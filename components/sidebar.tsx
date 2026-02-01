@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, ListTodo, MessageSquare, Activity, Calendar } from "lucide-react";
+import { LayoutDashboard, Users, ListTodo, MessageSquare, Activity, Calendar, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { NotificationBell } from "@/components/notification-bell";
@@ -14,6 +14,7 @@ const navigation = [
   { name: "Tasks", href: "/tasks", icon: ListTodo },
   { name: "Messages", href: "/messages", icon: MessageSquare },
   { name: "Activity", href: "/activity", icon: Activity },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {

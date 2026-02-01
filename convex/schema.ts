@@ -121,4 +121,11 @@ export default defineSchema({
   })
     .index("by_agent", ["agent"])
     .index("by_timestamp", ["timestamp"]),
+
+  // Settings
+  settings: defineTable({
+    key: v.string(),
+    value: v.any(),
+    updatedAt: v.number(),
+  }).index("by_key", ["key"]),
 });
