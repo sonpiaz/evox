@@ -140,7 +140,7 @@ export default function AgentDetailPage() {
           </div>
         </div>
 
-        {/* AGT-111: Boot Status */}
+        {/* AGT-111: Context Boot Protocol — checklist when data present */}
         <Card className="mb-6 border-zinc-800 bg-zinc-900/50">
           <CardHeader>
             <CardTitle className="text-zinc-50 text-base flex items-center gap-2">
