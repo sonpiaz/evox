@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, ListTodo, MessageSquare, Activity, Calendar, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import { NotificationBell } from "@/components/notification-bell";
 import { ProjectSelector } from "@/components/project-selector";
 import { useProject } from "@/components/project-context";
 
@@ -25,10 +24,9 @@ export function Sidebar() {
 
   return (
     <div className="flex h-screen w-60 flex-col border-r border-zinc-800 bg-zinc-950">
-      {/* Logo + Notifications */}
-      <div className="flex h-16 items-center justify-between px-6">
+      {/* Logo */}
+      <div className="flex h-16 items-center px-6">
         <h1 className="text-xl font-semibold text-zinc-50">EVOX</h1>
-        <NotificationBell />
       </div>
 
       <Separator className="bg-zinc-800" />

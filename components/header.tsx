@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { NotificationBell } from "@/components/notification-bell";
 
 export function Header() {
   const pathname = usePathname();
@@ -28,12 +29,15 @@ export function Header() {
         ))}
       </div>
 
-      {/* User Avatar */}
-      <Avatar className="h-8 w-8">
-        <AvatarFallback className="bg-zinc-800 text-zinc-300 text-xs">
-          SP
-        </AvatarFallback>
-      </Avatar>
+      {/* Right side: Notification Bell + User Avatar */}
+      <div className="flex items-center gap-2">
+        <NotificationBell />
+        <Avatar className="h-8 w-8">
+          <AvatarFallback className="bg-zinc-800 text-zinc-300 text-xs">
+            SP
+          </AvatarFallback>
+        </Avatar>
+      </div>
     </header>
   );
 }
