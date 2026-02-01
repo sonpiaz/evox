@@ -1,8 +1,9 @@
 import { action, internalAction } from "./_generated/server";
+import { internal } from "./_generated/api";
 import { v } from "convex/values";
 
 // Slack notification action
-export const sendSlackNotification = action({
+export const sendSlackNotification = internalAction({
   args: {
     event: v.union(
       v.literal("task_completed"),
@@ -103,8 +104,8 @@ export const notifyTaskCompleted = internalAction({
     taskTitle: v.string(),
     assigneeName: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
-    return await ctx.runAction(sendSlackNotification, {
+  handler: async (ctx, args): Promise<{ success: boolean; reason?: string }> => {
+    return await ctx.runAction(internal.slackNotify.sendSlackNotification, {
       event: "task_completed",
       title: "Task Completed",
       message: `*${args.taskTitle}*${
@@ -123,8 +124,8 @@ export const notifyAgentBlocked = internalAction({
     taskTitle: v.string(),
     reason: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
-    return await ctx.runAction(sendSlackNotification, {
+  handler: async (ctx, args): Promise<{ success: boolean; reason?: string }> => {
+    return await ctx.runAction(internal.slackNotify.sendSlackNotification, {
       event: "agent_blocked",
       title: "Agent Blocked",
       message: `*Agent:* ${args.agentName}\n*Task:* ${args.taskTitle} (\`${args.taskId}\`)${
@@ -142,8 +143,8 @@ export const notifyDeployDone = internalAction({
     deployedBy: v.optional(v.string()),
     commitHash: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
-    return await ctx.runAction(sendSlackNotification, {
+  handler: async (ctx, args): Promise<{ success: boolean; reason?: string }> => {
+    return await ctx.runAction(internal.slackNotify.sendSlackNotification, {
       event: "deploy_done",
       title: "Deployment Complete",
       message: `*Environment:* ${args.environment}${

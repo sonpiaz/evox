@@ -54,7 +54,7 @@ http.route({
         }
         // Otherwise, find task by title
         else {
-          const allTasks = await ctx.runQuery(api.tasks.list);
+          const allTasks = await ctx.runQuery(api.tasks.list, {});
           const task = allTasks.find((t: any) =>
             t.title.toLowerCase().includes(currentTask.toLowerCase())
           );
