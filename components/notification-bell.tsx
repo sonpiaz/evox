@@ -100,7 +100,7 @@ export function NotificationBell({
       {isOpen && (
         <div
           ref={panelRef}
-          className="absolute right-0 top-full z-50 mt-2"
+          className="absolute left-0 top-full z-50 mt-2"
         >
           <NotificationPanel
             notifications={notifications}
