@@ -53,23 +53,51 @@ export function AgentCard({ name, role, status, currentTask, avatar, lastHeartbe
     if (hours < 24) return `${hours}h ago`;
     return `${Math.floor(hours / 24)}d ago`;
   };
+
+  // Get status based on last heartbeat
+  const getAgentStatus = () => {
+    if (!lastHeartbeat) return { status: "offline", color: "bg-red-500", label: "Offline" };
+    const minutesAgo = Math.floor((Date.now() - lastHeartbeat.getTime()) / 60000);
+    if (minutesAgo < 5) return { status: "active", color: "bg-green-500", label: "Active" };
+    if (minutesAgo < 15) return { status: "idle", color: "bg-yellow-500", label: "Idle" };
+    return { status: "offline", color: "bg-red-500", label: "Offline" };
+  };
+
+  const liveStatus = getAgentStatus();
   return (
     <Card className="border-zinc-800 bg-zinc-900/50">
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
-          {/* Avatar with status indicator */}
-          <div className="relative">
+          {/* Avatar with live status indicator */}
+          <div className="relative group">
             <Avatar className="h-12 w-12 border-2 border-zinc-800">
               <AvatarFallback className="bg-zinc-800 text-zinc-50">
                 {avatar}
               </AvatarFallback>
             </Avatar>
-            <div
-              className={cn(
-                "absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-zinc-900",
-                statusColors[status]
+            <div className="relative">
+              <div
+                className={cn(
+                  "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-zinc-900",
+                  liveStatus.color
+                )}
+              />
+              {liveStatus.status === "active" && (
+                <div
+                  className={cn(
+                    "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full animate-ping",
+                    liveStatus.color,
+                    "opacity-75"
+                  )}
+                />
               )}
-            />
+            </div>
+            {/* Tooltip */}
+            <div className="absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 group-hover:block">
+              <div className="rounded-lg bg-zinc-800 px-3 py-2 text-xs text-zinc-50 shadow-lg whitespace-nowrap">
+                {liveStatus.label} — last seen {getRelativeTime(lastHeartbeat)}
+              </div>
+            </div>
           </div>
 
           {/* Agent info */}
@@ -103,7 +131,10 @@ export function AgentCard({ name, role, status, currentTask, avatar, lastHeartbe
 
             {/* Current task */}
             {currentTask ? (
-              <p className="text-sm text-zinc-400 line-clamp-2">{currentTask}</p>
+              <div className="space-y-1">
+                <p className="text-xs text-zinc-600">Working on:</p>
+                <p className="text-sm text-zinc-400 line-clamp-2">{currentTask}</p>
+              </div>
             ) : (
               <p className="text-sm text-zinc-600 italic">No active task</p>
             )}

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -38,8 +39,9 @@ const priorityColors: Record<TaskPriority, string> = {
 
 function TaskCard({ task }: { task: Task }) {
   return (
-    <Card className="border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 transition-colors cursor-pointer">
-      <CardContent className="p-4 space-y-3">
+    <Link href={`/tasks/${task.id}`}>
+      <Card className="border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 transition-colors cursor-pointer">
+        <CardContent className="p-4 space-y-3">
         <div className="space-y-2">
           <h4 className="text-sm font-medium text-zinc-50 line-clamp-2">{task.title}</h4>
 
@@ -78,6 +80,7 @@ function TaskCard({ task }: { task: Task }) {
         </div>
       </CardContent>
     </Card>
+    </Link>
   );
 }
 
