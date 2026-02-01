@@ -6,7 +6,7 @@ import { ActivityFeed } from "@/components/activity-feed";
 
 export default function ActivityPage() {
   const activities = useQuery(api.activities.listWithAgents, { limit: 50 });
-  const displayActivities = activities ?? [];
+  const displayActivities = Array.isArray(activities) ? activities : [];
 
   return (
     <div className="h-full bg-black p-8">

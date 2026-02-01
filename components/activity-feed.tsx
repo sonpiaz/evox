@@ -33,8 +33,8 @@ const actionLabels: Record<string, string> = {
 };
 
 export function ActivityFeed({ activities }: ActivityFeedProps) {
-  // Limit to 20 items
-  const displayActivities = activities.slice(0, 20);
+  const safeActivities = Array.isArray(activities) ? activities : [];
+  const displayActivities = safeActivities.slice(0, 20);
 
   return (
     <Card className="border-zinc-800 bg-zinc-900/50">
@@ -53,7 +53,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
               <p className="text-sm text-zinc-500">No recent activity</p>
             ) : (
               displayActivities.map((activity, index) => (
-                <div key={activity._id} className="relative flex gap-4">
+                <div key={activity._id ?? `activity-${index}`} className="relative flex gap-4">
                   {/* Avatar with timeline dot */}
                   <div className="relative z-10">
                     <Avatar className="h-8 w-8 border-2 border-zinc-900 bg-zinc-800">
@@ -95,7 +95,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                       })()}
                     </p>
                     <p className="mt-1 text-xs text-zinc-600">
-                      {formatDistanceToNow(activity.createdAt, { addSuffix: true })}
+                      {formatDistanceToNow(Number(activity.createdAt) || 0, { addSuffix: true })}
                     </p>
                   </div>
                 </div>

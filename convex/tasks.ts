@@ -1,10 +1,12 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { resolveAgentIdByName } from "./agentMappings";
 
-// CREATE
+// CREATE (ADR-001: agentName from caller for attribution)
 export const create = mutation({
   args: {
+    agentName: v.string(),
     projectId: v.id("projects"),
     title: v.string(),
     description: v.string(),
@@ -14,10 +16,10 @@ export const create = mutation({
       v.literal("high"),
       v.literal("urgent")
     ),
-    createdBy: v.id("agents"),
     assignee: v.optional(v.id("agents")),
   },
   handler: async (ctx, args) => {
+    const createdBy = await resolveAgentIdByName(ctx.db, args.agentName);
     const now = Date.now();
     const taskId = await ctx.db.insert("tasks", {
       projectId: args.projectId,
@@ -25,15 +27,15 @@ export const create = mutation({
       description: args.description,
       status: "backlog",
       priority: args.priority,
-      createdBy: args.createdBy,
+      createdBy,
       assignee: args.assignee,
       createdAt: now,
       updatedAt: now,
     });
 
-    // Log activity
+    // Log activity using agentName from caller (not Linear API key)
     await ctx.db.insert("activities", {
-      agent: args.createdBy,
+      agent: createdBy,
       action: "created_task",
       target: taskId,
       createdAt: now,
@@ -56,20 +58,24 @@ export const create = mutation({
   },
 });
 
-// READ - Get all tasks
+// READ - Get all tasks (never throw — dashboard depends on this)
 export const list = query({
   args: {
     projectId: v.optional(v.id("projects")),
   },
   handler: async (ctx, args) => {
-    if (args.projectId) {
-      return await ctx.db
-        .query("tasks")
-        .withIndex("by_project", (q) => q.eq("projectId", args.projectId))
-        .order("desc")
-        .collect();
+    try {
+      if (args.projectId) {
+        return await ctx.db
+          .query("tasks")
+          .withIndex("by_project", (q) => q.eq("projectId", args.projectId))
+          .order("desc")
+          .collect();
+      }
+      return await ctx.db.query("tasks").order("desc").collect();
+    } catch {
+      return [];
     }
-    return await ctx.db.query("tasks").order("desc").collect();
   },
 });
 
@@ -142,9 +148,10 @@ export const getByPriority = query({
   },
 });
 
-// UPDATE - Update task status
+// UPDATE - Update task status (ADR-001: agentName from caller for attribution)
 export const updateStatus = mutation({
   args: {
+    agentName: v.string(),
     id: v.id("tasks"),
     status: v.union(
       v.literal("backlog"),
@@ -153,21 +160,21 @@ export const updateStatus = mutation({
       v.literal("review"),
       v.literal("done")
     ),
-    updatedBy: v.id("agents"),
   },
   handler: async (ctx, args) => {
     const task = await ctx.db.get(args.id);
     if (!task) throw new Error("Task not found");
 
+    const updatedBy = await resolveAgentIdByName(ctx.db, args.agentName);
     const now = Date.now();
     await ctx.db.patch(args.id, {
       status: args.status,
       updatedAt: now,
     });
 
-    // Log activity
+    // Log activity using agentName from caller (not Linear API key)
     await ctx.db.insert("activities", {
-      agent: args.updatedBy,
+      agent: updatedBy,
       action: "updated_task_status",
       target: args.id,
       metadata: { from: task.status, to: args.status },
@@ -340,9 +347,10 @@ export const remove = mutation({
   },
 });
 
-// UPSERT - Create or update task by linearId (for Linear sync)
+// UPSERT - Create or update task by linearId (for Linear sync). ADR-001: activity uses agentName from caller, NOT Linear API key.
 export const upsertByLinearId = mutation({
   args: {
+    agentName: v.string(),
     projectId: v.optional(v.id("projects")),
     linearId: v.string(),
     linearIdentifier: v.string(),
@@ -363,28 +371,25 @@ export const upsertByLinearId = mutation({
       v.literal("urgent")
     ),
     assignee: v.optional(v.id("agents")),
-    createdBy: v.id("agents"),
     createdAt: v.number(),
     updatedAt: v.number(),
   },
   handler: async (ctx, args) => {
-    // Check if task with this linearId exists
+    const activityAgentId = await resolveAgentIdByName(ctx.db, args.agentName);
+
     const existingTasks = await ctx.db
       .query("tasks")
       .withIndex("by_linearId", (q) => q.eq("linearId", args.linearId))
       .collect();
 
     const existingTask = existingTasks[0];
-
     const now = Date.now();
 
     if (existingTask) {
-      // Track status change for activity creation
       const oldStatus = existingTask.status;
       const newStatus = args.status;
       const statusChanged = oldStatus !== newStatus;
 
-      // Update existing task
       await ctx.db.patch(existingTask._id, {
         title: args.title,
         description: args.description,
@@ -396,11 +401,9 @@ export const upsertByLinearId = mutation({
         linearUrl: args.linearUrl,
       });
 
-      // Create activity if status changed
       if (statusChanged) {
-        const activityAgent = args.assignee || args.createdBy;
         await ctx.db.insert("activities", {
-          agent: activityAgent,
+          agent: activityAgentId,
           action: "updated_task_status",
           target: existingTask._id,
           metadata: {
@@ -419,7 +422,6 @@ export const upsertByLinearId = mutation({
         statusChanged,
       };
     } else {
-      // Create new task - need projectId
       if (!args.projectId) {
         throw new Error("projectId is required when creating a new task from Linear sync");
       }
@@ -431,7 +433,7 @@ export const upsertByLinearId = mutation({
         status: args.status,
         priority: args.priority,
         assignee: args.assignee,
-        createdBy: args.createdBy,
+        createdBy: activityAgentId,
         createdAt: args.createdAt,
         updatedAt: args.updatedAt,
         linearId: args.linearId,
@@ -439,10 +441,8 @@ export const upsertByLinearId = mutation({
         linearUrl: args.linearUrl,
       });
 
-      // Create activity for new task with initial status
-      const activityAgent = args.assignee || args.createdBy;
       await ctx.db.insert("activities", {
-        agent: activityAgent,
+        agent: activityAgentId,
         action: "updated_task_status",
         target: taskId,
         metadata: {

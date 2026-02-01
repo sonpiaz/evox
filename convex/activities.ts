@@ -81,51 +81,54 @@ export const listWithAgents = query({
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const activities = await ctx.db
-      .query("activities")
-      .withIndex("by_created_at")
-      .order("desc")
-      .collect();
+    try {
+      const activities = await ctx.db
+        .query("activities")
+        .withIndex("by_created_at")
+        .order("desc")
+        .collect();
 
-    const limitedActivities = args.limit
-      ? activities.slice(0, args.limit)
-      : activities;
+      const limitedActivities = args.limit
+        ? activities.slice(0, args.limit)
+        : activities;
 
-    const activitiesWithAgents = await Promise.all(
-      limitedActivities.map(async (activity) => {
-        const agent = await ctx.db.get(activity.agent);
-        let targetDisplay: string | undefined;
-        if (TASK_ACTIONS.has(activity.action) && activity.target) {
-          const task = await ctx.db.get(activity.target as Id<"tasks">);
-          if (task) {
-            targetDisplay = task.linearIdentifier
-              ? `${task.linearIdentifier}: ${task.title}`
-              : task.title;
-          } else {
-            const meta = activity.metadata as { linearIdentifier?: string; summary?: string } | undefined;
-            if (meta?.linearIdentifier) {
-              targetDisplay = meta.summary
-                ? `${meta.linearIdentifier}: ${meta.summary.slice(0, 50)}${meta.summary.length > 50 ? "..." : ""}`
-                : meta.linearIdentifier;
+      const activitiesWithAgents = await Promise.all(
+        limitedActivities.map(async (activity) => {
+          const agent = await ctx.db.get(activity.agent);
+          let targetDisplay: string | undefined;
+          if (TASK_ACTIONS.has(activity.action) && activity.target) {
+            const task = await ctx.db.get(activity.target as Id<"tasks">);
+            if (task) {
+              targetDisplay = task.linearIdentifier
+                ? `${task.linearIdentifier}: ${task.title}`
+                : task.title;
+            } else {
+              const meta = activity.metadata as { linearIdentifier?: string; summary?: string } | undefined;
+              if (meta?.linearIdentifier) {
+                targetDisplay = meta.summary
+                  ? `${meta.linearIdentifier}: ${meta.summary.slice(0, 50)}${meta.summary.length > 50 ? "..." : ""}`
+                  : meta.linearIdentifier;
+              }
             }
           }
-        }
-        // Never show raw Convex _id to user — 26+ alphanumeric = Convex id (BUG 1 round 2)
-        const rawTarget = activity.target;
-        const looksLikeConvexId =
-          typeof rawTarget === "string" &&
-          rawTarget.length >= 26 &&
-          /^[a-z0-9]+$/i.test(rawTarget);
-        const fallback = looksLikeConvexId ? "—" : (rawTarget && typeof rawTarget === "string" ? rawTarget : "—");
-        return {
-          ...activity,
-          agent,
-          targetDisplay: (targetDisplay && targetDisplay.length > 0 ? targetDisplay : null) ?? fallback,
-        };
-      })
-    );
+          const rawTarget = activity.target;
+          const looksLikeConvexId =
+            typeof rawTarget === "string" &&
+            rawTarget.length >= 26 &&
+            /^[a-z0-9]+$/i.test(rawTarget);
+          const fallback = looksLikeConvexId ? "—" : (rawTarget && typeof rawTarget === "string" ? rawTarget : "—");
+          return {
+            ...activity,
+            agent: agent ?? null,
+            targetDisplay: (targetDisplay && targetDisplay.length > 0 ? targetDisplay : null) ?? fallback,
+          };
+        })
+      );
 
-    return activitiesWithAgents;
+      return activitiesWithAgents;
+    } catch {
+      return [];
+    }
   },
 });
 

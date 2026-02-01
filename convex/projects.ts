@@ -1,11 +1,15 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
-// List all projects
+// List all projects (never throw — layout depends on this)
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("projects").order("desc").collect();
+    try {
+      return await ctx.db.query("projects").order("desc").collect();
+    } catch {
+      return [];
+    }
   },
 });
 

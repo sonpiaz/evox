@@ -20,10 +20,14 @@ export const create = mutation({
   },
 });
 
-// READ - Get all agents
+// READ - Get all agents (never throw — dashboard/layout depend on this)
 export const list = query({
   handler: async (ctx) => {
-    return await ctx.db.query("agents").collect();
+    try {
+      return await ctx.db.query("agents").collect();
+    } catch {
+      return [];
+    }
   },
 });
 
