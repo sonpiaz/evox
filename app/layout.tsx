@@ -6,6 +6,7 @@ import { ProjectProvider } from "@/components/project-context";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
 import { Toaster } from "@/components/ui/toaster";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +45,7 @@ export default function RootLayout({
             <Toaster />
           </ProjectProvider>
         </ConvexClientProvider>
+        <Analytics />
       </body>
     </html>
   );
