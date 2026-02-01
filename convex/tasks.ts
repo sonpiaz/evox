@@ -5,6 +5,7 @@ import { internal } from "./_generated/api";
 // CREATE
 export const create = mutation({
   args: {
+    projectId: v.id("projects"),
     title: v.string(),
     description: v.string(),
     priority: v.union(
@@ -19,6 +20,7 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const now = Date.now();
     const taskId = await ctx.db.insert("tasks", {
+      projectId: args.projectId,
       title: args.title,
       description: args.description,
       status: "backlog",
@@ -56,7 +58,17 @@ export const create = mutation({
 
 // READ - Get all tasks
 export const list = query({
-  handler: async (ctx) => {
+  args: {
+    projectId: v.optional(v.id("projects")),
+  },
+  handler: async (ctx, args) => {
+    if (args.projectId) {
+      return await ctx.db
+        .query("tasks")
+        .withIndex("by_project", (q) => q.eq("projectId", args.projectId))
+        .order("desc")
+        .collect();
+    }
     return await ctx.db.query("tasks").order("desc").collect();
   },
 });
@@ -79,8 +91,18 @@ export const getByStatus = query({
       v.literal("review"),
       v.literal("done")
     ),
+    projectId: v.optional(v.id("projects")),
   },
   handler: async (ctx, args) => {
+    if (args.projectId) {
+      return await ctx.db
+        .query("tasks")
+        .withIndex("by_project_status", (q) =>
+          q.eq("projectId", args.projectId).eq("status", args.status)
+        )
+        .order("desc")
+        .collect();
+    }
     return await ctx.db
       .query("tasks")
       .withIndex("by_status", (q) => q.eq("status", args.status))
@@ -321,6 +343,7 @@ export const remove = mutation({
 // UPSERT - Create or update task by linearId (for Linear sync)
 export const upsertByLinearId = mutation({
   args: {
+    projectId: v.optional(v.id("projects")),
     linearId: v.string(),
     linearIdentifier: v.string(),
     linearUrl: v.string(),
@@ -371,8 +394,13 @@ export const upsertByLinearId = mutation({
         created: false,
       };
     } else {
-      // Create new task
+      // Create new task - need projectId
+      if (!args.projectId) {
+        throw new Error("projectId is required when creating a new task from Linear sync");
+      }
+
       const taskId = await ctx.db.insert("tasks", {
+        projectId: args.projectId,
         title: args.title,
         description: args.description,
         status: args.status,

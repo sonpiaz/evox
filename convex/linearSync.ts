@@ -122,6 +122,14 @@ export const syncFromLinear = action({
         throw new Error("No system agent (PM) found. Run seed first.");
       }
 
+      // Get EVOX project
+      const projects = await ctx.runQuery(api.projects.list);
+      const evoxProject = projects.find((p) => p.name === "EVOX");
+
+      if (!evoxProject) {
+        throw new Error("EVOX project not found. Run seed first.");
+      }
+
       // Upsert each task
       const results = await Promise.all(
         linearIssues.map(async (issue) => {
@@ -135,6 +143,7 @@ export const syncFromLinear = action({
           }
 
           return await ctx.runMutation(api.tasks.upsertByLinearId, {
+            projectId: evoxProject._id,
             linearId: issue.linearId,
             linearIdentifier: issue.linearIdentifier,
             linearUrl: issue.linearUrl,

@@ -2,6 +2,13 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+  // Projects
+  projects: defineTable({
+    name: v.string(),
+    description: v.optional(v.string()),
+    createdAt: v.number(),
+  }).index("by_name", ["name"]),
+
   // Agent management
   agents: defineTable({
     name: v.string(),
@@ -21,6 +28,7 @@ export default defineSchema({
 
   // Task management
   tasks: defineTable({
+    projectId: v.id("projects"),
     title: v.string(),
     description: v.string(),
     status: v.union(
@@ -45,9 +53,11 @@ export default defineSchema({
     linearIdentifier: v.optional(v.string()), // e.g., "AGT-72"
     linearUrl: v.optional(v.string()),
   })
+    .index("by_project", ["projectId"])
     .index("by_status", ["status"])
     .index("by_assignee", ["assignee"])
     .index("by_priority", ["priority"])
+    .index("by_project_status", ["projectId", "status"])
     .index("by_linearId", ["linearId"]),
 
   // Communication

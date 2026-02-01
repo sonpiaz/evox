@@ -6,6 +6,8 @@ import { LayoutDashboard, Users, ListTodo, MessageSquare, Activity, Calendar, Se
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { NotificationBell } from "@/components/notification-bell";
+import { ProjectSelector } from "@/components/project-selector";
+import { useProject } from "@/components/project-context";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -19,6 +21,7 @@ const navigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { selectedProjectId, setSelectedProjectId } = useProject();
 
   return (
     <div className="flex h-screen w-60 flex-col border-r border-zinc-800 bg-zinc-950">
@@ -26,6 +29,16 @@ export function Sidebar() {
       <div className="flex h-16 items-center justify-between px-6">
         <h1 className="text-xl font-semibold text-zinc-50">EVOX</h1>
         <NotificationBell />
+      </div>
+
+      <Separator className="bg-zinc-800" />
+
+      {/* Project Selector */}
+      <div className="py-2">
+        <ProjectSelector
+          selectedProjectId={selectedProjectId}
+          onSelectProject={setSelectedProjectId}
+        />
       </div>
 
       <Separator className="bg-zinc-800" />

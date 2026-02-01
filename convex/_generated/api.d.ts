@@ -16,7 +16,10 @@ import type * as linearSync from "../linearSync.js";
 import type * as mentions from "../mentions.js";
 import type * as messages from "../messages.js";
 import type * as notifications from "../notifications.js";
+import type * as projects from "../projects.js";
 import type * as seed from "../seed.js";
+import type * as settings from "../settings.js";
+import type * as slackNotify from "../slackNotify.js";
 import type * as standup from "../standup.js";
 import type * as tasks from "../tasks.js";
 
@@ -35,7 +38,10 @@ declare const fullApi: ApiFromModules<{
   mentions: typeof mentions;
   messages: typeof messages;
   notifications: typeof notifications;
+  projects: typeof projects;
   seed: typeof seed;
+  settings: typeof settings;
+  slackNotify: typeof slackNotify;
   standup: typeof standup;
   tasks: typeof tasks;
 }>;

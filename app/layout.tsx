@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "@/components/convex-provider";
+import { ProjectProvider } from "@/components/project-context";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
 import { Toaster } from "@/components/ui/toaster";
@@ -32,14 +33,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black`}
       >
         <ConvexClientProvider>
-          <div className="flex h-screen">
-            <Sidebar />
-            <div className="flex flex-1 flex-col overflow-hidden">
-              <Header />
-              <main className="flex-1 overflow-auto">{children}</main>
+          <ProjectProvider>
+            <div className="flex h-screen">
+              <Sidebar />
+              <div className="flex flex-1 flex-col overflow-hidden">
+                <Header />
+                <main className="flex-1 overflow-auto">{children}</main>
+              </div>
             </div>
-          </div>
-          <Toaster />
+            <Toaster />
+          </ProjectProvider>
         </ConvexClientProvider>
       </body>
     </html>

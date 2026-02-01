@@ -10,6 +10,31 @@ export const seedDatabase = mutation({
 
     const now = Date.now();
 
+    // Create projects
+    const evoxProjectId = await ctx.db.insert("projects", {
+      name: "EVOX",
+      description: "Mission Control MVP - Agent coordination dashboard",
+      createdAt: now,
+    });
+
+    const agentFactoryId = await ctx.db.insert("projects", {
+      name: "Agent Factory",
+      description: "AI agent creation and management platform",
+      createdAt: now,
+    });
+
+    const affitorId = await ctx.db.insert("projects", {
+      name: "Affitor",
+      description: "Affiliate marketing automation tool",
+      createdAt: now,
+    });
+
+    const myTimezoneId = await ctx.db.insert("projects", {
+      name: "MyTimezone",
+      description: "Global time zone coordination app",
+      createdAt: now,
+    });
+
     // Create agents
     const sonId = await ctx.db.insert("agents", {
       name: "SON",
@@ -37,6 +62,7 @@ export const seedDatabase = mutation({
 
     // Create initial tasks
     const task1 = await ctx.db.insert("tasks", {
+      projectId: evoxProjectId,
       title: "EVOX-1: Setup Convex schema",
       description: "Create schema.ts with 7 tables: agents, tasks, messages, activities, notifications, documents, heartbeats",
       status: "in_progress",
@@ -48,6 +74,7 @@ export const seedDatabase = mutation({
     });
 
     const task2 = await ctx.db.insert("tasks", {
+      projectId: evoxProjectId,
       title: "EVOX-2: Create backend CRUD functions",
       description: "Implement CRUD operations for agents, tasks, messages, activities in Convex",
       status: "in_progress",
@@ -59,6 +86,7 @@ export const seedDatabase = mutation({
     });
 
     const task3 = await ctx.db.insert("tasks", {
+      projectId: evoxProjectId,
       title: "EVOX-3: Design Mission Control UI",
       description: "Create main dashboard layout with agent status, task board, and activity feed",
       status: "todo",
@@ -70,6 +98,7 @@ export const seedDatabase = mutation({
     });
 
     const task4 = await ctx.db.insert("tasks", {
+      projectId: evoxProjectId,
       title: "EVOX-4: Implement real-time updates",
       description: "Connect frontend to Convex subscriptions for live data updates",
       status: "backlog",
@@ -216,6 +245,7 @@ export const seedDatabase = mutation({
 
     return {
       message: "Database seeded successfully",
+      projects: { evoxProjectId, agentFactoryId, affitorId, myTimezoneId },
       agents: { sonId, samId, leoId },
       tasks: { task1, task2, task3, task4 },
     };
@@ -227,6 +257,7 @@ export const resetDatabase = mutation({
   handler: async (ctx) => {
     // Delete all data from all tables
     const tables = [
+      "projects",
       "agents",
       "tasks",
       "messages",
@@ -234,6 +265,7 @@ export const resetDatabase = mutation({
       "notifications",
       "documents",
       "heartbeats",
+      "settings",
     ] as const;
 
     let totalDeleted = 0;
