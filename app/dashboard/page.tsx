@@ -62,7 +62,7 @@ const mockActivities = [
 
 export default function DashboardPage() {
   const agents = useQuery(api.agents.list);
-  const tasks = useQuery(api.tasks.list);
+  const tasks = useQuery(api.tasks.list, {});
   const activities = useQuery(api.activities.listWithAgents, { limit: 10 });
 
   // Use real data or fallback to mock
