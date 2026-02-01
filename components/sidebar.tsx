@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, ListTodo, MessageSquare, Activity, Calendar, Settings } from "lucide-react";
+import { LayoutDashboard, Users, ListTodo, MessageSquare, Activity, Calendar, Settings, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { ProjectSelector } from "@/components/project-selector";
@@ -12,6 +12,7 @@ const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Standup", href: "/standup", icon: Calendar },
   { name: "Agents", href: "/agents", icon: Users },
+  { name: "Registry", href: "/registry", icon: BookOpen },
   { name: "Tasks", href: "/tasks", icon: ListTodo },
   { name: "Messages", href: "/messages", icon: MessageSquare },
   { name: "Activity", href: "/activity", icon: Activity },
