@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useAction } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { ChevronLeft, ChevronRight, RefreshCw, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { StandupSummary } from "@/components/standup-summary";
 import { StandupAgentCard } from "@/components/standup-agent-card";
 
@@ -50,6 +53,8 @@ const mockStandupData = {
 
 export default function StandupPage() {
   const [date, setDate] = useState(new Date());
+  const [syncState, setSyncState] = useState<"idle" | "syncing" | "success">("idle");
+  const triggerSync = useAction(api.linearSync.triggerSync);
 
   const formatDate = (d: Date) => {
     return new Intl.DateTimeFormat("en-US", {
@@ -85,6 +90,27 @@ export default function StandupPage() {
     setDate(new Date());
   };
 
+  const handleSyncNow = async () => {
+    setSyncState("syncing");
+    try {
+      await triggerSync({});
+      setSyncState("success");
+    } catch (error) {
+      console.error("Sync failed:", error);
+      setSyncState("idle");
+    }
+  };
+
+  // Fade success state back to idle after 2 seconds
+  useEffect(() => {
+    if (syncState === "success") {
+      const timer = setTimeout(() => {
+        setSyncState("idle");
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [syncState]);
+
   // Calculate totals
   const agents = Object.values(mockStandupData);
   const totalDone = agents.reduce((sum, agent) => sum + agent.done.length, 0);
@@ -96,9 +122,35 @@ export default function StandupPage() {
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Header with Date Navigation */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-zinc-50">Daily Standup</h1>
-            <p className="text-sm text-zinc-500">{formatDate(date)}</p>
+          <div className="flex items-center gap-3">
+            <div>
+              <h1 className="text-2xl font-semibold text-zinc-50">Daily Standup</h1>
+              <p className="text-sm text-zinc-500">{formatDate(date)}</p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSyncNow}
+              disabled={syncState === "syncing"}
+              className="border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-50"
+            >
+              {syncState === "syncing" ? (
+                <>
+                  <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
+                  Syncing...
+                </>
+              ) : syncState === "success" ? (
+                <>
+                  <Check className="mr-2 h-3 w-3 text-green-500" />
+                  Synced
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="mr-2 h-3 w-3" />
+                  Sync Now
+                </>
+              )}
+            </Button>
           </div>
 
           <div className="flex items-center gap-2">

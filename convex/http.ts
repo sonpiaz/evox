@@ -156,7 +156,7 @@ http.route({
   handler: httpAction(async (ctx, request) => {
     try {
       // Trigger Linear sync action
-      const result = await ctx.runAction(api.linearSync.syncFromLinear, {});
+      const result = await ctx.runAction(api.linearSync.triggerSync, {});
 
       return new Response(JSON.stringify(result), {
         status: 200,

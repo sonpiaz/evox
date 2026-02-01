@@ -10,6 +10,7 @@
 
 import type * as activities from "../activities.js";
 import type * as agents from "../agents.js";
+import type * as crons from "../crons.js";
 import type * as documents from "../documents.js";
 import type * as http from "../http.js";
 import type * as linearSync from "../linearSync.js";
@@ -32,6 +33,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   activities: typeof activities;
   agents: typeof agents;
+  crons: typeof crons;
   documents: typeof documents;
   http: typeof http;
   linearSync: typeof linearSync;
