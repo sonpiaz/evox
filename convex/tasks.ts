@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 // CREATE
 export const create = mutation({
@@ -161,6 +162,16 @@ export const updateStatus = mutation({
         read: false,
         relatedTask: args.id,
         createdAt: now,
+      });
+    }
+
+    // Send Slack notification when task is completed
+    if (args.status === "done") {
+      const assignee = task.assignee ? await ctx.db.get(task.assignee) : null;
+      await ctx.scheduler.runAfter(0, internal.slackNotify.notifyTaskCompleted, {
+        taskId: args.id,
+        taskTitle: task.title,
+        assigneeName: assignee?.name,
       });
     }
   },
