@@ -15,21 +15,20 @@ const roleToColor = {
   pm: "blue" as const,
 };
 
-/** Format date as YYYY-MM-DD for Convex standup query (local date) */
-function toQueryDate(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+/** User's local day as UTC timestamps (start and end of day) for Convex standup */
+function toDayRange(d: Date): { startTs: number; endTs: number } {
+  const start = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const end = start + 24 * 60 * 60 * 1000 - 1;
+  return { startTs: start, endTs: end };
 }
 
 export default function StandupPage() {
   const [date, setDate] = useState(new Date());
   const [syncState, setSyncState] = useState<"idle" | "syncing" | "success">("idle");
-  const queryDate = useMemo(() => toQueryDate(date), [date]);
+  const dayRange = useMemo(() => toDayRange(date), [date]);
 
-  const standupData = useQuery(api.standup.getDaily, { date: queryDate });
-  const standupSummary = useQuery(api.standup.getDailySummary, { date: queryDate });
+  const standupData = useQuery(api.standup.getDaily, dayRange);
+  const standupSummary = useQuery(api.standup.getDailySummary, dayRange);
   const triggerSync = useAction(api.linearSync.triggerSync);
 
   const formatDate = (d: Date) => {
