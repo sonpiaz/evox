@@ -73,8 +73,8 @@ export default function DashboardPage() {
   const taskStats = tasks
     ? {
         total: tasks.length,
-        inProgress: tasks.filter((t) => t.status === "in_progress").length,
-        completed: tasks.filter((t) => t.status === "done").length,
+        inProgress: tasks.filter((t: any) => t.status === "in_progress").length,
+        completed: tasks.filter((t: any) => t.status === "done").length,
       }
     : { total: 12, inProgress: 4, completed: 8 };
 
@@ -131,7 +131,7 @@ export default function DashboardPage() {
           <div>
             <h2 className="mb-4 text-lg font-semibold text-zinc-50">Agents</h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {displayAgents.map((agent, idx) => (
+              {displayAgents.map((agent: any, idx: number) => (
                 <AgentCard
                   key={idx}
                   name={agent.name}

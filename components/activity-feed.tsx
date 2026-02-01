@@ -10,7 +10,7 @@ interface Activity {
     name: string;
     avatar: string;
     role: "pm" | "backend" | "frontend";
-    status: "online" | "offline" | "busy";
+    status: "online" | "idle" | "offline";
   } | null;
   action: string;
   target: string;

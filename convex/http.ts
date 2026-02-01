@@ -35,7 +35,7 @@ http.route({
       // Find agent by name (case-insensitive)
       const agents = await ctx.runQuery(api.agents.list);
       const agent = agents.find(
-        (a) => a.name.toLowerCase() === agentId.toLowerCase()
+        (a: any) => a.name.toLowerCase() === agentId.toLowerCase()
       );
 
       if (!agent) {
@@ -55,7 +55,7 @@ http.route({
         // Otherwise, find task by title
         else {
           const allTasks = await ctx.runQuery(api.tasks.list);
-          const task = allTasks.find((t) =>
+          const task = allTasks.find((t: any) =>
             t.title.toLowerCase().includes(currentTask.toLowerCase())
           );
           if (task) {
@@ -122,7 +122,7 @@ http.route({
       // Find agent by name (case-insensitive)
       const agents = await ctx.runQuery(api.agents.list);
       const agent = agents.find(
-        (a) => a.name.toLowerCase() === agentId.toLowerCase()
+        (a: any) => a.name.toLowerCase() === agentId.toLowerCase()
       );
 
       if (!agent) {
