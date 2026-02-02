@@ -5,7 +5,6 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { TopBar } from "@/components/dashboard-v2/top-bar";
-import type { NotificationGroupByAgent } from "@/components/notification-panel";
 import type { KanbanTask } from "@/components/dashboard-v2/task-card";
 
 /** Error boundary: when notifications query fails (e.g. listAllForDashboard not deployed), render TopBar with empty notifications */
@@ -35,6 +34,7 @@ interface NotificationTopBarWrapperProps {
   doneToday?: number;
   totalTasks?: number;
   onSettingsClick?: () => void;
+  onBellClick?: () => void;
   onNotificationClick?: (notificationId: string, taskSummary?: { id: string; title?: string; linearIdentifier?: string; linearUrl?: string; status?: string; priority?: string } | null) => void;
 }
 
@@ -46,14 +46,13 @@ function NotificationTopBarInner({
   doneToday = 0,
   totalTasks = 0,
   onSettingsClick,
+  onBellClick,
   onNotificationClick,
 }: NotificationTopBarWrapperProps) {
   const dashboardNotifications = useQuery(api.notifications.listAllForDashboard);
-  const markAllAsReadForAgent = useMutation(api.notifications.markAllAsRead);
   const markNotificationAsRead = useMutation(api.notifications.markAsRead);
 
   const notificationTotalUnread = dashboardNotifications?.totalUnread ?? 0;
-  const notificationByAgent = (dashboardNotifications?.byAgent ?? []) as NotificationGroupByAgent[];
 
   return (
     <TopBar
@@ -64,12 +63,7 @@ function NotificationTopBarInner({
       totalTasks={totalTasks}
       onSettingsClick={onSettingsClick}
       notificationTotalUnread={notificationTotalUnread}
-      notificationByAgent={notificationByAgent}
-      onMarkAllReadForAgent={(agentId) => markAllAsReadForAgent({ agent: agentId as Id<"agents"> })}
-      onNotificationClick={(id, taskSummary) => {
-        markNotificationAsRead({ id: id as Id<"notifications"> });
-        onNotificationClick?.(id, taskSummary);
-      }}
+      onBellClick={onBellClick}
     />
   );
 }
@@ -85,7 +79,7 @@ export function NotificationTopBarWrapper(props: NotificationTopBarWrapperProps)
       totalTasks={props.totalTasks ?? 0}
       onSettingsClick={props.onSettingsClick}
       notificationTotalUnread={0}
-      notificationByAgent={[]}
+      onBellClick={props.onBellClick}
     />
   );
 

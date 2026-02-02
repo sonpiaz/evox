@@ -8,17 +8,18 @@ import { NotificationTopBarWrapper } from "@/components/notification-topbar-wrap
 import { MissionQueue } from "@/components/dashboard-v2/mission-queue";
 import { SettingsModal } from "@/components/dashboard-v2/settings-modal";
 import { AgentSidebar } from "@/components/dashboard-v2/agent-sidebar";
-import { ContextPanelContent } from "@/components/dashboard-v2/context-panel-content";
+import { AgentProfileModal } from "@/components/dashboard-v2/agent-profile-modal";
+import { ActivityDrawer } from "@/components/dashboard-v2/activity-drawer";
 import type { KanbanTask } from "@/components/dashboard-v2/task-card";
 import type { DateFilterMode } from "@/components/dashboard-v2/date-filter";
 
-/** AGT-172: 3-panel layout — [Sidebar 200px] | [Kanban flex-1] | [Context Panel 400px] */
+/** AGT-181: 2-panel layout — [Sidebar 180px] | [Kanban flex-1]. Agent Profile → Modal, Activity → Drawer */
 export default function Home() {
   const [date, setDate] = useState(new Date());
   const [dateMode, setDateMode] = useState<DateFilterMode>("day");
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [activityDrawerOpen, setActivityDrawerOpen] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState<Id<"agents"> | null>(null);
-  const [selectedTask, setSelectedTask] = useState<KanbanTask | null>(null);
 
   const agents = useQuery(api.agents.list);
   const dashboardStats = useQuery(api.dashboard.getStats);
@@ -43,18 +44,12 @@ export default function Home() {
       setSelectedAgentId(null);
     } else {
       setSelectedAgentId(agentId);
-      setSelectedTask(null);
     }
   };
 
   const handleTaskClick = (task: KanbanTask) => {
-    setSelectedTask(task);
-    setSelectedAgentId(null);
-  };
-
-  const handlePanelClose = () => {
-    setSelectedAgentId(null);
-    setSelectedTask(null);
+    // Task detail not implemented yet, just log for now
+    console.log("Task clicked:", task);
   };
 
   const taskCounts = dashboardStats?.taskCounts ?? { backlog: 0, todo: 0, inProgress: 0, review: 0, done: 0 };
@@ -72,21 +67,10 @@ export default function Home() {
         doneToday={doneCount}
         totalTasks={totalTaskCount}
         onSettingsClick={() => setSettingsOpen(true)}
-        onNotificationClick={(_, taskSummary) => {
-          if (taskSummary?.id) {
-            setSelectedTask({
-              id: taskSummary.id,
-              title: taskSummary.title ?? "",
-              status: (taskSummary.status as KanbanTask["status"]) ?? "todo",
-              priority: (taskSummary.priority as KanbanTask["priority"]) ?? "medium",
-              linearIdentifier: taskSummary.linearIdentifier,
-              linearUrl: taskSummary.linearUrl,
-            });
-            setSelectedAgentId(null);
-          }
-        }}
+        onBellClick={() => setActivityDrawerOpen(true)}
       />
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <ActivityDrawer open={activityDrawerOpen} onClose={() => setActivityDrawerOpen(false)} />
 
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <AgentSidebar selectedAgentId={selectedAgentId} onAgentClick={handleAgentClick} />
@@ -100,13 +84,19 @@ export default function Home() {
             onAssigneeClick={(id) => handleAgentClick(id as Id<"agents">)}
           />
         </main>
-        <ContextPanelContent
-          selectedAgentId={selectedAgentId}
-          selectedTask={selectedTask}
-          selectedAgent={selectedAgent}
-          onClose={handlePanelClose}
-        />
       </div>
+
+      {selectedAgent && (
+        <AgentProfileModal
+          open={selectedAgentId !== null}
+          agentId={selectedAgent._id}
+          name={selectedAgent.name}
+          role={selectedAgent.role}
+          status={selectedAgent.status}
+          avatar={selectedAgent.avatar}
+          onClose={() => setSelectedAgentId(null)}
+        />
+      )}
     </div>
   );
 }

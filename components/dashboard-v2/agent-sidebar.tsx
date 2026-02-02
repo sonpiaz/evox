@@ -47,7 +47,7 @@ type SidebarAgent = {
   currentTaskIdentifier: string | null;
 };
 
-/** AGT-172: Left sidebar 200px — agent list, status dot + current task or Idle, selected border-l-2 border-amber-400 */
+/** AGT-181: Left sidebar 180px — agent list, status dot + current task or Idle, selected border-l-2 border-amber-400 */
 export function AgentSidebar({ selectedAgentId, onAgentClick, className = "" }: AgentSidebarProps) {
   const listAgents = useQuery(api.agents.list);
 
@@ -68,7 +68,7 @@ export function AgentSidebar({ selectedAgentId, onAgentClick, className = "" }: 
     <aside
       className={cn(
         "flex shrink-0 flex-col border-r border-white/[0.06] bg-white/[0.02]",
-        "w-14 min-[1200px]:w-[200px]",
+        "w-14 min-[1200px]:w-[180px]",
         className
       )}
     >

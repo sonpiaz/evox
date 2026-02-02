@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Settings } from "lucide-react";
 import { NotificationBell } from "@/components/notification-bell";
-import type { NotificationGroupByAgent } from "@/components/notification-panel";
 
 interface TopBarProps {
   agentsActive?: number;
@@ -12,11 +11,9 @@ interface TopBarProps {
   doneToday?: number;
   totalTasks?: number;
   onSettingsClick?: () => void;
-  /** AGT-116: Bell — total unread + panel grouped by agent */
+  /** AGT-181: Bell opens Activity drawer */
   notificationTotalUnread?: number;
-  notificationByAgent?: NotificationGroupByAgent[];
-  onMarkAllReadForAgent?: (agentId: string) => void;
-  onNotificationClick?: (notificationId: string, taskSummary?: { id: string; title?: string; linearIdentifier?: string; linearUrl?: string; status?: string; priority?: string } | null) => void;
+  onBellClick?: () => void;
 }
 
 export function TopBar({
@@ -27,9 +24,7 @@ export function TopBar({
   totalTasks = 0,
   onSettingsClick,
   notificationTotalUnread = 0,
-  notificationByAgent = [],
-  onMarkAllReadForAgent,
-  onNotificationClick,
+  onBellClick,
 }: TopBarProps) {
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
@@ -69,9 +64,7 @@ export function TopBar({
         </div>
         <NotificationBell
           totalUnread={notificationTotalUnread}
-          byAgent={notificationByAgent}
-          onMarkAllReadForAgent={onMarkAllReadForAgent}
-          onNotificationClick={onNotificationClick}
+          onBellClick={onBellClick}
         />
         <div className="flex items-center gap-1.5 text-xs text-[#888]">
           <span className="h-2 w-2 rounded-full bg-green-500" />
