@@ -3,12 +3,19 @@
 import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+interface Agent {
+  _id: string;
+  name: string;
+  role: string;
+  status: string;
+  avatar: string;
+}
 
 const roleColors: Record<string, string> = {
   pm: "bg-purple-500/10 text-purple-500 border-purple-500/20",
@@ -34,7 +41,7 @@ export default function AgentsPage() {
       </div>
       <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {agents && agents.length > 0 ? (
-          agents.map((agent) => (
+          agents.map((agent: Agent) => (
             <Link key={agent._id} href={`/agents/${agent._id}`}>
               <Card className="border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 transition-colors cursor-pointer">
                 <CardContent className="p-6 flex items-center gap-4">

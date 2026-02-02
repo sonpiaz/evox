@@ -17,6 +17,7 @@ import type * as agentMessages from "../agentMessages.js";
 import type * as agents from "../agents.js";
 import type * as crons from "../crons.js";
 import type * as documents from "../documents.js";
+import type * as heartbeat from "../heartbeat.js";
 import type * as http from "../http.js";
 import type * as linearSync from "../linearSync.js";
 import type * as mentions from "../mentions.js";
@@ -47,6 +48,7 @@ declare const fullApi: ApiFromModules<{
   agents: typeof agents;
   crons: typeof crons;
   documents: typeof documents;
+  heartbeat: typeof heartbeat;
   http: typeof http;
   linearSync: typeof linearSync;
   mentions: typeof mentions;

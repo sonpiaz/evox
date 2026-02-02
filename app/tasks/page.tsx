@@ -26,7 +26,7 @@ function toBoardPriority(
 export default function TasksPage() {
   const projects = useQuery(api.projects.list);
   const evoxProjectId = useMemo(
-    () => projects?.find((p) => p.name === "EVOX")?._id,
+    () => projects?.find((p: { name: string; _id: string }) => p.name === "EVOX")?._id,
     [projects]
   );
   const rawTasks = useQuery(
@@ -35,10 +35,15 @@ export default function TasksPage() {
   );
   const agents = useQuery(api.agents.list);
 
+  type TaskStatusType = "backlog" | "todo" | "in_progress" | "review" | "done";
+  type TaskPriorityType = "low" | "medium" | "high" | "urgent";
+  interface RawAgent { _id: string; name?: string; avatar?: string }
+  interface RawTask { _id: string; title: string; status: TaskStatusType; priority: TaskPriorityType; assignee?: string; linearIdentifier?: string }
+
   const tasks = useMemo(() => {
     if (!rawTasks || !agents) return [];
-    const agentMap = new Map(agents.map((a) => [a._id, a]));
-    return rawTasks.map((t) => {
+    const agentMap = new Map((agents as RawAgent[]).map((a) => [a._id, a]));
+    return (rawTasks as RawTask[]).map((t) => {
       const assignee = t.assignee ? agentMap.get(t.assignee) : undefined;
       return {
         id: t._id,

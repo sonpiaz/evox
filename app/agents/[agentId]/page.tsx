@@ -45,7 +45,7 @@ export default function AgentDetailPage() {
     api.tasks.getByAssignee,
     agentId ? { assignee: agentId } : "skip"
   );
-  const tasksInProgress = inProgressTasks?.filter((t) => t.status === "in_progress") ?? [];
+  const tasksInProgress = inProgressTasks?.filter((t: { status: string }) => t.status === "in_progress") ?? [];
 
   const upsertMemory = useMutation(api.agentMemory.upsertMemory);
 
@@ -200,7 +200,7 @@ export default function AgentDetailPage() {
             <CardContent>
               {tasksInProgress.length > 0 ? (
                 <ul className="space-y-2">
-                  {tasksInProgress.map((t) => (
+                  {tasksInProgress.map((t: { _id: string; linearIdentifier?: string; title: string }) => (
                     <li key={t._id} className="text-sm text-zinc-300">
                       {t.linearIdentifier ?? "—"}: {t.title}
                     </li>
@@ -277,7 +277,7 @@ export default function AgentDetailPage() {
               <CardContent>
                 {dailyNotes && dailyNotes.length > 0 ? (
                   <ul className="space-y-4">
-                    {dailyNotes.map((note) => (
+                    {dailyNotes.map((note: { _id: string; date?: string; updatedAt: number; content: string }) => (
                       <li key={note._id} className="border-l-2 border-zinc-700 pl-4">
                         <p className="text-xs text-zinc-500">
                           {note.date ?? "—"} · {formatDistanceToNow(note.updatedAt, { addSuffix: true })}

@@ -22,6 +22,7 @@ export default defineSchema({
     currentTask: v.optional(v.id("tasks")),
     avatar: v.string(),
     lastSeen: v.number(),
+    lastHeartbeat: v.optional(v.number()), // AGT-119: Last heartbeat timestamp
     linearUserId: v.optional(v.string()), // Linear user ID for API attribution
   })
     .index("by_status", ["status"])

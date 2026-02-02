@@ -148,14 +148,32 @@ export default function StandupPage() {
   };
   const STANDUP_ORDER = ["Max", "Sam", "Leo"];
 
+  interface StandupTask {
+    id: string;
+    title: string;
+    linearIdentifier?: string | null;
+  }
+  interface StandupAgent {
+    name: string;
+    role: "pm" | "backend" | "frontend";
+    avatar?: string;
+  }
+  interface StandupReport {
+    agent: StandupAgent;
+    completed: StandupTask[];
+    inProgress: StandupTask[];
+    backlog: StandupTask[];
+    blocked: StandupTask[];
+  }
+
   const agentCards = useMemo(() => {
     if (!standupData?.agents) return [];
-    const toTask = (t: { id: string; title: string; linearIdentifier?: string | null }) => ({
+    const toTask = (t: StandupTask) => ({
       id: t.id,
       title: t.title,
       identifier: sanitizeIdentifier(t.linearIdentifier),
     });
-    const cards = standupData.agents.map((report) => {
+    const cards = (standupData.agents as StandupReport[]).map((report) => {
       const color = roleToColor[report.agent.role] ?? "blue";
       const rawName = report.agent.name ?? "Unknown";
       const displayName = STANDUP_DISPLAY_NAMES[rawName] ?? rawName;
