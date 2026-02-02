@@ -163,32 +163,36 @@ export const list = query({
 });
 
 /**
- * List events with agent details (for rich activity feed)
+ * List events with agent details (for rich activity feed).
+ * Never throws — returns [] on error so /activity and /dashboard do not crash (AGT-140, AGT-141).
  */
 export const listWithAgents = query({
   args: {
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const limit = args.limit ?? 50;
+    try {
+      const limit = args.limit ?? 50;
 
-    const events = await ctx.db
-      .query("activityEvents")
-      .withIndex("by_timestamp")
-      .order("desc")
-      .take(limit);
+      const events = await ctx.db
+        .query("activityEvents")
+        .withIndex("by_timestamp")
+        .order("desc")
+        .take(limit);
 
-    // Batch fetch all unique agents
-    const agentIds = Array.from(new Set(events.map((e) => e.agentId)));
-    const agents = await Promise.all(agentIds.map((id) => ctx.db.get(id)));
-    const agentMap = new Map(
-      agents.filter(Boolean).map((a) => [a!._id, a])
-    );
+      const agentIds = Array.from(new Set(events.map((e) => e.agentId)));
+      const agents = await Promise.all(agentIds.map((id) => ctx.db.get(id)));
+      const agentMap = new Map(
+        agents.filter(Boolean).map((a) => [a!._id, a])
+      );
 
-    return events.map((event) => ({
-      ...event,
-      agent: agentMap.get(event.agentId) ?? null,
-    }));
+      return events.map((event) => ({
+        ...event,
+        agent: agentMap.get(event.agentId) ?? null,
+      }));
+    } catch {
+      return [];
+    }
   },
 });
 

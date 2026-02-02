@@ -36,8 +36,9 @@ interface ActivityEvent {
   timestamp: number;
 }
 
+// AGT-140: Accept normalized shape so feed never crashes on backend shape mismatch
 interface ActivityFeedProps {
-  activities: ActivityEvent[];
+  activities: ActivityEvent[] | Array<Record<string, unknown>>;
 }
 
 // AGT-137: Event type labels for display
@@ -78,46 +79,48 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             {displayActivities.length === 0 ? (
               <p className="text-sm text-zinc-500">No recent activity</p>
             ) : (
-              displayActivities.map((activity, index) => (
-                <div key={activity._id ?? `activity-${index}`} className="relative flex gap-4">
-                  {/* Avatar with timeline dot */}
-                  <div className="relative z-10">
-                    <Avatar className="h-8 w-8 border-2 border-zinc-900 bg-zinc-800">
-                      <AvatarFallback className="bg-zinc-800 text-xs text-zinc-50">
-                        {activity.agent?.avatar ?? activity.agentName?.charAt(0).toUpperCase() ?? "?"}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
-
-                  {/* AGT-137: Activity content from unified activityEvents */}
-                  <div className="flex-1 pb-2">
-                    <p className="text-sm text-zinc-300">
-                      <span className="font-medium text-zinc-50">
-                        {activity.agent?.name ?? activity.agentName ?? "Unknown"}
-                      </span>{" "}
-                      {eventTypeLabels[activity.eventType] ?? activity.eventType}
-                      {activity.linearIdentifier && (
-                        <>
-                          {" "}
-                          <span className="text-zinc-500">{activity.linearIdentifier}</span>
-                        </>
+              displayActivities.map((activity, index) => {
+                const ts = typeof activity.timestamp === "number" ? activity.timestamp : 0;
+                const key = activity._id && String(activity._id).length > 0 ? String(activity._id) : `activity-${index}`;
+                const agent = activity.agent as { name?: string; avatar?: string } | null | undefined;
+                const agentName = String(agent?.name ?? activity.agentName ?? "Unknown");
+                const avatar = agent?.avatar ?? (typeof activity.agentName === "string" ? activity.agentName.charAt(0).toUpperCase() : "?");
+                return (
+                  <div key={key} className="relative flex gap-4">
+                    <div className="relative z-10">
+                      <Avatar className="h-8 w-8 border-2 border-zinc-900 bg-zinc-800">
+                        <AvatarFallback className="bg-zinc-800 text-xs text-zinc-50">
+                          {avatar}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                    <div className="flex-1 pb-2">
+                      <p className="text-sm text-zinc-300">
+                        <span className="font-medium text-zinc-50">{agentName}</span>{" "}
+                        {eventTypeLabels[String(activity.eventType ?? "")] ?? String(activity.eventType ?? "")}
+                        {typeof activity.linearIdentifier === "string" && activity.linearIdentifier.length > 0 && (
+                          <>
+                            {" "}
+                            <span className="text-zinc-500">{activity.linearIdentifier}</span>
+                          </>
+                        )}
+                        {(activity.metadata as { toStatus?: string })?.toStatus && (
+                          <>
+                            {" → "}
+                            <span className="text-zinc-400">{(activity.metadata as { toStatus?: string }).toStatus}</span>
+                          </>
+                        )}
+                      </p>
+                      {activity.description != null && activity.description !== "" && (
+                        <p className="mt-0.5 text-xs text-zinc-500 line-clamp-1">{String(activity.description)}</p>
                       )}
-                      {activity.metadata?.toStatus && (
-                        <>
-                          {" → "}
-                          <span className="text-zinc-400">{activity.metadata.toStatus}</span>
-                        </>
-                      )}
-                    </p>
-                    {activity.description && (
-                      <p className="mt-0.5 text-xs text-zinc-500 line-clamp-1">{activity.description}</p>
-                    )}
-                    <p className="mt-1 text-xs text-zinc-600">
-                      {formatDistanceToNow(activity.timestamp ?? 0, { addSuffix: true })}
-                    </p>
+                      <p className="mt-1 text-xs text-zinc-600">
+                        {formatDistanceToNow(ts, { addSuffix: true })}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>

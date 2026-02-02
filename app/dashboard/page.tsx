@@ -8,6 +8,7 @@ import { ActivityFeed } from "@/components/activity-feed";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, ListTodo, CheckCircle2 } from "lucide-react";
+import { normalizeActivities } from "@/lib/activity-utils";
 
 // Mock data fallback
 const mockAgents = [
@@ -106,9 +107,11 @@ export default function DashboardPage() {
   // Unread counts: skip query on dashboard to avoid crash when agentMappings not seeded or Convex not yet deployed; badge shows 0
   const unreadCounts: Record<string, number> | undefined = undefined;
 
+  // AGT-141: Null-safe lists; normalize activities so ActivityFeed never crashes on shape mismatch
   const agentsList = Array.isArray(agents) && agents.length > 0 ? agents : mockAgents;
+  const rawActivities = Array.isArray(activities) ? activities : [];
   const activitiesList =
-    Array.isArray(activities) && activities.length > 0 ? activities : mockActivities;
+    rawActivities.length > 0 ? normalizeActivities(rawActivities) : normalizeActivities(mockActivities);
 
   const taskStats = useMemo(() => {
     if (!Array.isArray(tasks) || tasks.length === 0) {

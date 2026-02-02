@@ -3,11 +3,12 @@
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ActivityFeed } from "@/components/activity-feed";
+import { normalizeActivities } from "@/lib/activity-utils";
 
 export default function ActivityPage() {
   // AGT-137: Unified activity feed from activityEvents (single table)
   const activities = useQuery(api.activityEvents.listWithAgents, { limit: 50 });
-  const displayActivities = Array.isArray(activities) ? activities : [];
+  const displayActivities = normalizeActivities(activities);
 
   return (
     <div className="h-full bg-black p-8">
