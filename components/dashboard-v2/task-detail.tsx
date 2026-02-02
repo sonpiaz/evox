@@ -1,6 +1,8 @@
 "use client";
 
 import type { KanbanTask } from "./task-card";
+import { TaskCommentThread } from "./task-comment-thread";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface TaskDetailProps {
   task: KanbanTask;
@@ -8,9 +10,11 @@ interface TaskDetailProps {
 }
 
 export function TaskDetail({ task, onClose }: TaskDetailProps) {
+  const taskId = task.id as Id<"tasks">;
+
   return (
-    <div className="flex h-full flex-col overflow-y-auto p-4">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="flex h-full flex-col overflow-hidden p-4">
+      <div className="mb-4 flex shrink-0 items-center justify-between">
         <h3 className="text-sm font-semibold text-zinc-50">Task Detail</h3>
         <button
           type="button"
@@ -21,7 +25,7 @@ export function TaskDetail({ task, onClose }: TaskDetailProps) {
           ×
         </button>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-4 shrink-0">
         <div>
           <h4 className="text-xs font-semibold uppercase text-zinc-500">Title</h4>
           <p className="mt-1 text-sm text-zinc-50">{task.title}</p>
@@ -32,28 +36,26 @@ export function TaskDetail({ task, onClose }: TaskDetailProps) {
           )}
         </div>
         <div>
-          <h4 className="text-xs font-semibold uppercase text-zinc-500">Description</h4>
-          <p className="mt-1 text-sm text-zinc-400 italic">—</p>
-        </div>
-        <div>
           <h4 className="text-xs font-semibold uppercase text-zinc-500">Assignee</h4>
           <p className="mt-1 text-sm text-zinc-400">{task.assigneeName ?? "—"}</p>
         </div>
         <div>
-          <h4 className="text-xs font-semibold uppercase text-zinc-500">Comments</h4>
-          <p className="mt-1 text-sm text-zinc-400 italic">—</p>
-        </div>
-        <div>
           <h4 className="text-xs font-semibold uppercase text-zinc-500">Quick actions</h4>
           <div className="mt-2 flex gap-2">
-            <button type="button" className="rounded border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs text-zinc-400 hover:bg-zinc-700">
+            <a
+              href={task.linearUrl ?? "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs text-zinc-400 hover:bg-zinc-700"
+            >
               Open in Linear
-            </button>
-            <button type="button" className="rounded border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs text-zinc-400 hover:bg-zinc-700">
-              Assign
-            </button>
+            </a>
           </div>
         </div>
+      </div>
+      {/* AGT-114: Comment thread — bottom section, chat-style */}
+      <div className="mt-4 flex-1 min-h-0 flex flex-col">
+        <TaskCommentThread taskId={taskId} />
       </div>
     </div>
   );

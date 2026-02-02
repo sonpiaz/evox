@@ -10,6 +10,8 @@ import { SettingsModal } from "@/components/dashboard-v2/settings-modal";
 import { ActivityPage } from "@/components/dashboard-v2/activity-page";
 import { AgentStrip } from "@/components/dashboard-v2/agent-strip";
 import { AgentDetailSlidePanel } from "@/components/dashboard-v2/agent-detail-slide-panel";
+import { TaskDetailSlidePanel } from "@/components/dashboard-v2/task-detail-slide-panel";
+import type { KanbanTask } from "@/components/dashboard-v2/task-card";
 import type { DateFilterMode } from "@/components/dashboard-v2/date-filter";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +24,7 @@ export default function Home() {
   const [dateMode, setDateMode] = useState<DateFilterMode>("day");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState<Id<"agents"> | null>(null);
+  const [selectedTask, setSelectedTask] = useState<KanbanTask | null>(null);
 
   const agents = useQuery(api.agents.list);
   const dashboardStats = useQuery(api.dashboard.getStats);
@@ -91,6 +94,7 @@ export default function Home() {
               dateMode={dateMode}
               onDateModeChange={setDateMode}
               onDateChange={setDate}
+              onTaskClick={(t) => setSelectedTask(t)}
               onAssigneeClick={(id) => setSelectedAgentId(id as Id<"agents">)}
             />
           </>
@@ -106,6 +110,12 @@ export default function Home() {
         status={selectedAgent?.status ?? ""}
         avatar={selectedAgent?.avatar ?? ""}
         onClose={() => setSelectedAgentId(null)}
+      />
+
+      <TaskDetailSlidePanel
+        open={!!selectedTask}
+        task={selectedTask}
+        onClose={() => setSelectedTask(null)}
       />
     </div>
   );
