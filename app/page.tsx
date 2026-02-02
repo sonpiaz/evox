@@ -71,7 +71,7 @@ export default function Home() {
     : null;
 
   return (
-    <div className="flex h-screen flex-col bg-black">
+    <div className="flex h-screen flex-col bg-[#0a0a0a]">
       <TopBar
         agentsActive={activeCount}
         tasksInQueue={4}
@@ -108,7 +108,7 @@ export default function Home() {
 
       {/* Mobile: 1 column with tabs — Queue | Agents | Feed */}
       <div className="flex flex-1 flex-col overflow-hidden md:hidden">
-        <div className="flex border-b border-zinc-800 bg-zinc-950">
+        <div className="flex border-b border-gray-800 bg-[#0a0a0a]">
           <button
             type="button"
             onClick={() => setMobileTab("queue")}

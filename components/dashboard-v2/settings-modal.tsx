@@ -87,13 +87,13 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={onClose}>
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border border-zinc-800 bg-zinc-950 shadow-xl" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between border-b border-zinc-800 p-4">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border border-gray-800 bg-[#0a0a0a]" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-gray-800 p-4">
           <h2 className="text-lg font-semibold text-zinc-50">Settings</h2>
-          <button type="button" onClick={onClose} className="rounded p-2 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-50" aria-label="Close">×</button>
+          <button type="button" onClick={onClose} className="rounded p-2 text-gray-500 hover:bg-gray-800 hover:text-white" aria-label="Close">×</button>
         </div>
         <div className="p-4">
-          <Card className="border-zinc-800 bg-zinc-900/50">
+          <Card className="border-gray-800 bg-gray-900/50">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Bell className="h-5 w-5 text-purple-400" />
@@ -105,8 +105,8 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
               <div className="space-y-2">
                 <Label htmlFor="webhookUrl" className="text-zinc-200">Webhook URL</Label>
                 <div className="flex gap-2">
-                  <Input id="webhookUrl" type="url" placeholder="https://hooks.slack.com/..." value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} className="flex-1 border-zinc-700 bg-zinc-800 text-zinc-100" />
-                  <Button variant="outline" onClick={handleTest} disabled={isTesting || !webhookUrl} className="border-zinc-700">{isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Test"}</Button>
+                  <Input id="webhookUrl" type="url" placeholder="https://hooks.slack.com/..." value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} className="flex-1 border-gray-700 bg-gray-800 text-gray-100" />
+                  <Button variant="outline" onClick={handleTest} disabled={isTesting || !webhookUrl} className="border-gray-700">{isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Test"}</Button>
                 </div>
               </div>
               <div className="space-y-3">
@@ -117,7 +117,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                   { key: "taskCompleted" as const, label: "Task Completed" },
                   { key: "statusChanged" as const, label: "Status Changed" },
                 ].map(({ key, label }) => (
-                  <div key={key} className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-800/50 p-3">
+                  <div key={key} className="flex items-center justify-between rounded-lg border border-gray-800 bg-gray-800/50 p-3">
                     <p className="text-sm font-medium text-zinc-100">{label}</p>
                     <Switch checked={eventToggles[key]} onCheckedChange={(c) => setEventToggles((t) => ({ ...t, [key]: c }))} />
                   </div>

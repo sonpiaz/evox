@@ -8,9 +8,9 @@ type KanbanStatus = "todo" | "in_progress" | "review" | "done";
 type Priority = "low" | "medium" | "high";
 
 const priorityColors: Record<Priority, string> = {
-  high: "border-l-red-500",
+  high: "border-l-green-500",
   medium: "border-l-yellow-500",
-  low: "border-l-blue-500",
+  low: "border-l-gray-500",
 };
 
 export interface KanbanTask {
@@ -24,6 +24,7 @@ export interface KanbanTask {
   linearUrl?: string;
   updatedAt?: number;
   tags?: string[];
+  description?: string;
 }
 
 interface TaskCardProps {
@@ -40,7 +41,7 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       type="button"
       onClick={onClick}
       className={cn(
-        "w-full rounded-lg border border-zinc-800 bg-zinc-900/80 p-3 text-left transition-colors hover:border-zinc-700 hover:bg-zinc-800/80",
+        "w-full rounded-lg border border-gray-800 bg-[#0a0a0a] p-4 text-left transition-colors hover:border-gray-700 hover:bg-gray-800/50",
         "border-l-4",
         barColor
       )}
@@ -54,26 +55,29 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-xs text-zinc-500 hover:text-zinc-400"
+              className="text-xs text-gray-500 hover:text-gray-400"
             >
               {task.linearIdentifier}
             </a>
           )}
         </div>
         {task.assigneeAvatar && (
-          <Avatar className="h-6 w-6 shrink-0 border border-zinc-700">
-            <AvatarFallback className="bg-zinc-800 text-[10px] text-zinc-50">{task.assigneeAvatar}</AvatarFallback>
+          <Avatar className="h-6 w-6 shrink-0 border border-gray-700">
+            <AvatarFallback className="bg-gray-800 text-[10px] text-zinc-50">{task.assigneeAvatar}</AvatarFallback>
           </Avatar>
         )}
       </div>
+      {task.description && (
+        <p className="mt-2 line-clamp-2 text-xs text-gray-400">{task.description}</p>
+      )}
       <div className="mt-2 flex flex-wrap items-center gap-2">
-        {task.tags?.slice(0, 2).map((tag) => (
-          <span key={tag} className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400">
+        {task.tags?.slice(0, 3).map((tag) => (
+          <span key={tag} className="rounded bg-gray-800 px-1.5 py-0.5 text-xs text-gray-400">
             {tag}
           </span>
         ))}
         {task.updatedAt != null && (
-          <span className="text-[10px] text-zinc-500">{formatDistanceToNow(task.updatedAt, { addSuffix: true })}</span>
+          <span className="text-xs text-gray-500">{formatDistanceToNow(task.updatedAt, { addSuffix: true })}</span>
         )}
       </div>
     </button>
