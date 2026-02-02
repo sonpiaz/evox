@@ -130,14 +130,30 @@ export const syncAll = internalAction({
         throw new Error("EVOX project not found. Run seed first.");
       }
 
-      // AGT-134 + AGT-136: Map Linear assignee name → taskAgentName for Standup attribution
-      // Supports both old (Son) and new (Max) naming
-      const assigneeNameToTaskAgent: Record<string, string> = {
-        son: "max",
-        max: "max",
-        sam: "sam",
-        leo: "leo",
-      };
+      // AGT-142: Parse agent from ticket description (Dispatch section or Agent: line)
+      // Falls back to Linear assignee if no dispatch found
+      function parseAgentFromDescription(description: string): string | undefined {
+        const descLower = description.toLowerCase();
+
+        // Pattern 1: "## Agent: Sam" or "Agent: Sam"
+        const agentMatch = descLower.match(/##?\s*agent:\s*(sam|leo|max)/i);
+        if (agentMatch) return agentMatch[1].toLowerCase();
+
+        // Pattern 2: "SAM's Steps" or "LEO's Steps" (agent-specific sections)
+        if (descLower.includes("sam's steps") || descLower.includes("sam (backend)")) return "sam";
+        if (descLower.includes("leo's steps") || descLower.includes("leo (frontend)")) return "leo";
+        if (descLower.includes("max's steps") || descLower.includes("max (pm)")) return "max";
+
+        // Pattern 3: Dispatch block with "Sam:" or "Leo:" at start of line
+        const dispatchMatch = description.match(/^(Sam|Leo|Max):/im);
+        if (dispatchMatch) return dispatchMatch[1].toLowerCase();
+
+        // Pattern 4: Simple "## Dispatch\n...\nSam" or similar
+        if (descLower.includes("dispatch") && descLower.includes("sam")) return "sam";
+        if (descLower.includes("dispatch") && descLower.includes("leo")) return "leo";
+
+        return undefined;
+      }
 
       // Upsert each task
       const results = await Promise.all(
@@ -150,10 +166,10 @@ export const syncAll = internalAction({
             );
             assigneeId = matchedAgent?._id;
           }
-          const taskAgentName =
-            issue.assigneeName != null
-              ? assigneeNameToTaskAgent[issue.assigneeName.toLowerCase()]
-              : undefined;
+
+          // AGT-142: Parse agent from description first, fallback to "max" (PM owns unassigned)
+          const parsedAgent = parseAgentFromDescription(issue.description);
+          const taskAgentName = parsedAgent ?? "max";
 
           return await ctx.runMutation(api.tasks.upsertByLinearId, {
             agentName: "max",

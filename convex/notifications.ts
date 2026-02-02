@@ -131,3 +131,54 @@ export const clearRead = mutation({
     return toDelete.length;
   },
 });
+
+/**
+ * AGT-143: Clear ALL notifications for an agent (mark as read + delete old).
+ * This is useful when user wants to dismiss all notifications.
+ */
+export const clearAll = mutation({
+  args: { agent: v.id("agents") },
+  handler: async (ctx, args) => {
+    const allNotifications = await ctx.db
+      .query("notifications")
+      .withIndex("by_recipient", (q) => q.eq("to", args.agent))
+      .collect();
+
+    // Delete all notifications for this agent
+    for (const notification of allNotifications) {
+      await ctx.db.delete(notification._id);
+    }
+
+    return { deleted: allNotifications.length };
+  },
+});
+
+/**
+ * AGT-143: TTL cleanup — delete notifications older than N hours.
+ * Run: npx convex run notifications:cleanup '{"hoursOld": 24}'
+ */
+export const cleanup = mutation({
+  args: {
+    hoursOld: v.optional(v.number()), // default 24 hours
+  },
+  handler: async (ctx, args) => {
+    const hours = args.hoursOld ?? 24;
+    const cutoff = Date.now() - hours * 60 * 60 * 1000;
+
+    const allNotifications = await ctx.db.query("notifications").collect();
+
+    const oldNotifications = allNotifications.filter(
+      (n) => n.createdAt < cutoff
+    );
+
+    for (const notification of oldNotifications) {
+      await ctx.db.delete(notification._id);
+    }
+
+    return {
+      deleted: oldNotifications.length,
+      remaining: allNotifications.length - oldNotifications.length,
+      cutoffHours: hours,
+    };
+  },
+});

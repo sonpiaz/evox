@@ -574,3 +574,62 @@ export const upsertByLinearId = mutation({
     }
   },
 });
+
+/**
+ * AGT-142: Backfill agentName from task description for existing tasks.
+ * Parses dispatch patterns to determine which agent owns each task.
+ * Run: npx convex run tasks:backfillAgentName
+ */
+export const backfillAgentName = mutation({
+  handler: async (ctx) => {
+    const allTasks = await ctx.db.query("tasks").collect();
+
+    // Parse agent from description (same logic as linearSync)
+    function parseAgentFromDescription(description: string): string | undefined {
+      const descLower = description.toLowerCase();
+
+      // Pattern 1: "## Agent: Sam" or "Agent: Sam"
+      const agentMatch = descLower.match(/##?\s*agent:\s*(sam|leo|max)/i);
+      if (agentMatch) return agentMatch[1].toLowerCase();
+
+      // Pattern 2: "SAM's Steps" or "LEO's Steps" (agent-specific sections)
+      if (descLower.includes("sam's steps") || descLower.includes("sam (backend)")) return "sam";
+      if (descLower.includes("leo's steps") || descLower.includes("leo (frontend)")) return "leo";
+      if (descLower.includes("max's steps") || descLower.includes("max (pm)")) return "max";
+
+      // Pattern 3: Dispatch block with "Sam:" or "Leo:" at start of line
+      const dispatchMatch = description.match(/^(Sam|Leo|Max):/im);
+      if (dispatchMatch) return dispatchMatch[1].toLowerCase();
+
+      // Pattern 4: Simple "## Dispatch\n...\nSam" or similar
+      if (descLower.includes("dispatch") && descLower.includes("sam")) return "sam";
+      if (descLower.includes("dispatch") && descLower.includes("leo")) return "leo";
+
+      return undefined;
+    }
+
+    let updated = 0;
+    let skipped = 0;
+
+    for (const task of allTasks) {
+      // Skip if already has agentName
+      if (task.agentName) {
+        skipped++;
+        continue;
+      }
+
+      const parsedAgent = parseAgentFromDescription(task.description);
+      const agentName = parsedAgent ?? "max"; // default to max (PM) if no dispatch found
+
+      await ctx.db.patch(task._id, { agentName });
+      updated++;
+    }
+
+    return {
+      message: `Backfilled agentName for ${updated} tasks, skipped ${skipped} (already had agentName)`,
+      updated,
+      skipped,
+      total: allTasks.length,
+    };
+  },
+});
