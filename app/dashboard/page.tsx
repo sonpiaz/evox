@@ -3,6 +3,7 @@
 import { useMemo, useEffect, useRef } from "react";
 import { useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { AgentCard } from "@/components/agent-card";
 import { ActivityFeed } from "@/components/activity-feed";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,32 +11,11 @@ import { Badge } from "@/components/ui/badge";
 import { Users, ListTodo, CheckCircle2 } from "lucide-react";
 import { normalizeActivities } from "@/lib/activity-utils";
 
-// Mock data fallback
+// AGT-147: Mock agents without fake currentTask (WORKING.md or "No active task" only)
 const mockAgents = [
-  {
-    name: "Sam",
-    role: "pm" as const,
-    status: "online" as const,
-    currentTask: "Planning Phase 2 features",
-    avatar: "SM",
-    lastHeartbeat: new Date(Date.now() - 2 * 60 * 1000), // 2 mins ago
-  },
-  {
-    name: "Leo",
-    role: "frontend" as const,
-    status: "online" as const,
-    currentTask: "Building dashboard components",
-    avatar: "LO",
-    lastHeartbeat: new Date(Date.now() - 30 * 1000), // 30 secs ago
-  },
-  {
-    name: "Backend Agent",
-    role: "backend" as const,
-    status: "idle" as const,
-    currentTask: undefined,
-    avatar: "BE",
-    lastHeartbeat: new Date(Date.now() - 15 * 60 * 1000), // 15 mins ago
-  },
+  { name: "Sam", role: "pm" as const, status: "online" as const, avatar: "SM", lastHeartbeat: new Date(Date.now() - 2 * 60 * 1000) },
+  { name: "Leo", role: "frontend" as const, status: "online" as const, avatar: "LO", lastHeartbeat: new Date(Date.now() - 30 * 1000) },
+  { name: "Backend Agent", role: "backend" as const, status: "idle" as const, avatar: "BE", lastHeartbeat: new Date(Date.now() - 15 * 60 * 1000) },
 ] as const;
 
 // AGT-137: Mock activities use new unified activityEvents schema
@@ -83,6 +63,64 @@ const agentNameToCanonical: Record<string, string> = {
 };
 
 const SYNC_INTERVAL_MS = 60 * 1000; // 60s (AGT-133)
+
+/** AGT-147: Parse first line or status from WORKING.md content for current task display */
+function currentTaskFromWorkingContent(content: string | undefined): string | undefined {
+  if (!content || typeof content !== "string") return undefined;
+  const trimmed = content.trim();
+  if (!trimmed) return undefined;
+  const firstLine = trimmed.split(/\r?\n/)[0]?.trim();
+  if (!firstLine) return undefined;
+  return firstLine.length > 120 ? firstLine.slice(0, 117) + "..." : firstLine;
+}
+
+/** AGT-147: Agent card with WORKING.md content; fetches getBootContext per agent */
+function DashboardAgentCard({
+  agentId,
+  name,
+  role,
+  status,
+  avatar,
+  lastHeartbeat,
+  lastActivityAt,
+  unreadCount,
+  taskCounts,
+  fallbackCurrentTask,
+}: {
+  agentId: string | undefined;
+  name: string;
+  role: "pm" | "backend" | "frontend";
+  status: "online" | "idle" | "offline" | "busy";
+  avatar: string;
+  lastHeartbeat?: Date;
+  lastActivityAt?: Date;
+  unreadCount: number;
+  taskCounts?: { backlog: number; inProgress: number; done: number };
+  fallbackCurrentTask?: string;
+}) {
+  const bootContext = useQuery(
+    api.agentMemory.getBootContext,
+    agentId ? { agentId: agentId as Id<"agents"> } : "skip"
+  );
+  const currentTask =
+    currentTaskFromWorkingContent(bootContext?.working?.content) ?? fallbackCurrentTask;
+  const sessionBased = name === "Max" || name === "Son";
+
+  return (
+    <AgentCard
+      name={name}
+      role={role}
+      status={status}
+      currentTask={currentTask}
+      avatar={avatar}
+      lastHeartbeat={lastHeartbeat}
+      lastActivityAt={lastActivityAt}
+      unreadCount={unreadCount}
+      taskCounts={taskCounts}
+      sessionBased={sessionBased}
+    />
+  );
+}
 
 export default function DashboardPage() {
   const agents = useQuery(api.agents.list);
@@ -163,6 +201,22 @@ export default function DashboardPage() {
     return map;
   }, [tasks, agents]);
 
+  // AGT-147: Per-agent task counts (assignee) for badge
+  const taskCountsByAgent = useMemo(() => {
+    if (!Array.isArray(tasks) || tasks.length === 0) return {} as Record<string, { backlog: number; inProgress: number; done: number }>;
+    const byAgent: Record<string, { backlog: number; inProgress: number; done: number }> = {};
+    for (const t of tasks) {
+      const assignee = (t as { assignee?: string }).assignee;
+      if (!assignee) continue;
+      if (!byAgent[assignee]) byAgent[assignee] = { backlog: 0, inProgress: 0, done: 0 };
+      const status = (t as { status?: string }).status;
+      if (status === "backlog" || status === "todo") byAgent[assignee].backlog++;
+      else if (status === "in_progress" || status === "review") byAgent[assignee].inProgress++;
+      else if (status === "done") byAgent[assignee].done++;
+    }
+    return byAgent;
+  }, [tasks]);
+
   return (
     <div className="h-full bg-black p-8">
 
@@ -229,18 +283,21 @@ export default function DashboardPage() {
                 const lastActivityAt = lastActivityTs != null ? new Date(lastActivityTs) : undefined;
                 const lastSeen = agent.lastSeen as number | undefined;
                 const lastHeartbeat = lastSeen != null ? new Date(lastSeen) : (agent.lastHeartbeat as Date | undefined);
-                const currentTask = agentId ? currentTaskByAgent[agentId] : (agent.currentTask as string | undefined);
+                const fallbackCurrentTask = agentId ? currentTaskByAgent[agentId] : undefined;
+                const taskCounts = agentId ? taskCountsByAgent[agentId] : undefined;
                 return (
-                  <AgentCard
+                  <DashboardAgentCard
                     key={agentId ?? idx}
+                    agentId={agentId}
                     name={name}
                     role={(agent.role as "pm" | "backend" | "frontend") ?? "pm"}
                     status={(agent.status as "online" | "idle" | "offline" | "busy") ?? "offline"}
-                    currentTask={currentTask}
                     avatar={(agent.avatar as string) ?? "?"}
                     lastHeartbeat={lastHeartbeat}
                     lastActivityAt={lastActivityAt}
                     unreadCount={unreadCount}
+                    taskCounts={taskCounts}
+                    fallbackCurrentTask={fallbackCurrentTask}
                   />
                 );
               })}

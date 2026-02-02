@@ -8,6 +8,13 @@ import { cn } from "@/lib/utils";
 type AgentStatus = "online" | "idle" | "offline" | "busy";
 type AgentRole = "pm" | "backend" | "frontend";
 
+/** AGT-147: Per-agent task counts for badge */
+export interface AgentTaskCounts {
+  backlog: number;
+  inProgress: number;
+  done: number;
+}
+
 interface AgentCardProps {
   name: string;
   role: AgentRole;
@@ -20,6 +27,10 @@ interface AgentCardProps {
   lastActivityAt?: Date;
   /** Unread message count (AGT-123 boot sequence) */
   unreadCount?: number;
+  /** AGT-147: Per-agent task counts (backlog · in progress · done) */
+  taskCounts?: AgentTaskCounts;
+  /** AGT-147: Max is session-based; show "Session-based" instead of heartbeat time */
+  sessionBased?: boolean;
 }
 
 const roleLabels: Record<AgentRole, string> = {
@@ -49,8 +60,18 @@ const statusLabels: Record<AgentStatus, string> = {
   busy: "Busy",
 };
 
-export function AgentCard({ name, role, status, currentTask, avatar, lastHeartbeat, lastActivityAt, unreadCount = 0 }: AgentCardProps) {
-  // Format last heartbeat/activity as relative time
+export function AgentCard({
+  name,
+  role,
+  status,
+  currentTask,
+  avatar,
+  lastHeartbeat,
+  lastActivityAt,
+  unreadCount = 0,
+  taskCounts,
+  sessionBased = false,
+}: AgentCardProps) {
   const getRelativeTime = (date?: Date) => {
     if (!date) return "Never";
     const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -137,7 +158,7 @@ export function AgentCard({ name, role, status, currentTask, avatar, lastHeartbe
               </div>
             </div>
 
-            {/* Status badge (BUG 2: use normalizedStatus for colors) */}
+            {/* Status badge + time or Session-based (AGT-147) */}
             <div className="flex items-center gap-2">
               <Badge
                 variant="outline"
@@ -152,8 +173,17 @@ export function AgentCard({ name, role, status, currentTask, avatar, lastHeartbe
                 {statusLabels[normalizedStatus] ?? statusLabels.offline}
               </Badge>
               <span className="text-xs text-zinc-600">•</span>
-              <span className="text-xs text-zinc-500">{getRelativeTime(lastActive)}</span>
+              <span className="text-xs text-zinc-500">
+                {sessionBased ? "Session-based" : getRelativeTime(lastActive)}
+              </span>
             </div>
+
+            {/* AGT-147: Task count badge */}
+            {taskCounts && (
+              <p className="text-xs text-zinc-500">
+                {taskCounts.backlog} backlog · {taskCounts.inProgress} in progress · {taskCounts.done} done
+              </p>
+            )}
 
             {/* Current task */}
             {currentTask ? (
