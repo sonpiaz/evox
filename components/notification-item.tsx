@@ -14,6 +14,15 @@ interface NotificationItemProps {
   timestamp: Date | number;
   isUnread: boolean;
   onClick?: () => void;
+  /** AGT-180: Task detail for notification */
+  taskSummary?: {
+    id: string;
+    title?: string;
+    linearIdentifier?: string;
+    linearUrl?: string;
+    status?: string;
+    priority?: string;
+  } | null;
 }
 
 const typeIcons: Record<string, typeof MessageSquare> = {
@@ -42,6 +51,7 @@ export function NotificationItem({
   timestamp,
   isUnread,
   onClick,
+  taskSummary,
 }: NotificationItemProps) {
   const Icon = typeIcons[type] ?? MessageCircle;
 
@@ -82,7 +92,23 @@ export function NotificationItem({
 
       {/* Content */}
       <div className="flex-1 space-y-1">
-        <p className="text-sm text-zinc-300">{title}</p>
+        {taskSummary?.linearIdentifier ? (
+          <div className="space-y-0.5">
+            <p className="text-sm text-zinc-300">
+              <span className="font-mono font-semibold">{taskSummary.linearIdentifier}</span>
+              {type === "assignment" && " assigned to you"}
+              {type === "mention" && " mentioned you"}
+              {type === "status_change" && " status changed"}
+            </p>
+            {taskSummary.title && (
+              <p className="text-xs text-zinc-400 truncate" title={taskSummary.title}>
+                "{taskSummary.title}"
+              </p>
+            )}
+          </div>
+        ) : (
+          <p className="text-sm text-zinc-300">{title}</p>
+        )}
         <div className="flex items-center gap-2 text-xs text-zinc-600">
           <Icon className={cn("h-3 w-3", typeColors[type])} />
           <span>{formatTime(timestamp)}</span>

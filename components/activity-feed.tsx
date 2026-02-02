@@ -73,7 +73,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                 {agentName}
               </span>
               <span className="shrink-0 truncate text-xs text-white/50">{verb}</span>
-              <span className="min-w-0 shrink font-mono text-xs text-white/50 truncate">{ticketId}</span>
+              <span className="min-w-0 shrink-0 font-mono text-xs text-white/50 whitespace-nowrap">{ticketId}</span>
               <span className="min-w-0 flex-1" aria-hidden />
               <span className="shrink-0 text-[10px] text-white/30 ml-auto">
                 {formatDistanceToNow(ts, { addSuffix: true })}

@@ -82,6 +82,7 @@ export function NotificationPanel({
                       title={n.title}
                       timestamp={n.createdAt}
                       isUnread={!n.read}
+                      taskSummary={n.taskSummary}
                       onClick={() => onNotificationClick?.(n._id, n.taskSummary)}
                     />
                   ))}
