@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { TopBar } from "@/components/dashboard-v2/top-bar";
+import { NotificationTopBarWrapper } from "@/components/notification-topbar-wrapper";
 import { MissionQueue } from "@/components/dashboard-v2/mission-queue";
 import { SettingsModal } from "@/components/dashboard-v2/settings-modal";
 import { ActivityPage } from "@/components/dashboard-v2/activity-page";
@@ -12,7 +12,6 @@ import { AgentStrip } from "@/components/dashboard-v2/agent-strip";
 import { AgentDetailSlidePanel } from "@/components/dashboard-v2/agent-detail-slide-panel";
 import { TaskDetailSlidePanel } from "@/components/dashboard-v2/task-detail-slide-panel";
 import type { KanbanTask } from "@/components/dashboard-v2/task-card";
-import type { NotificationGroupByAgent } from "@/components/notification-panel";
 import type { DateFilterMode } from "@/components/dashboard-v2/date-filter";
 import { cn } from "@/lib/utils";
 
@@ -29,9 +28,6 @@ export default function Home() {
 
   const agents = useQuery(api.agents.list);
   const dashboardStats = useQuery(api.dashboard.getStats);
-  const dashboardNotifications = useQuery(api.notifications.listAllForDashboard);
-  const markAllAsReadForAgent = useMutation(api.notifications.markAllAsRead);
-  const markNotificationAsRead = useMutation(api.notifications.markAsRead);
 
   const agentsList = useMemo(() => {
     if (!Array.isArray(agents) || agents.length === 0) return [];
@@ -49,8 +45,6 @@ export default function Home() {
   }, [selectedAgentId, agentsList]);
 
   const taskCounts = dashboardStats?.taskCounts ?? { backlog: 0, todo: 0, inProgress: 0, review: 0, done: 0 };
-  const notificationTotalUnread = dashboardNotifications?.totalUnread ?? 0;
-  const notificationByAgent = (dashboardNotifications?.byAgent ?? []) as NotificationGroupByAgent[];
   const inProgressCount = (taskCounts.inProgress ?? 0) + (taskCounts.review ?? 0);
   const doneCount = taskCounts.done ?? 0;
   const totalTaskCount =
@@ -63,18 +57,14 @@ export default function Home() {
 
   return (
     <div className="flex h-screen flex-col bg-[#0a0a0a]">
-      <TopBar
+      <NotificationTopBarWrapper
         agentsActive={activeCount}
         tasksInQueue={taskCounts.todo ?? 0}
         inProgress={inProgressCount}
         doneToday={doneCount}
         totalTasks={totalTaskCount}
         onSettingsClick={() => setSettingsOpen(true)}
-        notificationTotalUnread={notificationTotalUnread}
-        notificationByAgent={notificationByAgent}
-        onMarkAllReadForAgent={(agentId) => markAllAsReadForAgent({ agent: agentId as Id<"agents"> })}
-        onNotificationClick={(notificationId, taskSummary) => {
-          markNotificationAsRead({ id: notificationId as Id<"notifications"> });
+        onNotificationClick={(_, taskSummary) => {
           if (taskSummary?.id) {
             setSelectedTask({
               id: taskSummary.id,
