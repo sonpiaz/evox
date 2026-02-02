@@ -149,6 +149,49 @@ export const getByStatus = query({
   },
 });
 
+/**
+ * AGT-150: Get tasks grouped by status for Kanban view
+ * - DONE column filtered by date range (startTs/endTs)
+ * - Other columns (backlog, todo, in_progress, review) show all tasks
+ * @returns { backlog: Task[], todo: Task[], inProgress: Task[], review: Task[], done: Task[] }
+ */
+export const getGroupedByStatus = query({
+  args: {
+    projectId: v.optional(v.id("projects")),
+    startTs: v.optional(v.number()), // Unix timestamp for done filter start
+    endTs: v.optional(v.number()),   // Unix timestamp for done filter end
+  },
+  handler: async (ctx, args) => {
+    // Get all tasks (optionally filtered by project)
+    let allTasks: Doc<"tasks">[];
+    if (args.projectId) {
+      allTasks = await ctx.db
+        .query("tasks")
+        .withIndex("by_project", (q) => q.eq("projectId", args.projectId))
+        .order("desc")
+        .collect();
+    } else {
+      allTasks = await ctx.db.query("tasks").order("desc").collect();
+    }
+
+    // Group by status
+    const backlog = allTasks.filter((t) => t.status === "backlog");
+    const todo = allTasks.filter((t) => t.status === "todo");
+    const inProgress = allTasks.filter((t) => t.status === "in_progress");
+    const review = allTasks.filter((t) => t.status === "review");
+
+    // DONE column: filter by date range if provided
+    let done = allTasks.filter((t) => t.status === "done");
+    if (args.startTs !== undefined && args.endTs !== undefined) {
+      done = done.filter(
+        (t) => t.updatedAt >= args.startTs! && t.updatedAt <= args.endTs!
+      );
+    }
+
+    return { backlog, todo, inProgress, review, done };
+  },
+});
+
 // READ - Get tasks by assignee
 export const getByAssignee = query({
   args: { assignee: v.id("agents") },
