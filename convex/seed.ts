@@ -63,6 +63,10 @@ export const seedDatabase = mutation({
         status: "offline",
         avatar: "👨‍💼",
         lastSeen: now,
+        soul: "I am Max. PM agent of EVOX. I plan, prioritize, and dispatch. I track velocity, calibrate estimates, and keep the team shipping.",
+        about: "PM agent — planning, dispatch, coordination",
+        statusReason: "Idle — awaiting tasks",
+        statusSince: now,
       });
 
       samId = await ctx.db.insert("agents", {
@@ -71,6 +75,10 @@ export const seedDatabase = mutation({
         status: "offline",
         avatar: "🤖",
         lastSeen: now,
+        soul: "I am Sam. Backend engineer. I build APIs, queries, and data models in Convex. Fast, reliable, test-before-ship.",
+        about: "Backend engineer — Convex, APIs, data models",
+        statusReason: "Idle — awaiting tasks",
+        statusSince: now,
       });
 
       leoId = await ctx.db.insert("agents", {
@@ -79,6 +87,10 @@ export const seedDatabase = mutation({
         status: "offline",
         avatar: "🦁",
         lastSeen: now,
+        soul: "I am Leo. Frontend engineer. I build UI in React + Next.js + Tailwind. Pixel-perfect, responsive, component-driven.",
+        about: "Frontend engineer — React, Next.js, Tailwind",
+        statusReason: "Idle — awaiting tasks",
+        statusSince: now,
       });
     } else {
       const max = existingAgents.find((a) => a.name === "MAX" || a.name === "SON" || a.role === "pm");
@@ -513,6 +525,52 @@ export const seedAgentsMd = mutation({
     });
 
     return { message: "AGENTS.md content seeded", created: true };
+  },
+});
+
+/**
+ * AGT-156: Backfill soul, statusReason, statusSince for existing agents.
+ * Run: npx convex run seed:backfillAgentSouls
+ */
+export const backfillAgentSouls = mutation({
+  handler: async (ctx) => {
+    const now = Date.now();
+    const agents = await ctx.db.query("agents").collect();
+
+    const soulMap: Record<string, { soul: string; about: string }> = {
+      MAX: {
+        soul: "I am Max. PM agent of EVOX. I plan, prioritize, and dispatch. I track velocity, calibrate estimates, and keep the team shipping.",
+        about: "PM agent — planning, dispatch, coordination",
+      },
+      SAM: {
+        soul: "I am Sam. Backend engineer. I build APIs, queries, and data models in Convex. Fast, reliable, test-before-ship.",
+        about: "Backend engineer — Convex, APIs, data models",
+      },
+      LEO: {
+        soul: "I am Leo. Frontend engineer. I build UI in React + Next.js + Tailwind. Pixel-perfect, responsive, component-driven.",
+        about: "Frontend engineer — React, Next.js, Tailwind",
+      },
+    };
+
+    let updated = 0;
+    for (const agent of agents) {
+      const data = soulMap[agent.name.toUpperCase()];
+      if (data) {
+        await ctx.db.patch(agent._id, {
+          soul: data.soul,
+          about: data.about,
+          statusReason: agent.statusReason ?? "Idle — awaiting tasks",
+          statusSince: agent.statusSince ?? now,
+        });
+        updated++;
+      }
+    }
+
+    return {
+      message: `Backfilled soul data for ${updated} agents`,
+      updated,
+      total: agents.length,
+    };
   },
 });
 

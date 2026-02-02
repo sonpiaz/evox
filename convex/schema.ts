@@ -24,6 +24,7 @@ export default defineSchema({
     currentTask: v.optional(v.id("tasks")),
     avatar: v.string(),
     soul: v.optional(v.string()), // Agent identity/personality summary (from SOUL.md)
+    about: v.optional(v.string()), // Short 1-line description (fallback if soul is empty)
     lastSeen: v.number(),
     lastHeartbeat: v.optional(v.number()), // AGT-119: Last heartbeat timestamp
     linearUserId: v.optional(v.string()), // Linear user ID for API attribution
