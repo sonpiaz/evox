@@ -15,15 +15,17 @@ interface AnalyticsBarProps {
   };
 }
 
-/** AGT-181 fix: Analytics bar — horizontal stats above kanban */
+/** AGT-184: Analytics bar — same source as top bar (dashboard.getStats), always visible */
 export function AnalyticsBar({ taskCounts }: AnalyticsBarProps) {
   const dashboardStats = useQuery(api.dashboard.getStats);
 
+  // AGT-184: Use dashboard.getStats when available (same as top bar per AGT-183); fallback to prop while loading
+  const counts = dashboardStats?.taskCounts ?? taskCounts;
   const stats = useMemo(() => {
-    const total = taskCounts.backlog + taskCounts.todo + taskCounts.inProgress + taskCounts.review + taskCounts.done;
-    const completed = taskCounts.done;
+    const total = counts.backlog + counts.todo + counts.inProgress + counts.review + counts.done;
+    const completed = counts.done;
     const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-    const inProgress = taskCounts.inProgress + taskCounts.review;
+    const inProgress = counts.inProgress + counts.review;
     const lastSyncTime = dashboardStats?.lastSyncTime ?? null;
 
     return {
@@ -31,17 +33,21 @@ export function AnalyticsBar({ taskCounts }: AnalyticsBarProps) {
       completed,
       completionRate,
       inProgress,
-      todo: taskCounts.todo,
-      backlog: taskCounts.backlog,
+      todo: counts.todo,
+      backlog: counts.backlog,
       lastSyncTime,
     };
-  }, [taskCounts, dashboardStats]);
+  }, [counts, dashboardStats]);
 
   const chipBase =
     "rounded-lg border border-white/[0.06] bg-white/[0.03] px-5 py-3 transition-colors duration-150 hover:bg-white/[0.05]";
 
   return (
-    <div className="flex shrink-0 items-center gap-4 border-b border-white/[0.06] bg-white/[0.02] px-4 py-3">
+    <div
+      className="flex min-h-[4.5rem] shrink-0 items-center gap-4 border-b border-white/[0.06] bg-white/[0.02] px-4 py-3"
+      role="region"
+      aria-label="Analytics"
+    >
       {/* Completion Chip — highlight with progress bar */}
       <div className={chipBase}>
         <div className="flex flex-col gap-1">
