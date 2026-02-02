@@ -19,8 +19,11 @@ export default defineSchema({
       v.literal("offline"),
       v.literal("busy")
     ),
+    statusReason: v.optional(v.string()), // Why agent is in this status (e.g., "Working on AGT-150")
+    statusSince: v.optional(v.number()),  // Timestamp when status last changed
     currentTask: v.optional(v.id("tasks")),
     avatar: v.string(),
+    soul: v.optional(v.string()), // Agent identity/personality summary (from SOUL.md)
     lastSeen: v.number(),
     lastHeartbeat: v.optional(v.number()), // AGT-119: Last heartbeat timestamp
     linearUserId: v.optional(v.string()), // Linear user ID for API attribution
