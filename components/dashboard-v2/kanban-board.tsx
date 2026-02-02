@@ -6,13 +6,13 @@ import type { KanbanTask } from "./task-card";
 export type { KanbanTask };
 import { cn } from "@/lib/utils";
 
+/** AGT-172: 4 columns only — REVIEW removed (Son reviews in conversation) */
 type KanbanStatus = "backlog" | "todo" | "in_progress" | "review" | "done";
 
 const COLUMNS: { status: KanbanStatus; title: string }[] = [
   { status: "backlog", title: "BACKLOG" },
   { status: "todo", title: "TODO" },
   { status: "in_progress", title: "IN PROGRESS" },
-  { status: "review", title: "REVIEW" },
   { status: "done", title: "DONE" },
 ];
 
@@ -24,7 +24,12 @@ interface KanbanBoardProps {
 }
 
 export function KanbanBoard({ tasks, onTaskClick, onAssigneeClick, className = "" }: KanbanBoardProps) {
-  const byStatus = (status: KanbanStatus) => tasks.filter((t) => t.status === status);
+  const byStatus = (status: KanbanStatus) => {
+    if (status === "in_progress") {
+      return tasks.filter((t) => t.status === "in_progress" || t.status === "review");
+    }
+    return tasks.filter((t) => t.status === status);
+  };
 
   return (
     <div className={cn("flex h-full gap-4 overflow-x-auto pb-4", className)}>

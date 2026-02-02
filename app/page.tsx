@@ -8,18 +8,15 @@ import { NotificationTopBarWrapper } from "@/components/notification-topbar-wrap
 import { MissionQueue } from "@/components/dashboard-v2/mission-queue";
 import { SettingsModal } from "@/components/dashboard-v2/settings-modal";
 import { ActivityPage } from "@/components/dashboard-v2/activity-page";
-import { AgentStrip } from "@/components/dashboard-v2/agent-strip";
+import { AgentSidebar } from "@/components/dashboard-v2/agent-sidebar";
+import { ContextPanel } from "@/components/dashboard-v2/context-panel";
 import { AgentDetailSlidePanel } from "@/components/dashboard-v2/agent-detail-slide-panel";
 import { TaskDetailSlidePanel } from "@/components/dashboard-v2/task-detail-slide-panel";
 import type { KanbanTask } from "@/components/dashboard-v2/task-card";
 import type { DateFilterMode } from "@/components/dashboard-v2/date-filter";
-import { cn } from "@/lib/utils";
 
-/** AGT-170: Top nav MISSION QUEUE | ACTIVITY only (Agents tab removed) */
-type MainTab = "queue" | "activity";
-
+/** AGT-172: 3-panel layout — [Sidebar 200px] | [Kanban flex-1] | [Context Panel 400px] */
 export default function Home() {
-  const [mainTab, setMainTab] = useState<MainTab>("queue");
   const [date, setDate] = useState(new Date());
   const [dateMode, setDateMode] = useState<DateFilterMode>("day");
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -50,11 +47,6 @@ export default function Home() {
   const totalTaskCount =
     (taskCounts.backlog ?? 0) + (taskCounts.todo ?? 0) + (taskCounts.inProgress ?? 0) + (taskCounts.review ?? 0) + doneCount;
 
-  const TABS: { id: MainTab; label: string }[] = [
-    { id: "queue", label: "Mission Queue" },
-    { id: "activity", label: "Activity" },
-  ];
-
   return (
     <div className="flex h-screen flex-col bg-[#0a0a0a]">
       <NotificationTopBarWrapper
@@ -79,39 +71,21 @@ export default function Home() {
       />
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
-      <nav className="flex shrink-0 border-b border-[#222] px-4">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setMainTab(tab.id)}
-            className={cn(
-              "px-4 py-3 text-[11px] font-medium uppercase tracking-wide",
-              mainTab === tab.id
-                ? "border-b-2 border-zinc-50 text-zinc-50"
-                : "text-zinc-500 hover:text-zinc-400"
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
-
-      <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
-        {mainTab === "queue" && (
-          <>
-            <AgentStrip onAgentClick={(id) => setSelectedAgentId(id)} />
-            <MissionQueue
-              date={date}
-              dateMode={dateMode}
-              onDateModeChange={setDateMode}
-              onDateChange={setDate}
-              onTaskClick={(t) => setSelectedTask(t)}
-              onAssigneeClick={(id) => setSelectedAgentId(id as Id<"agents">)}
-            />
-          </>
-        )}
-        {mainTab === "activity" && <ActivityPage />}
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        <AgentSidebar selectedAgentId={selectedAgentId} onAgentClick={(id) => setSelectedAgentId(id)} />
+        <main className="flex-1 min-w-0 flex flex-col overflow-hidden">
+          <MissionQueue
+            date={date}
+            dateMode={dateMode}
+            onDateModeChange={setDateMode}
+            onDateChange={setDate}
+            onTaskClick={(t) => setSelectedTask(t)}
+            onAssigneeClick={(id) => setSelectedAgentId(id as Id<"agents">)}
+          />
+        </main>
+        <ContextPanel>
+          <ActivityPage />
+        </ContextPanel>
       </div>
 
       <AgentDetailSlidePanel
