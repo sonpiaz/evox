@@ -7,11 +7,8 @@ import { Id } from "@/convex/_generated/dataModel";
 import { NotificationTopBarWrapper } from "@/components/notification-topbar-wrapper";
 import { MissionQueue } from "@/components/dashboard-v2/mission-queue";
 import { SettingsModal } from "@/components/dashboard-v2/settings-modal";
-import { ActivityPage } from "@/components/dashboard-v2/activity-page";
 import { AgentSidebar } from "@/components/dashboard-v2/agent-sidebar";
-import { ContextPanel } from "@/components/dashboard-v2/context-panel";
-import { AgentDetailSlidePanel } from "@/components/dashboard-v2/agent-detail-slide-panel";
-import { TaskDetailSlidePanel } from "@/components/dashboard-v2/task-detail-slide-panel";
+import { ContextPanelContent } from "@/components/dashboard-v2/context-panel-content";
 import type { KanbanTask } from "@/components/dashboard-v2/task-card";
 import type { DateFilterMode } from "@/components/dashboard-v2/date-filter";
 
@@ -41,6 +38,25 @@ export default function Home() {
     return agentsList.find((a) => a._id === selectedAgentId) ?? null;
   }, [selectedAgentId, agentsList]);
 
+  const handleAgentClick = (agentId: Id<"agents">) => {
+    if (selectedAgentId === agentId) {
+      setSelectedAgentId(null);
+    } else {
+      setSelectedAgentId(agentId);
+      setSelectedTask(null);
+    }
+  };
+
+  const handleTaskClick = (task: KanbanTask) => {
+    setSelectedTask(task);
+    setSelectedAgentId(null);
+  };
+
+  const handlePanelClose = () => {
+    setSelectedAgentId(null);
+    setSelectedTask(null);
+  };
+
   const taskCounts = dashboardStats?.taskCounts ?? { backlog: 0, todo: 0, inProgress: 0, review: 0, done: 0 };
   const inProgressCount = (taskCounts.inProgress ?? 0) + (taskCounts.review ?? 0);
   const doneCount = taskCounts.done ?? 0;
@@ -66,43 +82,31 @@ export default function Home() {
               linearIdentifier: taskSummary.linearIdentifier,
               linearUrl: taskSummary.linearUrl,
             });
+            setSelectedAgentId(null);
           }
         }}
       />
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
       <div className="flex flex-1 min-h-0 overflow-hidden">
-        <AgentSidebar selectedAgentId={selectedAgentId} onAgentClick={(id) => setSelectedAgentId(id)} />
+        <AgentSidebar selectedAgentId={selectedAgentId} onAgentClick={handleAgentClick} />
         <main className="flex-1 min-w-0 flex flex-col overflow-hidden">
           <MissionQueue
             date={date}
             dateMode={dateMode}
             onDateModeChange={setDateMode}
             onDateChange={setDate}
-            onTaskClick={(t) => setSelectedTask(t)}
-            onAssigneeClick={(id) => setSelectedAgentId(id as Id<"agents">)}
+            onTaskClick={handleTaskClick}
+            onAssigneeClick={(id) => handleAgentClick(id as Id<"agents">)}
           />
         </main>
-        <ContextPanel>
-          <ActivityPage />
-        </ContextPanel>
+        <ContextPanelContent
+          selectedAgentId={selectedAgentId}
+          selectedTask={selectedTask}
+          selectedAgent={selectedAgent}
+          onClose={handlePanelClose}
+        />
       </div>
-
-      <AgentDetailSlidePanel
-        open={!!selectedAgentId && !!selectedAgent}
-        agentId={selectedAgentId}
-        name={selectedAgent?.name ?? ""}
-        role={selectedAgent?.role ?? ""}
-        status={selectedAgent?.status ?? ""}
-        avatar={selectedAgent?.avatar ?? ""}
-        onClose={() => setSelectedAgentId(null)}
-      />
-
-      <TaskDetailSlidePanel
-        open={!!selectedTask}
-        task={selectedTask}
-        onClose={() => setSelectedTask(null)}
-      />
     </div>
   );
 }

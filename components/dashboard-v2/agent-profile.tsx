@@ -16,6 +16,8 @@ interface AgentProfileProps {
   status: string;
   avatar: string;
   onClose: () => void;
+  /** AGT-173: When true, omit header (used inside context panel) */
+  embedded?: boolean;
 }
 
 /** AGT-155: Status dots — green / yellow / gray only (spec 5.6) */
@@ -51,6 +53,7 @@ export function AgentProfile({
   status,
   avatar,
   onClose,
+  embedded = false,
 }: AgentProfileProps) {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [sendAsName, setSendAsName] = useState<string>("max");
@@ -121,18 +124,19 @@ export function AgentProfile({
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-[#0a0a0a]">
-      {/* Header: close */}
-      <div className="flex shrink-0 items-center justify-between border-b border-[#222] px-4 py-3">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Agent Profile</h3>
-        <button
-          type="button"
-          onClick={onClose}
-          className="rounded p-1 text-zinc-500 transition-colors hover:bg-[#222] hover:text-zinc-50"
-          aria-label="Close"
-        >
-          ×
-        </button>
-      </div>
+      {!embedded && (
+        <div className="flex shrink-0 items-center justify-between border-b border-[#222] px-4 py-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Agent Profile</h3>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded p-1 text-zinc-500 transition-colors hover:bg-[#222] hover:text-zinc-50"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {/* Identity + Status — compact */}
       <div className="shrink-0 border-b border-[#222] px-4 py-3">
