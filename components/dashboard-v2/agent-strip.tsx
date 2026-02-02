@@ -24,7 +24,7 @@ export function AgentStrip({ onAgentClick }: AgentStripProps) {
   if (!stripAgents?.length) return null;
 
   return (
-    <div className="flex h-10 shrink-0 items-center gap-3 border-b border-[#222] bg-[#111] px-4">
+    <div className="flex h-14 shrink-0 items-center gap-3 border-b border-[#222] bg-[#111] px-4">
       {stripAgents.map((a) => {
         const dot = statusDot[(a.status ?? "").toLowerCase()] ?? statusDot.offline;
         const label = a.currentTaskIdentifier ?? "Idle";
