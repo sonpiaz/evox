@@ -57,6 +57,8 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
         const verb = eventTypeToVerb[String(raw.eventType ?? "")] ?? String(raw.eventType ?? "updated");
         const ticketId = typeof raw.linearIdentifier === "string" ? raw.linearIdentifier : "—";
         const title = typeof raw.title === "string" ? raw.title : "—";
+        const metadata = raw.metadata as { commitHash?: string } | undefined;
+        const commitHash = typeof metadata?.commitHash === "string" ? metadata.commitHash : null;
 
         return (
           <li
@@ -74,6 +76,9 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             <span className="min-w-0 flex-1 truncate text-zinc-400" title={title}>
               {title}
             </span>
+            {commitHash && (
+              <span className="shrink-0 font-mono text-xs text-[#555]" title="Commit">{commitHash.slice(0, 7)}</span>
+            )}
             <span className="shrink-0 text-xs text-[#555]">
               {formatDistanceToNow(ts, { addSuffix: true })}
             </span>
