@@ -10,6 +10,7 @@ import { SettingsModal } from "@/components/dashboard-v2/settings-modal";
 import { AgentSidebar } from "@/components/dashboard-v2/agent-sidebar";
 import { AgentProfileModal } from "@/components/dashboard-v2/agent-profile-modal";
 import { ActivityDrawer } from "@/components/dashboard-v2/activity-drawer";
+import { TaskDetailModal } from "@/components/dashboard-v2/task-detail-modal";
 import type { KanbanTask } from "@/components/dashboard-v2/task-card";
 import type { DateFilterMode } from "@/components/dashboard-v2/date-filter";
 
@@ -20,6 +21,7 @@ export default function Home() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [activityDrawerOpen, setActivityDrawerOpen] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState<Id<"agents"> | null>(null);
+  const [selectedTask, setSelectedTask] = useState<KanbanTask | null>(null);
 
   const agents = useQuery(api.agents.list);
   const dashboardStats = useQuery(api.dashboard.getStats);
@@ -48,8 +50,7 @@ export default function Home() {
   };
 
   const handleTaskClick = (task: KanbanTask) => {
-    // Task detail not implemented yet, just log for now
-    console.log("Task clicked:", task);
+    setSelectedTask(task);
   };
 
   const taskCounts = dashboardStats?.taskCounts ?? { backlog: 0, todo: 0, inProgress: 0, review: 0, done: 0 };
@@ -71,6 +72,7 @@ export default function Home() {
       />
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <ActivityDrawer open={activityDrawerOpen} onClose={() => setActivityDrawerOpen(false)} />
+      <TaskDetailModal open={selectedTask !== null} task={selectedTask} onClose={() => setSelectedTask(null)} />
 
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <AgentSidebar selectedAgentId={selectedAgentId} onAgentClick={handleAgentClick} />
