@@ -152,6 +152,8 @@ export const logGitTaskCompletion = internalMutation({
 
     const displayName = agent.name.toUpperCase();
     const title = `${displayName} completed ${args.linearIdentifier}`;
+    // AGT-179: Show task title in description for completed events
+    const description = task?.title;
 
     const eventId = await ctx.db.insert("activityEvents", {
       agentId: agent._id,
@@ -159,6 +161,7 @@ export const logGitTaskCompletion = internalMutation({
       category: "task",
       eventType: "completed",
       title,
+      description,
       taskId: task?._id,
       linearIdentifier: args.linearIdentifier,
       projectId: task?.projectId,
@@ -573,6 +576,8 @@ export const backfillFromCompletedTasks = mutation({
 
       const displayName = agent.name.toUpperCase();
       const title = `${displayName} completed ${task.linearIdentifier ?? task.title}`;
+      // AGT-179: Show task title in description for completed events
+      const description = task.title;
 
       await ctx.db.insert("activityEvents", {
         agentId: agent._id,
@@ -580,6 +585,7 @@ export const backfillFromCompletedTasks = mutation({
         category: "task",
         eventType: "completed",
         title,
+        description,
         taskId: task._id,
         linearIdentifier: task.linearIdentifier,
         projectId: task.projectId,
@@ -649,8 +655,11 @@ export const fixWrongCompletionAttribution = mutation({
 
       const correctAgentName = correctAgent.name.toLowerCase();
 
-      // Check if event is attributed to wrong agent
-      if (event.agentName !== correctAgentName) {
+      // Check if event is attributed to wrong agent OR missing description
+      const needsAttribFix = event.agentName !== correctAgentName;
+      const needsDescFix = !event.description && task.title;
+
+      if (needsAttribFix || needsDescFix) {
         const displayName = correctAgent.name.toUpperCase();
         const newTitle = `${displayName} completed ${task.linearIdentifier ?? task.title}`;
 
@@ -658,13 +667,17 @@ export const fixWrongCompletionAttribution = mutation({
           agentId: correctAgent._id,
           agentName: correctAgentName,
           title: newTitle,
+          // AGT-179: Add task title as description for completed events
+          description: task.title,
         });
 
-        fixes.push({
-          linearId: task.linearIdentifier ?? task._id.toString(),
-          from: event.agentName,
-          to: correctAgentName,
-        });
+        if (needsAttribFix) {
+          fixes.push({
+            linearId: task.linearIdentifier ?? task._id.toString(),
+            from: event.agentName,
+            to: correctAgentName,
+          });
+        }
         fixed++;
       } else {
         skipped++;

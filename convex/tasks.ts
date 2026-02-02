@@ -605,12 +605,16 @@ export const upsertByLinearId = mutation({
             ? `${completionAgentName.toUpperCase()} completed ${args.linearIdentifier}`
             : `${args.agentName.toUpperCase()} moved ${args.linearIdentifier} to ${newStatus}`;
 
+          // AGT-179: For completed events, show task title in description (not repeated action text)
+          const description = newStatus === "done" ? args.title : undefined;
+
           await ctx.db.insert("activityEvents", {
             agentId: eventAgentId,
             agentName: eventAgentName,
             category: "task",
             eventType,
             title,
+            description,
             taskId: existingTask._id,
             linearIdentifier: args.linearIdentifier,
             projectId: existingTask.projectId,
