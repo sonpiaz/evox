@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -18,35 +18,69 @@ const MODEL_OPTIONS = ["claude", "codex"] as const;
 export function AgentSettingsModal({ open, agentId, onClose }: AgentSettingsModalProps) {
   const agent = useQuery(api.agents.get, agentId ? { id: agentId } : "skip");
   const updateAgent = useMutation(api.agents.update);
+  const updateStatus = useMutation(api.agents.updateStatus);
+  const updatePreferredModel = useMutation(api.agents.updatePreferredModel);
 
   const [name, setName] = useState("");
   const [avatar, setAvatar] = useState("🤖");
   const [role, setRole] = useState<"pm" | "backend" | "frontend">("pm");
-  const [status, setStatus] = useState("idle");
+  const [status, setStatus] = useState<"online" | "idle" | "busy" | "offline">("idle");
   const [model, setModel] = useState<"claude" | "codex">("claude");
   const [isSaving, setIsSaving] = useState(false);
 
+  // Track original values to only update what changed
+  const originalValues = useRef<{
+    name: string;
+    avatar: string;
+    role: "pm" | "backend" | "frontend";
+    status: "online" | "idle" | "busy" | "offline";
+    model: "claude" | "codex";
+  } | null>(null);
+
   useEffect(() => {
     if (agent) {
+      const agentStatus = (agent.status ?? "idle") as "online" | "idle" | "busy" | "offline";
+      const agentModel = ((agent as { metadata?: { preferredModel?: string } }).metadata?.preferredModel === "codex" ? "codex" : "claude") as "claude" | "codex";
       setName(agent.name);
       setAvatar(agent.avatar);
       setRole(agent.role as "pm" | "backend" | "frontend");
-      setStatus(agent.status);
-      setModel((agent as { preferredModel?: string }).preferredModel === "codex" ? "codex" : "claude");
+      setStatus(agentStatus);
+      setModel(agentModel);
+      originalValues.current = {
+        name: agent.name,
+        avatar: agent.avatar,
+        role: agent.role as "pm" | "backend" | "frontend",
+        status: agentStatus,
+        model: agentModel,
+      };
     }
   }, [agent]);
 
   if (!open || !agentId) return null;
 
   const handleSave = async () => {
+    if (!agentId) return;
     setIsSaving(true);
     try {
-      await updateAgent({
-        id: agentId,
-        name,
-        avatar,
-        role,
-      });
+      const orig = originalValues.current;
+      const promises: Promise<unknown>[] = [];
+
+      // Update basic info if changed
+      if (!orig || name !== orig.name || avatar !== orig.avatar || role !== orig.role) {
+        promises.push(updateAgent({ id: agentId, name, avatar, role }));
+      }
+
+      // Update status if changed
+      if (!orig || status !== orig.status) {
+        promises.push(updateStatus({ id: agentId, status }));
+      }
+
+      // Update model if changed
+      if (!orig || model !== orig.model) {
+        promises.push(updatePreferredModel({ agentId, model }));
+      }
+
+      await Promise.all(promises);
       onClose();
     } catch (e) {
       console.error("Failed to save agent settings:", e);
@@ -152,7 +186,7 @@ export function AgentSettingsModal({ open, agentId, onClose }: AgentSettingsModa
             <label className="mb-1 block text-xs text-[#888888]">Status</label>
             <select
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onChange={(e) => setStatus(e.target.value as "online" | "idle" | "busy" | "offline")}
               className="w-full rounded border border-[#222222] bg-[#0a0a0a] px-3 py-2 text-sm text-[#fafafa] focus:border-[#3b82f6] focus:outline-none"
             >
               {STATUS_OPTIONS.map((s) => (
