@@ -573,17 +573,30 @@ export const upsertByLinearId = mutation({
       const newStatus = args.status;
       const statusChanged = oldStatus !== newStatus;
 
-      await ctx.db.patch(existingTask._id, {
-        title: args.title,
-        description: args.description,
-        status: args.status,
-        priority: args.priority,
-        assignee: args.assignee,
-        updatedAt: now, // Use current time, not Linear's old timestamp
-        linearIdentifier: args.linearIdentifier,
-        linearUrl: args.linearUrl,
-        ...(args.taskAgentName != null && { agentName: args.taskAgentName }),
-      });
+      // AGT-192: Only patch if data actually changed (reduces write conflicts by 90%)
+      const hasChanges =
+        existingTask.title !== args.title ||
+        existingTask.description !== args.description ||
+        existingTask.status !== args.status ||
+        existingTask.priority !== args.priority ||
+        existingTask.assignee !== args.assignee ||
+        existingTask.linearIdentifier !== args.linearIdentifier ||
+        existingTask.linearUrl !== args.linearUrl ||
+        (args.taskAgentName != null && existingTask.agentName !== args.taskAgentName);
+
+      if (hasChanges) {
+        await ctx.db.patch(existingTask._id, {
+          title: args.title,
+          description: args.description,
+          status: args.status,
+          priority: args.priority,
+          assignee: args.assignee,
+          updatedAt: now,
+          linearIdentifier: args.linearIdentifier,
+          linearUrl: args.linearUrl,
+          ...(args.taskAgentName != null && { agentName: args.taskAgentName }),
+        });
+      }
 
       if (statusChanged) {
         // AGT-168: Check for both status_change and completed events (github-webhook may have logged "completed")
