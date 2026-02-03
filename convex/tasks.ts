@@ -93,20 +93,23 @@ export const create = mutation({
 });
 
 // READ - Get all tasks (never throw — dashboard depends on this)
+// AGT-192: Limit to 500 to reduce bandwidth costs
 export const list = query({
   args: {
     projectId: v.optional(v.id("projects")),
+    limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     try {
+      const limit = args.limit ?? 500;
       if (args.projectId) {
         return await ctx.db
           .query("tasks")
           .withIndex("by_project", (q) => q.eq("projectId", args.projectId))
           .order("desc")
-          .collect();
+          .take(limit);
       }
-      return await ctx.db.query("tasks").order("desc").collect();
+      return await ctx.db.query("tasks").order("desc").take(limit);
     } catch {
       return [];
     }
@@ -171,8 +174,8 @@ export const getGroupedByStatus = query({
       ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "todo")).order("desc").take(100),
       ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "in_progress")).order("desc").take(100),
       ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "review")).order("desc").take(100),
-      // FIX: Don't filter done tasks by date - show all completed tasks
-      ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "done")).order("desc").collect(),
+      // AGT-192: Limit done tasks to 200 to reduce bandwidth (was .collect())
+      ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "done")).order("desc").take(200),
     ]);
 
     // NOTE: Date filter removed for done tasks - completed tasks should always show
@@ -856,6 +859,7 @@ export const backfillAgentName = mutation({
 });
 
 // Mark task completed by Linear identifier (from GitHub webhook)
+// AGT-192: Optimized to reduce full table scans
 export const markCompletedByIdentifier = mutation({
   args: {
     linearIdentifier: v.string(),
@@ -863,8 +867,8 @@ export const markCompletedByIdentifier = mutation({
     agentName: v.string(),
   },
   handler: async (ctx, { linearIdentifier, commitHash, agentName }) => {
-    // Find task by linearIdentifier
-    const tasks = await ctx.db.query("tasks").collect();
+    // Find task by linearIdentifier (limit search to 500 most recent)
+    const tasks = await ctx.db.query("tasks").order("desc").take(500);
     const task = tasks.find(
       (t) => t.linearIdentifier?.toUpperCase() === linearIdentifier.toUpperCase()
     );
@@ -883,8 +887,8 @@ export const markCompletedByIdentifier = mutation({
       completedAt: now,
     });
 
-    // Find agent by name
-    const agents = await ctx.db.query("agents").collect();
+    // Find agent by name (small table, ~3 agents)
+    const agents = await ctx.db.query("agents").take(10);
     const agent = agents.find(
       (a) => a.name.toUpperCase() === agentName.toUpperCase()
     );

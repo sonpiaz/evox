@@ -3,12 +3,12 @@ import { internal } from "./_generated/api";
 
 const crons = cronJobs();
 
-// Sync Linear issues every 30 seconds (AGT-161: optimized GraphQL = ~1 API call per sync)
-// 120 calls/hour = 2.4% of 5000/hour Linear budget
-// Real-time updates also come via /api/webhooks/linear webhook
+// Sync Linear issues every 5 minutes (AGT-192: reduced from 30s to save Convex costs)
+// 12 calls/hour instead of 120 = 90% reduction
+// Real-time updates still come via /api/webhooks/linear webhook
 crons.interval(
   "sync-linear",
-  { seconds: 30 },
+  { minutes: 5 },
   internal.linearSync.syncAll,
   {}
 );

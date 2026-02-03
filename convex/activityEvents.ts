@@ -135,14 +135,15 @@ export const logGitTaskCompletion = internalMutation({
       return { skipped: true, reason: "duplicate" };
     }
 
-    // Find task by linearIdentifier first
-    const tasks = await ctx.db.query("tasks").collect();
-    const task = tasks.find(
-      (t) => t.linearIdentifier?.toUpperCase() === args.linearIdentifier.toUpperCase()
-    );
+    // Find task by linearIdentifier using index (AGT-192: optimize query)
+    const task = await ctx.db
+      .query("tasks")
+      .withIndex("by_linearId")
+      .filter((q) => q.eq(q.field("linearIdentifier"), args.linearIdentifier.toUpperCase()))
+      .first();
 
-    // Get all agents for lookup
-    const agents = await ctx.db.query("agents").collect();
+    // Get all agents for lookup (small table, ~3 records)
+    const agents = await ctx.db.query("agents").take(10);
     const agentByName = new Map(agents.map((a) => [a.name.toLowerCase(), a]));
     const agentById = new Map(agents.map((a) => [a._id.toString(), a]));
 
@@ -431,13 +432,13 @@ export const getByTimeRange = query({
     ),
   },
   handler: async (ctx, args) => {
-    // Fetch all events in desc order then filter by time range
-    // (Convex doesn't support range queries on indexes)
+    // AGT-192: Limit to 200 events max to reduce bandwidth costs
+    // Fetch recent events in desc order then filter by time range
     const allEvents = await ctx.db
       .query("activityEvents")
       .withIndex("by_timestamp")
       .order("desc")
-      .collect();
+      .take(200);
 
     let filtered = allEvents.filter(
       (e) => e.timestamp >= args.startTs && e.timestamp <= args.endTs

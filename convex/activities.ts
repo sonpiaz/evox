@@ -24,18 +24,18 @@ export const log = mutation({
   },
 });
 
-// READ - Get all activities
+// READ - Get all activities (AGT-192: default limit 100 to reduce costs)
 export const list = query({
   args: {
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const activities = await ctx.db
+    const limit = args.limit ?? 100;
+    return await ctx.db
       .query("activities")
       .withIndex("by_created_at")
       .order("desc")
-      .collect();
-    return args.limit ? activities.slice(0, args.limit) : activities;
+      .take(limit);
   },
 });
 
@@ -47,19 +47,19 @@ export const get = query({
   },
 });
 
-// READ - Get activities by agent
+// READ - Get activities by agent (AGT-192: default limit 50)
 export const getByAgent = query({
   args: {
     agent: v.id("agents"),
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const activities = await ctx.db
+    const limit = args.limit ?? 50;
+    return await ctx.db
       .query("activities")
       .withIndex("by_agent", (q) => q.eq("agent", args.agent))
       .order("desc")
-      .collect();
-    return args.limit ? activities.slice(0, args.limit) : activities;
+      .take(limit);
   },
 });
 
@@ -76,21 +76,19 @@ const TASK_ACTIONS = new Set([
 ]);
 
 // READ - Get recent activities with agent details; resolve task target to linearId + title
+// AGT-192: Use .take() instead of .collect() to reduce bandwidth costs
 export const listWithAgents = query({
   args: {
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     try {
-      const activities = await ctx.db
+      const limit = args.limit ?? 50;
+      const limitedActivities = await ctx.db
         .query("activities")
         .withIndex("by_created_at")
         .order("desc")
-        .collect();
-
-      const limitedActivities = args.limit
-        ? activities.slice(0, args.limit)
-        : activities;
+        .take(limit);
 
       const activitiesWithAgents = await Promise.all(
         limitedActivities.map(async (activity) => {
@@ -139,11 +137,12 @@ export const getByTimeRange = query({
     endTime: v.number(),
   },
   handler: async (ctx, args) => {
+    // AGT-192: Limit to 200 to reduce bandwidth costs
     const allActivities = await ctx.db
       .query("activities")
       .withIndex("by_created_at")
       .order("desc")
-      .collect();
+      .take(200);
 
     return allActivities.filter(
       (activity) =>
@@ -153,24 +152,26 @@ export const getByTimeRange = query({
   },
 });
 
-// READ - Get activities by action type
+// READ - Get activities by action type (AGT-192: default limit 50)
 export const getByAction = query({
   args: {
     action: v.string(),
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    const limit = args.limit ?? 50;
+    // AGT-192: Limit initial fetch to reduce bandwidth
     const allActivities = await ctx.db
       .query("activities")
       .withIndex("by_created_at")
       .order("desc")
-      .collect();
+      .take(200);
 
     const filtered = allActivities.filter(
       (activity) => activity.action === args.action
     );
 
-    return args.limit ? filtered.slice(0, args.limit) : filtered;
+    return filtered.slice(0, limit);
   },
 });
 

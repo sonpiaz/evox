@@ -606,11 +606,12 @@ export const updateWorkingMemory = mutation({
 
 /**
  * Query to verify agent completion stats (for dashboard).
+ * AGT-192: Limit tasks query to reduce bandwidth costs
  */
 export const getAgentStats = query({
   handler: async (ctx) => {
-    const agents = await ctx.db.query("agents").collect();
-    const tasks = await ctx.db.query("tasks").collect();
+    const agents = await ctx.db.query("agents").take(10);
+    const tasks = await ctx.db.query("tasks").take(500);
 
     const stats = agents.map((agent) => {
       const agentTasks = tasks.filter((t) => t.assignee === agent._id);
