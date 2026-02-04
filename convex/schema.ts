@@ -466,6 +466,96 @@ export default defineSchema({
     .index("by_task", ["taskId", "timestamp"])
     .index("by_timestamp", ["timestamp"]),
 
+  // AGT-215: Alert System — Push Notifications for Agent Events
+  alerts: defineTable({
+    // Alert type: what triggered this alert
+    type: v.union(
+      v.literal("agent_failed"),      // Agent execution failed
+      v.literal("agent_stuck"),       // Agent stuck >30 min on task
+      v.literal("needs_approval"),    // Task requires human approval
+      v.literal("task_blocked"),      // Task blocked by dependency
+      v.literal("rate_limit_hit"),    // Agent hit rate limit
+      v.literal("kill_switch")        // System paused via kill switch
+    ),
+    // Severity level
+    severity: v.union(
+      v.literal("info"),
+      v.literal("warning"),
+      v.literal("critical")
+    ),
+    // Delivery channel
+    channel: v.union(
+      v.literal("telegram"),
+      v.literal("email"),
+      v.literal("browser"),
+      v.literal("slack")
+    ),
+    // Alert content
+    title: v.string(),
+    message: v.string(),
+    // Context
+    agentName: v.optional(v.string()),
+    taskId: v.optional(v.id("tasks")),
+    linearIdentifier: v.optional(v.string()),
+    // Delivery status
+    status: v.union(
+      v.literal("pending"),
+      v.literal("sent"),
+      v.literal("failed"),
+      v.literal("snoozed")
+    ),
+    sentAt: v.optional(v.number()),
+    deliveryError: v.optional(v.string()),
+    // Acknowledgment
+    acknowledged: v.optional(v.boolean()),
+    acknowledgedBy: v.optional(v.string()),
+    acknowledgedAt: v.optional(v.number()),
+    // Timestamps
+    createdAt: v.number(),
+  })
+    .index("by_type", ["type", "createdAt"])
+    .index("by_severity", ["severity", "createdAt"])
+    .index("by_status", ["status", "createdAt"])
+    .index("by_agent", ["agentName", "createdAt"])
+    .index("by_task", ["taskId", "createdAt"])
+    .index("by_created", ["createdAt"]),
+
+  // AGT-215: Alert Preferences — Configurable alert rules per user/agent
+  alertPreferences: defineTable({
+    // Who this preference is for (agent name or "global")
+    target: v.string(),
+    // Which alert types to receive
+    enabledTypes: v.array(v.union(
+      v.literal("agent_failed"),
+      v.literal("agent_stuck"),
+      v.literal("needs_approval"),
+      v.literal("task_blocked"),
+      v.literal("rate_limit_hit"),
+      v.literal("kill_switch")
+    )),
+    // Preferred channels (in priority order)
+    channels: v.array(v.union(
+      v.literal("telegram"),
+      v.literal("email"),
+      v.literal("browser"),
+      v.literal("slack")
+    )),
+    // Telegram config (if enabled)
+    telegramChatId: v.optional(v.string()),
+    telegramBotToken: v.optional(v.string()), // Stored securely, used for custom bots
+    // Email config (if enabled)
+    email: v.optional(v.string()),
+    // Thresholds
+    stuckThresholdMinutes: v.optional(v.number()), // Default 30
+    // Snooze/quiet hours
+    snoozedUntil: v.optional(v.number()),
+    quietHoursStart: v.optional(v.number()), // 0-23
+    quietHoursEnd: v.optional(v.number()),   // 0-23
+    // Active status
+    enabled: v.boolean(),
+    updatedAt: v.number(),
+  }).index("by_target", ["target"]),
+
   // AGT-197: Execution Visibility - Execution Logs
   // Detailed logs from agent execution for debugging and audit
   executionLogs: defineTable({

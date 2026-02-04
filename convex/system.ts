@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { internal } from "./_generated/api";
 
 // AGT-212: Kill Switch Backend
 // Emergency stop all agent operations
@@ -82,6 +83,12 @@ export const killSwitch = mutation({
         errorMessage: reason,
       },
       timestamp: now,
+    });
+
+    // AGT-215: Trigger kill switch alert
+    await ctx.scheduler.runAfter(0, internal.alerts.triggerKillSwitch, {
+      reason,
+      triggeredBy: pausedBy ?? "system",
     });
 
     return {

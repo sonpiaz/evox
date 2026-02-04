@@ -1424,4 +1424,242 @@ http.route({
   }),
 });
 
+// ============================================================
+// AGT-215: ALERT SYSTEM ENDPOINTS
+// ============================================================
+
+/**
+ * GET /alerts — List alerts with optional filters
+ * Query params: type, severity, status, agentName, limit
+ */
+http.route({
+  path: "/alerts",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const type = url.searchParams.get("type") || undefined;
+      const severity = url.searchParams.get("severity") || undefined;
+      const status = url.searchParams.get("status") || undefined;
+      const agentName = url.searchParams.get("agentName") || undefined;
+      const limit = url.searchParams.get("limit");
+
+      const alerts = await ctx.runQuery(api.alerts.listAlerts, {
+        type,
+        severity,
+        status,
+        agentName,
+        limit: limit ? parseInt(limit, 10) : undefined,
+      });
+
+      return new Response(JSON.stringify({ alerts }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("List alerts error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * GET /alerts/stats — Get alert statistics
+ * Query params: since (timestamp)
+ */
+http.route({
+  path: "/alerts/stats",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const since = url.searchParams.get("since");
+
+      const stats = await ctx.runQuery(api.alerts.getAlertStats, {
+        since: since ? parseInt(since, 10) : undefined,
+      });
+
+      return new Response(JSON.stringify(stats), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Get alert stats error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * GET /alerts/critical — Get unacknowledged critical alerts
+ */
+http.route({
+  path: "/alerts/critical",
+  method: "GET",
+  handler: httpAction(async (ctx) => {
+    try {
+      const alerts = await ctx.runQuery(api.alerts.getUnacknowledgedCritical);
+
+      return new Response(JSON.stringify({ alerts }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Get critical alerts error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * POST /alerts/acknowledge — Acknowledge an alert
+ * Body: { alertId: string, acknowledgedBy?: string }
+ */
+http.route({
+  path: "/alerts/acknowledge",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const { alertId, acknowledgedBy } = body;
+
+      if (!alertId) {
+        return new Response(
+          JSON.stringify({ error: "alertId is required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const result = await ctx.runMutation(api.alerts.acknowledgeAlert, {
+        alertId: alertId as Id<"alerts">,
+        acknowledgedBy: acknowledgedBy ?? "user",
+      });
+
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Acknowledge alert error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * GET /alerts/preferences — Get alert preferences
+ * Query param: target (e.g., "global", "sam")
+ */
+http.route({
+  path: "/alerts/preferences",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const target = url.searchParams.get("target") ?? "global";
+
+      const prefs = await ctx.runQuery(api.alerts.getPreferences, { target });
+
+      return new Response(JSON.stringify(prefs), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Get preferences error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * POST /alerts/preferences — Update alert preferences
+ * Body: { target, enabledTypes?, channels?, telegramChatId?, email?, ... }
+ */
+http.route({
+  path: "/alerts/preferences",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const { target, ...updates } = body;
+
+      if (!target) {
+        return new Response(
+          JSON.stringify({ error: "target is required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const result = await ctx.runMutation(api.alerts.updatePreferences, {
+        target,
+        ...updates,
+      });
+
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Update preferences error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * POST /alerts/snooze — Snooze alerts for a target
+ * Body: { target: string, durationMinutes: number }
+ */
+http.route({
+  path: "/alerts/snooze",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const { target, durationMinutes } = body;
+
+      if (!target) {
+        return new Response(
+          JSON.stringify({ error: "target is required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const result = await ctx.runMutation(api.alerts.snoozeAlerts, {
+        target,
+        durationMinutes: durationMinutes ?? 60,
+      });
+
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Snooze alerts error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
 export default http;

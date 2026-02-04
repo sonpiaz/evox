@@ -46,4 +46,13 @@ crons.cron(
   {}
 );
 
+// AGT-215: Alert System — Check for stuck agents every 5 minutes
+// Triggers alerts when agents are stuck on a task for >30 minutes
+crons.interval(
+  "check-stuck-agents",
+  { minutes: 5 },
+  internal.alerts.checkStuckAgents,
+  {}
+);
+
 export default crons;
