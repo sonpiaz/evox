@@ -15,6 +15,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { startOfDay, endOfDay, formatDistanceToNow } from "date-fns";
+import { AgentActivityFeed } from "./AgentActivityFeed";
 
 interface CEODashboardProps {
   className?: string;
@@ -351,6 +352,9 @@ export function CEODashboard({ className }: CEODashboardProps) {
           ))}
         </div>
       </div>
+
+      {/* AGT-264: Real-time Agent Activity Feed */}
+      <AgentActivityFeed />
 
       {/* Today's Progress + Alerts */}
       <div className="grid grid-cols-2 gap-6">

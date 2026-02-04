@@ -29,7 +29,7 @@ I do NOT touch: `app/`, `components/` (Leo's territory)
 
 === CURRENT STATE ===
 # SAM — Working Memory
-Last updated: 2026-02-04 07:19 UTC
+Last updated: 2026-02-04 08:29 UTC
 
 ## Current Task
 None — Queue empty
@@ -38,6 +38,8 @@ None — Queue empty
 Session complete — 11 tickets processed
 
 ## Recent Completions
+- [x] AGT-92: Execution Engine Core complete. Built schema + 4 execution files. Step-based Cla... (2026-02-04 08:29)
+- [x] AGT-194: HEARTBEAT.md protocol seeded to Convex. File existed, ran seedHeartbeatProtocol ... (2026-02-04 08:21)
 - [x] AGT-231: Fixed all status comparisons to use toLowerCase() for case-insensitive matching.... (2026-02-04 07:19)
 - [x] AGT-242: Implemented agent performance tracking system with velocity, cost, duration, uti... (2026-02-04 06:11)
 - [x] AGT-240: Implemented Playwright-based headless browser testing for Quinn. Added screensho... (2026-02-04 05:59)
@@ -73,56 +75,35 @@ None
 3. Verify new endpoints work in production
 
 === TASK ===
-Ticket: AGT-194
-Title: [Phase 4C] HEARTBEAT.md Protocol — Agent Wake-up Checklist
-Priority: high
+Ticket: AGT-265
+Title: [AUTO] Agent spawns sub-agent for large tasks
+Priority: medium
 Status: backlog
 
 Description:
 ## Goal
 
-Document chuẩn mọi agent follow khi heartbeat/wake-up. Checklist đảm bảo agent không miss context.
+When ticket is too large, agent splits into sub-tasks and spawns parallel workers.
 
-**Roadmap doc:** [EVOX Phase 4-6 Roadmap v2](https://linear.app/affitorai/document/evox-phase-4-6-roadmap-v2-4574084f1278)
+## Trigger
 
-## [HEARTBEAT.md](<http://HEARTBEAT.md>) Content
+* Ticket has >3 files to change
+* Ticket has multiple components
+* Agent detects "and" in requirements
 
-```markdown
-# HEARTBEAT Protocol
+## Implementation
 
-When agent wakes up (manual or scheduled), follow this checklist:
+1. Agent analyzes ticket
+2. Creates sub-issues in Linear
+3. Dispatches to other agents
+4. Waits for completion
+5. Merges results
 
-## 1. Context Load (30 sec)
-- [ ] Read AGENTS.md → Team rules
-- [ ] Read own SOUL.md → Identity
-- [ ] Read own WORKING.md → Current state
+## North Star
 
-## 2. Check Inbox (10 sec)
-- [ ] Check @mentions → Anyone need me?
-- [ ] Check notifications → Any updates?
-- [ ] Check assigned tasks → What's in my queue?
-
-## 3. Decide Action
-- If task assigned → Start working
-- If @mentioned → Respond
-- If nothing → Report HEARTBEAT_OK
-
-## 4. Report
-- Update WORKING.md with current status
-- Log activity to dailyNotes
-```
-
-## Deliverable
-
-1. Create `/docs/HEARTBEAT.md` in repo
-2. Store content in Convex `agentMemory` (type: "heartbeat_protocol")
-3. Reference in agent dispatch prompts
-
-## Owner: Max (PM)
-
-## Est: 15 min
+Parallel execution - 4 agents = 4x speed.
 
 === DISPATCH RULES ===
-- Commit with "closes AGT-194" when done
+- Commit with "closes AGT-265" when done
 - Push immediately after commit
 - Leave Linear comment: files changed, what was done
