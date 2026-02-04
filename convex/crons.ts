@@ -78,14 +78,13 @@ crons.interval(
 // AGT-223: Max Autonomous Monitor
 // Background monitoring, self-check, agent sync, inter-agent coordination
 // Checks: agent health, task progress, stuck tasks, errors
-// Alerts Son on Telegram if critical issues
-// TODO(Sam): Enable when convex/maxMonitor.ts is created
-// crons.interval(
-//   "max-monitor",
-//   { minutes: 15 },
-//   internal.maxMonitor.check,
-//   {}
-// );
+// Creates alerts but Telegram notifications are disabled until sendTelegramAlert is fixed
+crons.interval(
+  "max-monitor",
+  { minutes: 15 },
+  internal.maxMonitor.check,
+  {}
+);
 
 // AGT-247: Event Bus — Cleanup expired events every 5 minutes
 // Removes events older than 5 minutes that were never delivered
