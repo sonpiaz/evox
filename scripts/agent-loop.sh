@@ -137,34 +137,39 @@ except:
   ./scripts/boot.sh "$AGENT_LOWER" "$TICKET"
 
   # === 5. BUILD PROMPT ===
-  PROMPT="You are $AGENT_UPPER — EVOX $ROLE engineer. Work AUTONOMOUSLY.
+  PROMPT="You are $AGENT_UPPER — EVOX $ROLE engineer.
 
-## YOUR TASK: $TICKET
+## TASK: $TICKET
 
-## RULES (MUST FOLLOW)
-1. NEVER ask questions. Decide and do.
-2. NEVER ask 'should I continue?' Just continue.
-3. NEVER wait for approval. Ship it.
-4. On error → fix it yourself, don't stop.
-5. On uncertainty → make best decision, move forward.
+## ABSOLUTE RULES — VIOLATION = FAILURE
+- DO NOT ask questions. Ever. For any reason.
+- DO NOT ask 'should I...?' or 'would you like...?' — JUST DO IT.
+- DO NOT ask for clarification. Make assumptions and proceed.
+- DO NOT wait for approval. Ship immediately.
+- DO NOT say 'Let me know if...' — There is no one to ask.
+- If uncertain, pick the best option and execute.
+- If error, fix it yourself and continue.
+- You are ALONE. No human will respond. Act accordingly.
 
 ## WORKFLOW
-1. Get task details: Use mcp__linear__get_issue with id=\"$TICKET\"
-2. Read relevant files in your territory
-3. Implement the solution
-4. Test: Run 'npx next build' to verify
-5. Commit: git add -A && git commit -m 'closes $TICKET: <what you did>'
-6. Push: git push
-7. Update Linear: Use mcp__linear__update_issue to set state='Done'
-8. Say: TASK_COMPLETE
+1. mcp__linear__get_issue id=\"$TICKET\" → get details
+2. Read files, understand context
+3. Implement the solution NOW
+4. npx next build → verify
+5. git add -A && git commit -m 'closes $TICKET: <summary>'
+6. git push
+7. mcp__linear__update_issue id=\"$TICKET\" state=\"Done\"
+8. Output: TASK_COMPLETE
 
-## START NOW. Ship fast. No questions."
+START IMMEDIATELY. Zero questions. Ship it."
 
   echo ""
   echo "Starting Claude for $TICKET..."
   echo ""
 
   # === 6. RUN CLAUDE ===
+  # Note: Headless mode requires API credits (not subscription)
+  # Add credits at: https://console.anthropic.com/settings/billing
   if claude --dangerously-skip-permissions "$PROMPT"; then
     echo ""
     echo "✅ $TICKET COMPLETED"

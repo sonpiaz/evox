@@ -20,9 +20,9 @@ fi
 # Normalize agent name to lowercase
 AGENT=$(echo "$AGENT" | tr '[:upper:]' '[:lower:]')
 
-# Validate agent name
-if [[ ! "$AGENT" =~ ^(sam|leo|max)$ ]]; then
-  echo "Error: Unknown agent '$AGENT'. Must be sam, leo, or max."
+# Validate agent name (all 10 agents)
+if [[ ! "$AGENT" =~ ^(sam|leo|max|quinn|alex|ella|nova|iris|cole|maya)$ ]]; then
+  echo "Error: Unknown agent '$AGENT'. Must be one of: sam, leo, max, quinn, alex, ella, nova, iris, cole, maya."
   exit 1
 fi
 
