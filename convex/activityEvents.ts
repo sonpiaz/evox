@@ -135,11 +135,11 @@ export const logGitTaskCompletion = internalMutation({
       return { skipped: true, reason: "duplicate" };
     }
 
-    // Find task by linearIdentifier using index (AGT-192: optimize query)
+    // Find task by linearIdentifier using proper index (AGT-198: fix write conflicts)
+    const ticketUpper = args.linearIdentifier.toUpperCase();
     const task = await ctx.db
       .query("tasks")
-      .withIndex("by_linearId")
-      .filter((q) => q.eq(q.field("linearIdentifier"), args.linearIdentifier.toUpperCase()))
+      .withIndex("by_linearIdentifier", (q) => q.eq("linearIdentifier", ticketUpper))
       .first();
 
     // Get all agents for lookup (small table, ~3 records)

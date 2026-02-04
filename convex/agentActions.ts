@@ -60,16 +60,12 @@ export const completeTask = mutation({
       throw new Error(`Agent not found for ID: ${agentId}`);
     }
 
-    // 2. Find task by linearIdentifier (e.g., "AGT-124")
-    const tasks = await ctx.db
+    // 2. Find task by linearIdentifier (e.g., "AGT-124") using proper index
+    const ticketUpper = args.ticket.toUpperCase();
+    const task = await ctx.db
       .query("tasks")
-      .withIndex("by_linearId")
-      .collect();
-
-    // Find by linearIdentifier (case-insensitive)
-    const task = tasks.find(
-      (t) => t.linearIdentifier?.toUpperCase() === args.ticket.toUpperCase()
-    );
+      .withIndex("by_linearIdentifier", (q) => q.eq("linearIdentifier", ticketUpper))
+      .first();
 
     if (!task) {
       // Task not in Convex yet — log activity anyway for visibility

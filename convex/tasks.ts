@@ -872,7 +872,7 @@ export const backfillAgentName = mutation({
 });
 
 // Mark task completed by Linear identifier (from GitHub webhook)
-// AGT-192: Optimized to reduce full table scans
+// AGT-198: Use proper index to avoid write conflicts
 export const markCompletedByIdentifier = mutation({
   args: {
     linearIdentifier: v.string(),
@@ -880,11 +880,12 @@ export const markCompletedByIdentifier = mutation({
     agentName: v.string(),
   },
   handler: async (ctx, { linearIdentifier, commitHash, agentName }) => {
-    // Find task by linearIdentifier (limit search to 500 most recent)
-    const tasks = await ctx.db.query("tasks").order("desc").take(500);
-    const task = tasks.find(
-      (t) => t.linearIdentifier?.toUpperCase() === linearIdentifier.toUpperCase()
-    );
+    // Find task by linearIdentifier using proper index
+    const ticketUpper = linearIdentifier.toUpperCase();
+    const task = await ctx.db
+      .query("tasks")
+      .withIndex("by_linearIdentifier", (q) => q.eq("linearIdentifier", ticketUpper))
+      .first();
 
     if (!task) {
       console.log(`Task not found: ${linearIdentifier}`);

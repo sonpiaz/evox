@@ -78,7 +78,8 @@ export default defineSchema({
     .index("by_agentName", ["agentName"])
     .index("by_priority", ["priority"])
     .index("by_project_status", ["projectId", "status"])
-    .index("by_linearId", ["linearId"]),
+    .index("by_linearId", ["linearId"])
+    .index("by_linearIdentifier", ["linearIdentifier"]),
 
   // Communication - Channel messages
   messages: defineTable({
