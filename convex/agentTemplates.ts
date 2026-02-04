@@ -274,7 +274,7 @@ export const checkSpawnNeeded = query({
     agents.forEach((a) => {
       const role = a.role || "general";
       totalByRole[role] = (totalByRole[role] || 0) + 1;
-      if (a.status === "busy" || a.status === "working") {
+      if (a.status === "busy") {
         busyByRole[role] = (busyByRole[role] || 0) + 1;
       }
     });
