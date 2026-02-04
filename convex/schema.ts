@@ -80,6 +80,10 @@ export default defineSchema({
     )),
     reviewedBy: v.optional(v.string()),
     reviewedAt: v.optional(v.number()),
+    // AGT-210: Self-Healing Retry
+    retryCount: v.optional(v.number()),
+    lastError: v.optional(v.string()),
+    escalatedAt: v.optional(v.number()),
   })
     .index("by_project", ["projectId"])
     .index("by_status", ["status"])

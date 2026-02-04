@@ -335,3 +335,181 @@ export const runAutoDispatchCycle = mutation({
     return { cycleTime: Date.now(), results };
   },
 });
+
+// =============================================================================
+// AGT-210: Self-Healing Retry
+// =============================================================================
+
+const MAX_RETRIES = 3;
+
+/**
+ * Handle task failure with auto-retry logic
+ * - If retryCount < MAX_RETRIES: retry with new instruction
+ * - If retryCount >= MAX_RETRIES: escalate and mark as blocked
+ */
+export const handleTaskFailure = mutation({
+  args: {
+    taskId: v.id("tasks"),
+    error: v.string(),
+    agentName: v.optional(v.string()),
+  },
+  handler: async (ctx, { taskId, error, agentName }) => {
+    const task = await ctx.db.get(taskId);
+    if (!task) throw new Error("Task not found");
+
+    const now = Date.now();
+    const currentRetries = task.retryCount ?? 0;
+    const newRetryCount = currentRetries + 1;
+
+    // Get agent info
+    const agent = task.assignee ? await ctx.db.get(task.assignee) : null;
+    const agentNameStr = agentName ?? agent?.name ?? "unknown";
+
+    if (newRetryCount >= MAX_RETRIES) {
+      // Escalate: mark as blocked/review
+      await ctx.db.patch(taskId, {
+        retryCount: newRetryCount,
+        lastError: error,
+        escalatedAt: now,
+        status: "review", // Move to review for human intervention
+        updatedAt: now,
+      });
+
+      // Log escalation
+      await ctx.db.insert("activityEvents", {
+        agentId: agent?._id ?? task.createdBy,
+        agentName: agentNameStr.toLowerCase(),
+        category: "task",
+        eventType: "escalated",
+        title: `${task.linearIdentifier ?? task.title} escalated after ${newRetryCount} failures`,
+        description: `Last error: ${error}`,
+        taskId,
+        linearIdentifier: task.linearIdentifier,
+        projectId: task.projectId,
+        metadata: {
+          source: "self_healing",
+          retryCount: newRetryCount,
+          error,
+        },
+        timestamp: now,
+      });
+
+      // Create notification for PM
+      const pmAgent = await ctx.db
+        .query("agents")
+        .withIndex("by_name", (q) => q.eq("name", "MAX"))
+        .first();
+
+      if (pmAgent) {
+        await ctx.db.insert("notifications", {
+          to: pmAgent._id,
+          from: agent?._id,
+          type: "review_request",
+          title: "Task Escalated",
+          message: `${task.linearIdentifier ?? task.title} failed ${newRetryCount} times: ${error}`,
+          read: false,
+          relatedTask: taskId,
+          createdAt: now,
+        });
+      }
+
+      return {
+        success: false,
+        action: "escalated",
+        retryCount: newRetryCount,
+        taskId,
+      };
+    } else {
+      // Retry: update retry count and keep in_progress
+      await ctx.db.patch(taskId, {
+        retryCount: newRetryCount,
+        lastError: error,
+        updatedAt: now,
+      });
+
+      // Create new dispatch for retry
+      if (agent) {
+        await ctx.db.insert("dispatches", {
+          agentId: agent._id,
+          command: "retry_task",
+          payload: JSON.stringify({
+            taskId,
+            linearIdentifier: task.linearIdentifier,
+            retryCount: newRetryCount,
+            lastError: error,
+          }),
+          status: "pending",
+          createdAt: now,
+        });
+      }
+
+      // Log retry
+      await ctx.db.insert("activityEvents", {
+        agentId: agent?._id ?? task.createdBy,
+        agentName: agentNameStr.toLowerCase(),
+        category: "task",
+        eventType: "retrying",
+        title: `Retrying ${task.linearIdentifier ?? task.title} (attempt ${newRetryCount + 1}/${MAX_RETRIES})`,
+        description: `Error: ${error}`,
+        taskId,
+        linearIdentifier: task.linearIdentifier,
+        projectId: task.projectId,
+        metadata: {
+          source: "self_healing",
+          retryCount: newRetryCount,
+          error,
+        },
+        timestamp: now,
+      });
+
+      return {
+        success: true,
+        action: "retrying",
+        retryCount: newRetryCount,
+        remainingRetries: MAX_RETRIES - newRetryCount,
+        taskId,
+      };
+    }
+  },
+});
+
+/**
+ * Reset retry count for a task (after manual intervention)
+ */
+export const resetRetryCount = mutation({
+  args: {
+    taskId: v.id("tasks"),
+  },
+  handler: async (ctx, { taskId }) => {
+    const task = await ctx.db.get(taskId);
+    if (!task) throw new Error("Task not found");
+
+    await ctx.db.patch(taskId, {
+      retryCount: 0,
+      lastError: undefined,
+      escalatedAt: undefined,
+      updatedAt: Date.now(),
+    });
+
+    return { success: true, taskId };
+  },
+});
+
+/**
+ * Get escalated tasks (failed MAX_RETRIES times)
+ */
+export const getEscalatedTasks = query({
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, { limit }) => {
+    const tasks = await ctx.db
+      .query("tasks")
+      .withIndex("by_status", (q) => q.eq("status", "review"))
+      .order("desc")
+      .take(limit ?? 50);
+
+    // Filter to only escalated tasks
+    return tasks.filter((t) => t.escalatedAt !== undefined);
+  },
+});
