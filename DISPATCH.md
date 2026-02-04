@@ -55,6 +55,7 @@
 
 - ✅ AGT-252: Auto-Recruit Agents — Self-Spawning Team (Sam)
 - ✅ AGT-227: Quinn QA Onboarding — Full Integration (Sam)
+- ✅ AGT-208: Auto-Dispatch from Backlog — Idle Agent Auto-Assign (Sam)
 - ✅ AGT-250: Website Health Monitor — Auto-alert on Downtime (Sam)
 - ✅ AGT-249: Self-Spawning Agents — Parallel Workers (Sam)
 - ✅ AGT-248: Agent Mesh — P2P Communication (Sam)
