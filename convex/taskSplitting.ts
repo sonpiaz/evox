@@ -1,5 +1,5 @@
 /**
- * AGT-265: Auto-Spawn Sub-Agents for Large Tasks
+ * AGT-265: Auto-Spawn Sub-Agents for Large Tasks (Actions Only)
  *
  * When a ticket is complex, automatically:
  * 1. Analyze complexity (>3 files, multiple components, "and" in requirements)
@@ -7,159 +7,16 @@
  * 3. Create Linear sub-issues
  * 4. Spawn parallel workers
  * 5. Track and merge results
+ *
+ * NOTE: Queries are in ./taskSplittingQueries.ts, Mutations are in ./taskSplittingMutations.ts
  */
 
 "use node";
 
 import { v } from "convex/values";
-import { mutation, query, action } from "./_generated/server";
+import { action } from "./_generated/server";
 import { api } from "./_generated/api";
 import { LinearClient } from "@linear/sdk";
-
-/**
- * Analyze task complexity to determine if it should be split.
- *
- * Triggers for splitting:
- * - Description mentions >3 files to change
- * - Multiple components mentioned (e.g., "frontend AND backend")
- * - Contains "and" listing multiple requirements
- * - Estimate > 8 points (if available)
- */
-export const analyzeComplexity = query({
-  args: {
-    taskId: v.string(), // Linear identifier like "AGT-265"
-  },
-  handler: async (ctx, args) => {
-    // Get task from Convex
-    const task = await ctx.db
-      .query("tasks")
-      .withIndex("by_linearIdentifier", (q) =>
-        q.eq("linearIdentifier", args.taskId.toUpperCase())
-      )
-      .first();
-
-    if (!task) {
-      return {
-        shouldSplit: false,
-        reason: "task_not_found",
-        confidence: 0,
-      };
-    }
-
-    const description = task.description.toLowerCase();
-    const title = task.title.toLowerCase();
-    const combined = `${title} ${description}`;
-
-    let score = 0;
-    const reasons: string[] = [];
-
-    // Check 1: Multiple files mentioned
-    const filePatterns = [
-      /\d+\s*files?/i,
-      /files?:\s*\[/i,
-      /modify:\s*\[/i,
-      /change:\s*\[/i,
-    ];
-
-    for (const pattern of filePatterns) {
-      const match = combined.match(pattern);
-      if (match) {
-        // Extract number if present
-        const numMatch = match[0].match(/(\d+)/);
-        if (numMatch) {
-          const numFiles = parseInt(numMatch[1]);
-          if (numFiles > 3) {
-            score += 30;
-            reasons.push(`${numFiles} files mentioned`);
-            break;
-          }
-        } else {
-          // Pattern found but no number - assume multiple files
-          score += 20;
-          reasons.push("multiple files implied");
-          break;
-        }
-      }
-    }
-
-    // Check 2: Multiple components/domains
-    const componentKeywords = [
-      "frontend and backend",
-      "ui and api",
-      "client and server",
-      "database and api",
-      "convex and nextjs",
-      "backend and frontend",
-    ];
-
-    for (const keyword of componentKeywords) {
-      if (combined.includes(keyword)) {
-        score += 25;
-        reasons.push(`cross-component work: ${keyword}`);
-        break;
-      }
-    }
-
-    // Check 3: Multiple requirements with "and"
-    // Count instances of numbered lists or "and" separating distinct tasks
-    const andCount = (combined.match(/\band\b/g) || []).length;
-    const numberedListItems = (combined.match(/^\s*\d+\./gm) || []).length;
-
-    if (numberedListItems > 3) {
-      score += 20;
-      reasons.push(`${numberedListItems} numbered items`);
-    } else if (andCount > 2) {
-      score += 15;
-      reasons.push(`${andCount} "and" conjunctions`);
-    }
-
-    // Check 4: Implementation section with substeps
-    if (combined.includes("implementation") || combined.includes("steps")) {
-      const steps = combined.match(/^\s*[-•*]\s/gm) || [];
-      if (steps.length > 4) {
-        score += 20;
-        reasons.push(`${steps.length} implementation steps`);
-      }
-    }
-
-    // Check 5: Keywords suggesting complexity
-    const complexityKeywords = [
-      "multiple",
-      "several",
-      "various",
-      "parallel",
-      "distributed",
-      "orchestrate",
-      "coordinate",
-      "integrate",
-    ];
-
-    let keywordCount = 0;
-    for (const keyword of complexityKeywords) {
-      if (combined.includes(keyword)) {
-        keywordCount++;
-      }
-    }
-
-    if (keywordCount > 2) {
-      score += 15;
-      reasons.push(`${keywordCount} complexity indicators`);
-    }
-
-    // Decision: score >= 40 = should split
-    const shouldSplit = score >= 40;
-    const confidence = Math.min(Math.round((score / 100) * 100), 100);
-
-    return {
-      shouldSplit,
-      confidence,
-      score,
-      reasons,
-      taskId: args.taskId,
-      title: task.title,
-    };
-  },
-});
 
 /**
  * Split a task into sub-issues and spawn parallel workers.
@@ -183,7 +40,7 @@ export const splitTaskAuto = action({
     const now = Date.now();
 
     // 1. Get the parent task from Convex using analyzeComplexity query
-    const analysis = await ctx.runQuery(api.taskSplitting.analyzeComplexity, {
+    const analysis = await ctx.runQuery(api.taskSplittingQueries.analyzeComplexity, {
       taskId: args.taskId.toUpperCase(),
     });
 
@@ -245,7 +102,7 @@ export const splitTaskAuto = action({
     }
 
     // 4. Log the split in execution logs
-    await ctx.runMutation(api.taskSplitting.logTaskSplit, {
+    await ctx.runMutation(api.taskSplittingMutations.logTaskSplit, {
       agent: args.agent,
       parentTaskId: args.taskId,
       subIssueCount: subIssueIds.length,
@@ -367,124 +224,6 @@ export const createLinearSubIssue = action({
 });
 
 /**
- * Log task split activity
- */
-export const logTaskSplit = mutation({
-  args: {
-    agent: v.string(),
-    parentTaskId: v.string(),
-    subIssueCount: v.number(),
-    subIssueIds: v.array(v.string()),
-    poolId: v.optional(v.id("workerPools")),
-  },
-  handler: async (ctx, args) => {
-    const now = Date.now();
-
-    // Find agent
-    const agents = await ctx.db.query("agents").collect();
-    const agent = agents.find(
-      (a) => a.name.toLowerCase() === args.agent.toLowerCase()
-    );
-
-    if (!agent) {
-      console.warn(`Agent not found: ${args.agent}`);
-      return { success: false };
-    }
-
-    // Log to execution logs
-    await ctx.db.insert("executionLogs", {
-      agentName: args.agent.toLowerCase(),
-      level: "info",
-      message: `Split ${args.parentTaskId} into ${args.subIssueCount} subtasks: ${args.subIssueIds.join(", ")}`,
-      linearIdentifier: args.parentTaskId,
-      metadata: {
-        poolId: args.poolId,
-        subtasks: args.subIssueIds,
-      },
-      timestamp: now,
-    });
-
-    // Log activity event
-    await ctx.db.insert("activityEvents", {
-      agentId: agent._id,
-      agentName: args.agent.toLowerCase(),
-      category: "task",
-      eventType: "task_split",
-      title: `${args.agent.toUpperCase()} split ${args.parentTaskId} into ${args.subIssueCount} subtasks`,
-      description: `Created subtasks: ${args.subIssueIds.join(", ")}`,
-      linearIdentifier: args.parentTaskId,
-      metadata: {
-        source: "task_splitting",
-        subtaskCount: args.subIssueCount,
-        subtasks: args.subIssueIds,
-      },
-      timestamp: now,
-    });
-
-    return { success: true };
-  },
-});
-
-/**
- * Check if a task is a subtask (has parent)
- */
-export const isSubtask = query({
-  args: {
-    taskId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const task = await ctx.db
-      .query("tasks")
-      .withIndex("by_linearIdentifier", (q) =>
-        q.eq("linearIdentifier", args.taskId.toUpperCase())
-      )
-      .first();
-
-    if (!task) return { isSubtask: false };
-
-    // Check if title starts with [SUBTASK] or description mentions parent
-    const isSubtask =
-      task.title.startsWith("[SUBTASK]") ||
-      task.description.toLowerCase().includes("**parent:**");
-
-    return {
-      isSubtask,
-      taskId: args.taskId,
-      title: task.title,
-    };
-  },
-});
-
-/**
- * Get all subtasks for a parent task
- */
-export const getSubtasks = query({
-  args: {
-    parentTaskId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    // Find all tasks where description mentions this parent
-    const allTasks = await ctx.db
-      .query("tasks")
-      .collect();
-
-    const subtasks = allTasks.filter((t) =>
-      t.title.startsWith("[SUBTASK]") &&
-      t.description.includes(args.parentTaskId.toUpperCase())
-    );
-
-    return subtasks.map((t) => ({
-      id: t._id,
-      identifier: t.linearIdentifier,
-      title: t.title.replace("[SUBTASK] ", ""),
-      status: t.status,
-      assignee: t.assignee,
-      agentName: t.agentName,
-    }));
-  },
-});
-
-/**
  * Simple API for agents to analyze and optionally split a task.
  *
  * Usage from CLI:
@@ -498,7 +237,7 @@ export const analyzeAndMaybeSplit = action({
   },
   handler: async (ctx, args) => {
     // Analyze complexity
-    const analysis = await ctx.runQuery(api.taskSplitting.analyzeComplexity, {
+    const analysis = await ctx.runQuery(api.taskSplittingQueries.analyzeComplexity, {
       taskId: args.taskId,
     });
 
