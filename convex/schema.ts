@@ -679,4 +679,57 @@ export default defineSchema({
     .index("by_agent", ["agentName", "createdAt"])
     .index("by_task", ["taskId"])
     .index("by_timestamp", ["createdAt"]),
+
+  // AGT-225: QA Agent Integration — Automated Test Gate
+  // Stores QA run results for CI/CD quality gates
+  qaRuns: defineTable({
+    // Run identity
+    runId: v.string(),                        // Unique run ID (e.g., "qa-1707012345")
+    triggeredBy: v.string(),                  // "github", "vercel", "manual", "agent"
+    commitHash: v.optional(v.string()),       // Git commit that triggered this
+    prNumber: v.optional(v.number()),         // PR number if applicable
+
+    // Status
+    status: v.union(
+      v.literal("pending"),
+      v.literal("running"),
+      v.literal("passed"),
+      v.literal("failed"),
+      v.literal("cancelled")
+    ),
+
+    // Test results
+    tests: v.array(v.object({
+      name: v.string(),                       // "next-build", "tsc", "eslint", "e2e"
+      status: v.union(
+        v.literal("pending"),
+        v.literal("running"),
+        v.literal("passed"),
+        v.literal("failed"),
+        v.literal("skipped")
+      ),
+      duration: v.optional(v.number()),       // Duration in ms
+      output: v.optional(v.string()),         // Truncated output/error
+      startedAt: v.optional(v.number()),
+      finishedAt: v.optional(v.number()),
+    })),
+
+    // Summary
+    totalTests: v.number(),
+    passedTests: v.number(),
+    failedTests: v.number(),
+    duration: v.optional(v.number()),         // Total duration in ms
+
+    // Actions taken
+    deployBlocked: v.optional(v.boolean()),   // Was deploy blocked?
+    alertSent: v.optional(v.boolean()),       // Was alert sent?
+    bugTicketCreated: v.optional(v.string()), // Linear ticket ID if created
+
+    // Timestamps
+    startedAt: v.number(),
+    finishedAt: v.optional(v.number()),
+  })
+    .index("by_status", ["status", "startedAt"])
+    .index("by_runId", ["runId"])
+    .index("by_commit", ["commitHash"]),
 });

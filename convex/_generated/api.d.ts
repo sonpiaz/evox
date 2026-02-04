@@ -36,6 +36,7 @@ import type * as messages from "../messages.js";
 import type * as messaging from "../messaging.js";
 import type * as notifications from "../notifications.js";
 import type * as projects from "../projects.js";
+import type * as qa from "../qa.js";
 import type * as rateLimit from "../rateLimit.js";
 import type * as recovery from "../recovery.js";
 import type * as scheduler from "../scheduler.js";
@@ -85,6 +86,7 @@ declare const fullApi: ApiFromModules<{
   messaging: typeof messaging;
   notifications: typeof notifications;
   projects: typeof projects;
+  qa: typeof qa;
   rateLimit: typeof rateLimit;
   recovery: typeof recovery;
   scheduler: typeof scheduler;

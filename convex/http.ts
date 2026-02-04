@@ -1929,4 +1929,229 @@ http.route({
   }),
 });
 
+// ============================================================
+// AGT-225: QA AGENT INTEGRATION ENDPOINTS
+// ============================================================
+
+/**
+ * POST /triggerQA — Trigger a new QA run
+ * Body: { triggeredBy: "github"|"vercel"|"manual"|"agent", commitHash?, prNumber? }
+ */
+http.route({
+  path: "/triggerQA",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const { triggeredBy, commitHash, prNumber } = body;
+
+      if (!triggeredBy) {
+        return new Response(
+          JSON.stringify({ error: "triggeredBy is required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const result = await ctx.runMutation(api.qa.triggerRun, {
+        triggeredBy,
+        commitHash: commitHash || undefined,
+        prNumber: prNumber || undefined,
+      });
+
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Trigger QA error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * GET /getQAStatus?runId=qa-XXXX — Get QA run status
+ */
+http.route({
+  path: "/getQAStatus",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const runId = url.searchParams.get("runId");
+
+      if (!runId) {
+        return new Response(
+          JSON.stringify({ error: "runId query parameter is required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const status = await ctx.runQuery(api.qa.getStatus, { runId });
+
+      if (!status) {
+        return new Response(
+          JSON.stringify({ error: `QA run ${runId} not found` }),
+          { status: 404, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      return new Response(JSON.stringify(status), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Get QA status error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * POST /updateQATest — Update a specific test result
+ * Body: { runId, testName, status, duration?, output? }
+ */
+http.route({
+  path: "/updateQATest",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const { runId, testName, status, duration, output } = body;
+
+      if (!runId || !testName || !status) {
+        return new Response(
+          JSON.stringify({ error: "runId, testName, and status are required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const result = await ctx.runMutation(api.qa.updateTest, {
+        runId,
+        testName,
+        status,
+        duration: duration || undefined,
+        output: output || undefined,
+      });
+
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Update QA test error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * POST /completeQARun — Complete a QA run
+ * Body: { runId, cancelled?: boolean }
+ */
+http.route({
+  path: "/completeQARun",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const { runId, cancelled } = body;
+
+      if (!runId) {
+        return new Response(
+          JSON.stringify({ error: "runId is required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const result = await ctx.runMutation(api.qa.completeRun, {
+        runId,
+        cancelled: cancelled || undefined,
+      });
+
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Complete QA run error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * GET /qaRuns — List recent QA runs
+ * Query params: limit, status
+ */
+http.route({
+  path: "/qaRuns",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const limit = url.searchParams.get("limit");
+      const status = url.searchParams.get("status");
+
+      const runs = await ctx.runQuery(api.qa.listRecent, {
+        limit: limit ? parseInt(limit, 10) : undefined,
+        status: status as any || undefined,
+      });
+
+      return new Response(JSON.stringify({ runs }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("List QA runs error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * GET /qaStats — Get QA statistics
+ * Query params: since (timestamp)
+ */
+http.route({
+  path: "/qaStats",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const since = url.searchParams.get("since");
+
+      const stats = await ctx.runQuery(api.qa.getStats, {
+        since: since ? parseInt(since, 10) : undefined,
+      });
+
+      return new Response(JSON.stringify(stats), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Get QA stats error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
 export default http;
