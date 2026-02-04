@@ -1247,6 +1247,149 @@ http.route({
   }),
 });
 
+// ============================================================
+// AGT-119: AGENT DAEMON ENDPOINTS (Staggered Heartbeat Scheduler)
+// ============================================================
+
+/**
+ * GET /getNextDispatch — Get next pending dispatch for daemon
+ * Returns the oldest pending dispatch with agent info
+ */
+http.route({
+  path: "/getNextDispatch",
+  method: "GET",
+  handler: httpAction(async (ctx) => {
+    try {
+      const pending = await ctx.runQuery(api.dispatches.listPending);
+
+      if (!pending || pending.length === 0) {
+        return new Response(
+          JSON.stringify({ dispatch: null }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const dispatch = pending[0];
+
+      // Parse payload to get ticket info
+      let ticket = null;
+      if (dispatch.payload) {
+        try {
+          const payload = JSON.parse(dispatch.payload);
+          ticket = payload.identifier || payload.ticketId || null;
+        } catch {}
+      }
+
+      return new Response(
+        JSON.stringify({
+          dispatchId: dispatch._id,
+          agentName: dispatch.agentName,
+          command: dispatch.command,
+          ticket,
+          payload: dispatch.payload,
+          createdAt: dispatch.createdAt,
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } catch (error) {
+      console.error("getNextDispatch error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * POST /markDispatchRunning — Mark dispatch as running (daemon calls this)
+ * Query param: dispatchId
+ */
+http.route({
+  path: "/markDispatchRunning",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const dispatchId = url.searchParams.get("dispatchId");
+
+      if (!dispatchId) {
+        return new Response(
+          JSON.stringify({ error: "dispatchId is required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      await ctx.runMutation(api.dispatches.claim, {
+        dispatchId: dispatchId as Id<"dispatches">,
+      });
+
+      return new Response(
+        JSON.stringify({ success: true, dispatchId }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } catch (error) {
+      console.error("markDispatchRunning error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * POST /createDispatch — Create a new dispatch (for Max to push work to agents)
+ * Body: { agentName: "sam", command: "execute_ticket", ticket: "AGT-215" }
+ */
+http.route({
+  path: "/createDispatch",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const { agentName, command, ticket, description } = body;
+
+      if (!agentName || !command) {
+        return new Response(
+          JSON.stringify({ error: "agentName and command are required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      // Find agent by name
+      const agents = await ctx.runQuery(api.agents.list);
+      const agent = agents.find(
+        (a: any) => a.name.toLowerCase() === agentName.toLowerCase()
+      );
+
+      if (!agent) {
+        return new Response(
+          JSON.stringify({ error: `Agent '${agentName}' not found` }),
+          { status: 404, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const dispatchId = await ctx.runMutation(api.dispatches.create, {
+        agentId: agent._id,
+        command,
+        payload: JSON.stringify({ identifier: ticket, description }),
+      });
+
+      return new Response(
+        JSON.stringify({ success: true, dispatchId, agentName, command, ticket }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } catch (error) {
+      console.error("createDispatch error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
 /**
  * POST /vercel-webhook — Handle Vercel deployment events
  * Posts status updates to Linear and creates P0 bug tickets on failure
