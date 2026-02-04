@@ -1,6 +1,6 @@
-import { mutation, action, query } from "./_generated/server";
+import { mutation, action, query, internalAction } from "./_generated/server";
 import { v } from "convex/values";
-import { internal } from "./_generated/api";
+import { internal, api } from "./_generated/api";
 
 // AGT-208: Auto-Dispatch from Backlog
 // Automatically assign highest priority unassigned tasks to idle agents
@@ -508,5 +508,88 @@ export const getEscalatedTasks = query({
 
     // Filter to only escalated tasks
     return tasks.filter((t) => t.escalatedAt !== undefined);
+  },
+});
+
+// =============================================================================
+// AGT-218: Cloud-based Auto-Dispatch (24/7) — Convex Cron Integration
+// =============================================================================
+
+/**
+ * Internal action wrapper for cron job
+ * Calls runAutoDispatchCycle and logs results
+ */
+export const runAutoDispatchCycleInternal = internalAction({
+  handler: async (ctx) => {
+    // Check if system is paused (kill switch)
+    const systemState = await ctx.runQuery(api.system.getSystemState);
+    if (systemState.paused) {
+      console.log("[AutoDispatch] System paused, skipping cycle");
+      return { skipped: true, reason: "system_paused" };
+    }
+
+    // Run the dispatch cycle
+    const result = await ctx.runMutation(api.automation.runAutoDispatchCycle);
+
+    console.log(`[AutoDispatch] Cycle complete: ${result.results.length} agents checked`);
+
+    const dispatched = result.results.filter((r: { success: boolean }) => r.success);
+    if (dispatched.length > 0) {
+      console.log(`[AutoDispatch] Dispatched ${dispatched.length} tasks:`,
+        dispatched.map((d: { agent: string; linearIdentifier?: string }) =>
+          `${d.agent} → ${d.linearIdentifier}`));
+    }
+
+    return result;
+  },
+});
+
+/**
+ * Get cron status for dashboard
+ */
+export const getCronStatus = query({
+  handler: async (ctx) => {
+    // Get recent dispatch cycle results from activity events
+    const recentActivity = await ctx.db
+      .query("activityEvents")
+      .withIndex("by_category", (q) => q.eq("category", "task"))
+      .order("desc")
+      .filter((q) => q.eq(q.field("eventType"), "auto_dispatched"))
+      .take(10);
+
+    // Get last Linear sync from settings or activity
+    const lastSync = await ctx.db
+      .query("activityEvents")
+      .withIndex("by_category", (q) => q.eq("category", "system"))
+      .order("desc")
+      .filter((q) => q.eq(q.field("eventType"), "linear_sync"))
+      .first();
+
+    // Get last heartbeat per agent
+    const agents = await ctx.db.query("agents").collect();
+    const heartbeats = agents.map((a) => ({
+      name: a.name,
+      lastHeartbeat: a.lastHeartbeat,
+      status: a.status,
+    }));
+
+    return {
+      crons: [
+        { name: "sync-linear", interval: "5 min", enabled: true },
+        { name: "heartbeat-max", schedule: "0,15,30,45 * * * *", enabled: true },
+        { name: "heartbeat-sam", schedule: "5,20,35,50 * * * *", enabled: true },
+        { name: "heartbeat-leo", schedule: "10,25,40,55 * * * *", enabled: true },
+        { name: "daily-standup", schedule: "0 18 * * *", enabled: true },
+        { name: "check-stuck-agents", interval: "5 min", enabled: true },
+        { name: "auto-dispatch-cycle", interval: "5 min", enabled: true },
+      ],
+      recentAutoDispatches: recentActivity.map((e) => ({
+        agent: e.agentName,
+        task: e.linearIdentifier,
+        timestamp: e.timestamp,
+      })),
+      lastLinearSync: lastSync?.timestamp,
+      agentHeartbeats: heartbeats,
+    };
   },
 });

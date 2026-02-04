@@ -55,4 +55,14 @@ crons.interval(
   {}
 );
 
+// AGT-218: Cloud-based Auto-Dispatch (24/7)
+// Automatically assigns prioritized tasks to idle agents every 5 minutes
+// Replaces local agent-daemon.sh for production use
+crons.interval(
+  "auto-dispatch-cycle",
+  { minutes: 5 },
+  internal.automation.runAutoDispatchCycleInternal,
+  {}
+);
+
 export default crons;

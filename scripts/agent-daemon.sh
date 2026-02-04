@@ -1,6 +1,13 @@
 #!/bin/bash
 # agent-daemon.sh — AGT-119: Staggered Heartbeat Scheduler (Local Component)
 #
+# ⚠️  DEPRECATED FOR PRODUCTION — AGT-218
+# Production uses Convex crons for 24/7 cloud-based auto-dispatch.
+# See: convex/crons.ts → "auto-dispatch-cycle" (runs every 5 min)
+#
+# This script is kept for local development/testing only.
+# To use production crons, just deploy to Convex — no local daemon needed.
+#
 # Polls Convex for pending dispatches and triggers agent sessions.
 # Run in background: ./scripts/agent-daemon.sh &
 #
