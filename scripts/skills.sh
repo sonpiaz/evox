@@ -202,4 +202,123 @@ get_learnings() {
   fi
 }
 
-echo "✓ Skills loaded. Available: check_queue, send_dm, report_dev, create_ticket, create_bug, commit_task, check_messages, agent_status, queue_task, ping_agent, handoff, log_learning, get_learnings"
+# ============================================================
+# SKILL: check_processes
+# List all running Claude agents and their tasks
+# ============================================================
+check_processes() {
+  echo "=== Running Processes ==="
+  ps aux | grep -E "claude.*--dangerously" | grep -v grep | while read line; do
+    pid=$(echo $line | awk '{print $2}')
+    agent=$(echo $line | grep -oE "You are [A-Z]+" | awk '{print $3}')
+    task=$(echo $line | grep -oE "TASK: AGT-[0-9]+" | awk '{print $2}')
+    echo "$agent | $task | PID: $pid"
+  done
+}
+
+# ============================================================
+# SKILL: kill_agent <agent>
+# Kill an agent and its loop
+# ============================================================
+kill_agent() {
+  local agent="$1"
+  local agent_lower=$(echo "$agent" | tr '[:upper:]' '[:lower:]')
+
+  # Kill agent-loop.sh
+  pkill -f "agent-loop.*$agent_lower" 2>/dev/null
+
+  # Kill claude process
+  pkill -f "claude.*$agent" 2>/dev/null
+
+  echo "✓ Killed $agent"
+}
+
+# ============================================================
+# SKILL: start_agent <agent>
+# Start an agent in current terminal (subscription mode)
+# ============================================================
+start_agent() {
+  local agent="$1"
+  local agent_lower=$(echo "$agent" | tr '[:upper:]' '[:lower:]')
+
+  cd "$(dirname "$0")/.."
+  ./scripts/agent-loop.sh "$agent_lower"
+}
+
+# ============================================================
+# SKILL: deploy_convex
+# Deploy Convex functions
+# ============================================================
+deploy_convex() {
+  echo "Deploying Convex..."
+  npx convex deploy --yes
+}
+
+# ============================================================
+# SKILL: session_summary <session_number>
+# Create a new session summary file from template
+# ============================================================
+session_summary() {
+  local session_num="$1"
+  local date=$(date +%Y-%m-%d)
+  local file="docs/sessions/${date}-session-${session_num}.md"
+
+  mkdir -p docs/sessions
+
+  cat > "$file" << 'TEMPLATE'
+# Session SESSION_NUM — DATE
+
+## Người thực hiện
+- Human:
+- Agent:
+
+## Mục tiêu
+[Mục tiêu chính]
+
+## Đã hoàn thành
+| # | Task | Ticket | Status |
+|---|------|--------|--------|
+| 1 | ... | AGT-XX | ✅ Done |
+
+## Files đã thay đổi
+```
+path/to/file.ts — Mô tả
+```
+
+## Bài học
+1. **Keyword** — Giải thích
+
+## Lỗi & Fix
+| Lỗi | Nguyên nhân | Fix |
+|-----|-------------|-----|
+
+## Còn lại
+- [ ] Task 1
+
+## Commands
+```bash
+# Useful commands
+```
+TEMPLATE
+
+  sed -i '' "s/SESSION_NUM/$session_num/g" "$file"
+  sed -i '' "s/DATE/$date/g" "$file"
+
+  echo "✓ Created $file"
+}
+
+# ============================================================
+# SKILL: push_all
+# Git add, commit and push with standard format
+# ============================================================
+push_all() {
+  local message="$1"
+
+  git add -A
+  git commit -m "$message
+
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
+  git push
+}
+
+echo "✓ Skills loaded. Available: check_queue, send_dm, report_dev, create_ticket, create_bug, commit_task, check_messages, agent_status, queue_task, ping_agent, handoff, log_learning, get_learnings, check_processes, kill_agent, start_agent, deploy_convex, session_summary, push_all"
