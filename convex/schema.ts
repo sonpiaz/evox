@@ -687,6 +687,53 @@ export default defineSchema({
     .index("by_task", ["taskId"])
     .index("by_timestamp", ["createdAt"]),
 
+  // AGT-242: Agent Performance Tracking — Velocity + Cost
+  // Hourly aggregated metrics per agent for Elon Dashboard
+  performanceMetrics: defineTable({
+    // Agent identity
+    agentName: v.string(),                      // "sam", "leo", "max", "quinn"
+
+    // Time bucket
+    hourBucket: v.string(),                     // "2026-02-04T06" (ISO hour bucket)
+    date: v.string(),                           // "2026-02-04" for daily queries
+
+    // Velocity metrics
+    tasksCompleted: v.number(),                 // Tasks completed this hour
+    tasksStarted: v.number(),                   // Tasks started this hour
+    tasksFailed: v.number(),                    // Tasks failed this hour
+
+    // Cost metrics (aggregated from costLogs)
+    totalInputTokens: v.number(),
+    totalOutputTokens: v.number(),
+    totalCost: v.number(),                      // USD
+
+    // Duration metrics (minutes)
+    totalDurationMinutes: v.number(),           // Sum of task durations
+    avgDurationMinutes: v.optional(v.number()), // Average duration this hour
+
+    // Utilization (from heartbeats)
+    activeMinutes: v.number(),                  // Minutes in "busy" or "online" status
+    idleMinutes: v.number(),                    // Minutes in "idle" status
+    offlineMinutes: v.number(),                 // Minutes in "offline" status
+    utilizationPercent: v.optional(v.number()), // activeMinutes / (active + idle) * 100
+
+    // Error tracking
+    errorCount: v.number(),                     // Errors logged this hour
+
+    // Computed metrics (for quick dashboard access)
+    velocityPerHour: v.optional(v.number()),    // Tasks per hour (rolling)
+    avgCostPerTask: v.optional(v.number()),     // Average cost per task
+    errorRate: v.optional(v.number()),          // Errors / total tasks
+
+    // Timestamps
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_agent_hour", ["agentName", "hourBucket"])
+    .index("by_agent_date", ["agentName", "date"])
+    .index("by_hour", ["hourBucket"])
+    .index("by_date", ["date"]),
+
   // AGT-225: QA Agent Integration — Automated Test Gate
   // Stores QA run results for CI/CD quality gates
   qaRuns: defineTable({

@@ -315,6 +315,77 @@ export function AgentProfile({
               </div>
             </div>
 
+            {/* Cost Metrics (7d) — AGT-245 */}
+            {costData && (
+              <div className="rounded border border-[#222] bg-[#0a0a0a] p-3">
+                <div className="text-xs uppercase tracking-wider text-zinc-500 mb-2">Cost (7d)</div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <div className="text-2xl font-bold text-zinc-50">${costData.totals.cost.toFixed(2)}</div>
+                    <div className="text-[10px] text-zinc-600">Total</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-zinc-50">{Math.round(costData.totals.inputTokens / 1000)}k</div>
+                    <div className="text-[10px] text-zinc-600">Input Tokens</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-zinc-50">{Math.round(costData.totals.outputTokens / 1000)}k</div>
+                    <div className="text-[10px] text-zinc-600">Output Tokens</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Execution Stats (24h) — AGT-245 */}
+            {executionSummary && (
+              <div className="rounded border border-[#222] bg-[#0a0a0a] p-3">
+                <div className="text-xs uppercase tracking-wider text-zinc-500 mb-2">Execution (24h)</div>
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  <div>
+                    <div className="text-2xl font-bold text-zinc-50">{executionSummary.files.totalActions}</div>
+                    <div className="text-[10px] text-zinc-600">File Actions</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-zinc-50">{executionSummary.files.uniqueFiles}</div>
+                    <div className="text-[10px] text-zinc-600">Unique Files</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-red-400">{executionSummary.logs.error}</div>
+                    <div className="text-[10px] text-zinc-600">Errors</div>
+                  </div>
+                </div>
+                {executionSummary.recentErrors.length > 0 && (
+                  <div className="rounded bg-red-500/10 border border-red-500/30 px-2 py-1.5">
+                    <div className="text-[10px] uppercase tracking-wider text-red-400 mb-1">Recent Errors</div>
+                    {executionSummary.recentErrors.slice(0, 3).map((err, i) => (
+                      <div key={i} className="text-[11px] text-red-300 truncate">{err.message}</div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Alert Stats (7d) — AGT-245 */}
+            {alertStats && alertStats.total > 0 && (
+              <div className="rounded border border-orange-500/30 bg-orange-500/10 p-3">
+                <div className="text-xs uppercase tracking-wider text-orange-400 mb-2">Alerts (7d)</div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <div className="text-2xl font-bold text-orange-300">{alertStats.total}</div>
+                    <div className="text-[10px] text-orange-600">Total</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-red-400">{alertStats.bySeverity.critical ?? 0}</div>
+                    <div className="text-[10px] text-orange-600">Critical</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-yellow-400">{alertStats.bySeverity.warning ?? 0}</div>
+                    <div className="text-[10px] text-orange-600">Warnings</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Heartbeat Status */}
             {full?.lastHeartbeat != null && (
               <div className="rounded border border-[#222] bg-[#0a0a0a] p-3">
