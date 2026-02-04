@@ -75,27 +75,16 @@ function MetricCard({
   const trendColor = trend === "up" ? "text-emerald-400" : trend === "down" ? "text-red-400" : "text-zinc-500";
 
   return (
-    <div className={cn(
-      "rounded-lg border p-6 transition-all hover:border-white/20",
-      colors.bg,
-      colors.border
-    )}>
-      <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-white/40">
+    <div className="rounded border border-white/10 bg-zinc-900/50 p-4">
+      <div className="mb-1 text-[10px] font-medium uppercase tracking-wider text-white/30">
         {title}
       </div>
-      <div className="flex items-baseline gap-2">
-        <div className={cn("text-4xl font-bold tabular-nums", colors.text)}>
-          {value}
-          {unit && <span className="text-2xl">{unit}</span>}
-        </div>
-        {trend && (
-          <span className={cn("text-sm font-medium", trendColor)}>
-            {trendIcon}
-          </span>
-        )}
+      <div className="text-3xl font-bold tabular-nums text-white">
+        {value}
+        {unit && <span className="text-xl text-white/70">{unit}</span>}
       </div>
       {subtitle && (
-        <div className="mt-2 text-xs text-white/50">{subtitle}</div>
+        <div className="mt-1 text-[10px] text-white/40">{subtitle}</div>
       )}
     </div>
   );
@@ -120,26 +109,18 @@ function AgentBadge({ agent }: { agent: AgentDoc }) {
 
   return (
     <div className={cn(
-      "group relative flex flex-col items-center gap-2 rounded-lg border p-4 transition-all",
-      colors.bg,
-      colors.border,
-      isOnline && isRecent ? "hover:scale-105" : "opacity-60"
+      "flex flex-col items-center gap-2 rounded border p-3",
+      isOnline && isRecent ? "border-white/20 bg-zinc-900/50" : "border-white/5 bg-zinc-900/30 opacity-50"
     )}>
-      <div className="text-3xl">{agent.avatar || "🤖"}</div>
+      <div className="text-2xl">{agent.avatar || "🤖"}</div>
       <div className="text-center">
-        <div className={cn("text-xs font-bold uppercase", colors.text)}>
+        <div className="text-[11px] font-semibold uppercase text-white/90">
           {agent.name}
         </div>
-        <div className="mt-1 text-[10px] text-white/40">
+        <div className="mt-0.5 text-[9px] text-white/30">
           {isRecent ? "Active" : formatDistanceToNow(lastSeen, { addSuffix: true })}
         </div>
       </div>
-
-      {/* Status indicator dot */}
-      <div className={cn(
-        "absolute top-2 right-2 h-2 w-2 rounded-full",
-        isOnline && isRecent ? colors.border.replace("border-", "bg-") : "bg-zinc-700"
-      )} />
     </div>
   );
 }
@@ -165,15 +146,11 @@ function AlertItem({
   const color = colors[severity];
 
   return (
-    <div className={cn(
-      "flex items-start gap-3 rounded-lg border p-3",
-      color.bg,
-      color.border
-    )}>
-      <div className="text-xl">{icon}</div>
+    <div className="flex items-start gap-3 rounded border border-white/10 bg-zinc-900/50 p-3">
+      <div className="text-lg">{icon}</div>
       <div className="flex-1 min-w-0">
-        <div className={cn("text-sm font-semibold", color.text)}>{title}</div>
-        <div className="mt-0.5 text-xs text-white/50">{subtitle}</div>
+        <div className="text-sm font-medium text-white/90">{title}</div>
+        <div className="mt-0.5 text-xs text-white/40">{subtitle}</div>
       </div>
     </div>
   );

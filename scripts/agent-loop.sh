@@ -167,21 +167,46 @@ START IMMEDIATELY. Zero questions. Ship it."
   echo "Starting Claude for $TICKET..."
   echo ""
 
-  # === 6. RUN CLAUDE ===
+  # === 6. RUN CLAUDE WITH SELF-HEALING (AGT-251) ===
   # Note: Headless mode requires API credits (not subscription)
   # Add credits at: https://console.anthropic.com/settings/billing
-  if claude --dangerously-skip-permissions "$PROMPT"; then
-    echo ""
-    echo "✅ $TICKET COMPLETED"
-    if [ -n "$DISPATCH_ID" ] && [ "$DISPATCH_ID" != "null" ]; then
-      curl -s "$CONVEX_URL/markDispatchCompleted?dispatchId=$DISPATCH_ID" > /dev/null 2>&1 || true
+
+  MAX_RETRIES=3
+  RETRY_COUNT=0
+  TASK_SUCCESS=false
+
+  while [ $RETRY_COUNT -lt $MAX_RETRIES ] && [ "$TASK_SUCCESS" = "false" ]; do
+    if [ $RETRY_COUNT -gt 0 ]; then
+      BACKOFF_SECONDS=$((2 ** $RETRY_COUNT))
+      echo ""
+      echo "⚠️  Retry attempt $RETRY_COUNT/$MAX_RETRIES after ${BACKOFF_SECONDS}s backoff..."
+      sleep $BACKOFF_SECONDS
     fi
-  else
-    echo ""
-    echo "❌ $TICKET FAILED"
-    if [ -n "$DISPATCH_ID" ] && [ "$DISPATCH_ID" != "null" ]; then
-      curl -s "$CONVEX_URL/markDispatchFailed?dispatchId=$DISPATCH_ID&error=claude_error" > /dev/null 2>&1 || true
+
+    if claude --dangerously-skip-permissions "$PROMPT"; then
+      echo ""
+      echo "✅ $TICKET COMPLETED"
+      TASK_SUCCESS=true
+      if [ -n "$DISPATCH_ID" ] && [ "$DISPATCH_ID" != "null" ]; then
+        curl -s "$CONVEX_URL/markDispatchCompleted?dispatchId=$DISPATCH_ID" > /dev/null 2>&1 || true
+      fi
+    else
+      RETRY_COUNT=$((RETRY_COUNT + 1))
+      echo ""
+      echo "❌ Attempt $RETRY_COUNT failed"
     fi
+  done
+
+  # If all retries exhausted, escalate
+  if [ "$TASK_SUCCESS" = "false" ]; then
+    echo ""
+    echo "🚨 $TICKET FAILED after $MAX_RETRIES attempts — ESCALATING"
+    if [ -n "$DISPATCH_ID" ] && [ "$DISPATCH_ID" != "null" ]; then
+      curl -s "$CONVEX_URL/markDispatchFailed?dispatchId=$DISPATCH_ID&error=retry_exhausted" > /dev/null 2>&1 || true
+    fi
+
+    # Log failure to Convex
+    npx convex run agentActions:reportFailure "{\"agent\":\"$AGENT_LOWER\",\"ticket\":\"$TICKET\",\"error\":\"Exhausted $MAX_RETRIES retries\",\"retryable\":false}" > /dev/null 2>&1 || true
   fi
 
   echo ""
