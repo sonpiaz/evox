@@ -802,14 +802,12 @@ export const requestWork = mutation({
     }
 
     // 2. Try auto-dispatch using existing automation system
-    const result = await ctx.scheduler.runAfter(0, internal.automation.autoDispatchForAgent, {
+    // Schedule it to run asynchronously
+    await ctx.scheduler.runAfter(0, internal.automation.autoDispatchForAgentInternal, {
       agentName: args.agent,
     });
 
-    // 3. If auto-dispatch succeeded, we're done
-    // If not, ping MAX for manual dispatch
-
-    // Create notification for MAX if no work found
+    // 3. Log activity immediately (dispatch happens async)
     const maxAgent = await ctx.db
       .query("agents")
       .withIndex("by_name", (q) => q.eq("name", "MAX"))
