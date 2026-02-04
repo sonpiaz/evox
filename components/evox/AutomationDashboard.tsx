@@ -321,7 +321,7 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
         <div className="space-y-2">
           {cronStatus.crons.map((cron: CronJob, i: number) => {
             const nextRun = getNextRunTime(cron);
-            const isImminent = nextRun !== "—" && parseInt(nextRun) <= 2;
+            const isImminent = nextRun === "now" || (nextRun !== "—" && parseInt(nextRun) <= 2);
             return (
               <div
                 key={i}
