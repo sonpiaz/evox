@@ -1,6 +1,10 @@
 # EVOX Mission Control — Agent Rules
 
-Auto-loaded every Claude Code session. Last updated: Feb 1, 2026.
+Auto-loaded every Claude Code session. Last updated: Feb 4, 2026.
+
+## Constitution
+
+**Read First:** [docs/VISION.md](docs/VISION.md) — The organizational DNA, values, and genius thinking framework.
 
 ## Project
 
@@ -20,7 +24,7 @@ Auto-loaded every Claude Code session. Last updated: Feb 1, 2026.
 | Quinn | QA | `*.test.ts`, `e2e/`, code review |
 | Max | PM | Linear docs, planning, coordination |
 
-**Rule:** Do NOT edit another agent's territory. Create a task instead.
+**Rule:** Territories are guidelines, not walls. Cross-territory edits allowed — just report in #dev.
 
 ## Agent Instructions
 - Sam: [Linear Doc](https://linear.app/affitorai/document/sam-instructions-backend-agent-a0ad2c23626a)

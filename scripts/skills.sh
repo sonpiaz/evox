@@ -162,4 +162,44 @@ handoff() {
   report_dev "$from" "🤝 Handed off $ticket to @$to: $message"
 }
 
-echo "✓ Skills loaded. Available: check_queue, send_dm, report_dev, create_ticket, create_bug, commit_task, check_messages, agent_status, queue_task, ping_agent, handoff"
+# ============================================================
+# SKILL: log_learning <agent> <ticket> <title> <summary> [files] [patterns]
+# Log session learning before ending
+# ============================================================
+log_learning() {
+  local agent="$1"
+  local ticket="$2"
+  local title="$3"
+  local summary="$4"
+  local files="${5:-[]}"
+  local patterns="${6:-}"
+
+  curl -s -X POST "$CONVEX_URL/v2/learn" \
+    -H "Content-Type: application/json" \
+    -d "{
+      \"agent\": \"$agent\",
+      \"taskId\": \"$ticket\",
+      \"taskTitle\": \"$title\",
+      \"summary\": \"$summary\",
+      \"files\": $files,
+      \"patterns\": \"$patterns\",
+      \"tags\": [\"session\", \"$(date +%Y-%m-%d)\"]
+    }"
+}
+
+# ============================================================
+# SKILL: get_learnings [agent] [limit]
+# Read learnings from team
+# ============================================================
+get_learnings() {
+  local agent="${1:-}"
+  local limit="${2:-10}"
+
+  if [ -n "$agent" ]; then
+    curl -s "$CONVEX_URL/v2/learnings?agent=$agent&limit=$limit"
+  else
+    curl -s "$CONVEX_URL/v2/learnings?limit=$limit"
+  fi
+}
+
+echo "✓ Skills loaded. Available: check_queue, send_dm, report_dev, create_ticket, create_bug, commit_task, check_messages, agent_status, queue_task, ping_agent, handoff, log_learning, get_learnings"

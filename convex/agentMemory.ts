@@ -336,6 +336,56 @@ _Protocol version: 1.0_`;
   },
 });
 
+// AGT-241: SEED - Initialize Genius DNA for all agents
+export const seedGeniusDNA = mutation({
+  handler: async (ctx) => {
+    const agents = await ctx.db.query("agents").collect();
+    const now = Date.now();
+    let updated = 0;
+
+    // Genius DNA mapping per agent (from VISION.md)
+    const geniusDNAMap: Record<string, string> = {
+      max: "von Neumann + Feynman + Musk",
+      sam: "Shannon + Turing + Carmack",
+      leo: "Tesla + Dirac + Rams",
+      quinn: "Bach + Dijkstra + Taleb",
+    };
+
+    for (const agent of agents) {
+      const nameLower = agent.name.toLowerCase();
+      const dna = geniusDNAMap[nameLower];
+
+      if (!dna) {
+        // Skip agents without DNA mapping
+        continue;
+      }
+
+      // Update SOUL memory with geniusDNA field
+      const existingSoul = await ctx.db
+        .query("agentMemory")
+        .withIndex("by_agent_type", (q) =>
+          q.eq("agentId", agent._id).eq("type", "soul")
+        )
+        .first();
+
+      if (existingSoul) {
+        await ctx.db.patch(existingSoul._id, {
+          geniusDNA: dna,
+          updatedAt: now,
+          version: existingSoul.version + 1,
+        });
+        updated++;
+      }
+    }
+
+    return {
+      message: `Updated Genius DNA for ${updated} agents`,
+      updated,
+      total: agents.length,
+    };
+  },
+});
+
 // SEED - Initialize SOUL.md for all agents (one-time migration)
 export const seedSoulMemories = mutation({
   handler: async (ctx) => {

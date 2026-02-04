@@ -349,6 +349,7 @@ export default defineSchema({
   // Agent persistent memory (ADR-002: Hierarchical Memory Architecture)
   // AGT-107: SOUL.md per agent, AGT-109: WORKING.md per agent, AGT-110: Daily notes
   // AGT-194: heartbeat_protocol - system-wide protocol (stored under MAX)
+  // AGT-241: geniusDNA - Genius thinking framework per agent
   agentMemory: defineTable({
     agentId: v.id("agents"),
     type: v.union(
@@ -359,6 +360,7 @@ export default defineSchema({
     ),
     content: v.string(),
     date: v.optional(v.string()), // For daily notes: YYYY-MM-DD
+    geniusDNA: v.optional(v.string()), // AGT-241: Genius DNA (von Neumann, Feynman, etc.)
     createdAt: v.number(),
     updatedAt: v.number(),
     version: v.number(), // Optimistic concurrency
