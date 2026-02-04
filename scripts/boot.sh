@@ -70,7 +70,23 @@ fi
 
 # All agents now use Claude Code
 OUTPUT_FILE=".claude-context"
-echo "$CONTEXT" > "$OUTPUT_FILE"
+
+# Load unified identity from agents/*.md (Single Source of Truth)
+IDENTITY_FILE="agents/$AGENT.md"
+if [ -f "$IDENTITY_FILE" ]; then
+  echo "Loading identity from $IDENTITY_FILE..."
+  IDENTITY=$(cat "$IDENTITY_FILE")
+  # Prepend identity to context
+  echo "$IDENTITY" > "$OUTPUT_FILE"
+  echo "" >> "$OUTPUT_FILE"
+  echo "---" >> "$OUTPUT_FILE"
+  echo "" >> "$OUTPUT_FILE"
+  echo "$CONTEXT" >> "$OUTPUT_FILE"
+else
+  echo "Warning: No identity file at $IDENTITY_FILE"
+  echo "$CONTEXT" > "$OUTPUT_FILE"
+fi
+
 echo "Context ready at $OUTPUT_FILE for Claude Code"
 
 # Show summary

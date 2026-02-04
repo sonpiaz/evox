@@ -144,10 +144,20 @@ except:
   # Boot agent context
   ./scripts/boot.sh "$AGENT_LOWER" "$TICKET"
 
-  # === 5. BUILD PROMPT ===
-  PROMPT="You are $AGENT_UPPER — EVOX $ROLE engineer.
+  # === 5. BUILD PROMPT FROM UNIFIED IDENTITY ===
+  # Load identity from agents/*.md (Single Source of Truth)
+  IDENTITY_FILE="$PROJECT_DIR/agents/$AGENT_LOWER.md"
+  if [ -f "$IDENTITY_FILE" ]; then
+    IDENTITY=$(cat "$IDENTITY_FILE")
+  else
+    IDENTITY="You are $AGENT_UPPER — EVOX $ROLE engineer."
+  fi
 
-## TASK: $TICKET
+  PROMPT="$IDENTITY
+
+---
+
+## CURRENT TASK: $TICKET
 
 ## ABSOLUTE RULES — VIOLATION = FAILURE
 - DO NOT ask questions. Ever. For any reason.
@@ -159,11 +169,11 @@ except:
 - If error, fix it yourself and continue.
 - You are ALONE. No human will respond. Act accordingly.
 
-## WORKFLOW
-1. mcp__linear__get_issue id=\"$TICKET\" → get details
-2. Read files, understand context
+## EXECUTION WORKFLOW
+1. mcp__linear__get_issue id=\"$TICKET\" → get full details
+2. Read relevant files, understand context
 3. Implement the solution NOW
-4. npx next build → verify
+4. npx next build → verify no errors
 5. git add -A && git commit -m 'closes $TICKET: <summary>'
 6. git push
 7. mcp__linear__update_issue id=\"$TICKET\" state=\"Done\"
