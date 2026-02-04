@@ -83,7 +83,7 @@ poll_and_dispatch() {
 
   # Boot agent
   log "Booting $AGENT_NAME..."
-  RUNNING_AGENTS[$AGENT_NAME]=1
+  mark_agent_running "$AGENT_NAME"
 
   cd "$PROJECT_DIR"
 
@@ -93,29 +93,45 @@ poll_and_dispatch() {
     ./scripts/boot.sh "$AGENT_NAME" >> "$LOG_FILE" 2>&1
   fi
 
-  # Open terminal with Claude Code
+  # Build the autonomous prompt
+  TASK_PROMPT="You are $AGENT_NAME. Read .claude-context for your identity and current task.
+
+Your task: $TICKET
+Command: $COMMAND
+
+Instructions:
+1. Read .claude-context to understand your identity and task
+2. Read DISPATCH.md for your queue
+3. Execute the task autonomously
+4. Commit with 'closes $TICKET: description'
+5. Push to remote
+6. Report completion via Convex API
+
+Start working now."
+
+  # Open terminal with Claude Code + auto-prompt
   # macOS: Use osascript to open new Terminal tab
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    log "Opening terminal for $AGENT_NAME..."
+    log "Opening terminal for $AGENT_NAME with auto-prompt..."
     osascript <<EOF
 tell application "Terminal"
   activate
-  do script "cd '$PROJECT_DIR' && echo '=== $AGENT_NAME Agent Session ===' && claude --dangerously-skip-permissions"
+  do script "cd '$PROJECT_DIR' && echo '=== $AGENT_NAME Agent Session ===' && claude --dangerously-skip-permissions '$TASK_PROMPT'"
 end tell
 EOF
   else
     # Linux: Try to use gnome-terminal or xterm
     if command -v gnome-terminal &> /dev/null; then
-      gnome-terminal -- bash -c "cd '$PROJECT_DIR' && echo '=== $AGENT_NAME Agent Session ===' && claude --dangerously-skip-permissions; exec bash"
+      gnome-terminal -- bash -c "cd '$PROJECT_DIR' && echo '=== $AGENT_NAME Agent Session ===' && claude --dangerously-skip-permissions '$TASK_PROMPT'; exec bash"
     elif command -v xterm &> /dev/null; then
-      xterm -e "cd '$PROJECT_DIR' && echo '=== $AGENT_NAME Agent Session ===' && claude --dangerously-skip-permissions; exec bash" &
+      xterm -e "cd '$PROJECT_DIR' && echo '=== $AGENT_NAME Agent Session ===' && claude --dangerously-skip-permissions '$TASK_PROMPT'; exec bash" &
     fi
   fi
 
   log "$AGENT_NAME session started"
 
   # Clear running flag after delay (allow time for agent to work)
-  (sleep 300 && unset "RUNNING_AGENTS[$AGENT_NAME]") &
+  (sleep 300 && clear_agent_running "$AGENT_NAME") &
 }
 
 # Main loop
