@@ -4097,4 +4097,43 @@ http.route({
   }),
 });
 
+// ============================================================
+// P0 CEO REQUEST: Channel Messages with Keywords
+// For LEO's AgentCommsWidget
+// ============================================================
+
+/**
+ * GET /getChannelMessagesWithKeywords — Get channel messages with extracted keywords
+ * Query params: channel (optional), limit (optional, default 20)
+ * Returns: { messages: [{ id, sender, channel, keywords[], summary, timestamp }], count, updatedAt }
+ */
+http.route({
+  path: "/getChannelMessagesWithKeywords",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const channel = url.searchParams.get("channel") || undefined;
+      const limitParam = url.searchParams.get("limit");
+      const limit = limitParam ? parseInt(limitParam, 10) : 20;
+
+      const result = await ctx.runQuery(api.agentMessages.getChannelMessagesWithKeywords, {
+        channel,
+        limit,
+      });
+
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("getChannelMessagesWithKeywords error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
 export default http;

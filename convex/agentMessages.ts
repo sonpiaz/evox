@@ -369,3 +369,116 @@ export const cleanupSpam = mutation({
     return { deleted, message: `Cleaned up ${deleted} spam messages` };
   },
 });
+
+// ============================================================================
+// P0 CEO REQUEST: Channel Messages with Keywords
+// For LEO's AgentCommsWidget
+// ============================================================================
+
+/**
+ * Extract keywords from message content
+ * - Ticket IDs: AGT-XXX, #AGT-XXX
+ * - Actions: shipped, fixed, blocked, completed, started, deployed, merged
+ * - Components: dashboard, api, backend, frontend, convex, etc.
+ */
+function extractKeywords(content: string): string[] {
+  const keywords: Set<string> = new Set();
+
+  // Ticket IDs (AGT-123, #AGT-123)
+  const ticketRegex = /#?(AGT-\d+)/gi;
+  const ticketMatches = content.matchAll(ticketRegex);
+  for (const match of ticketMatches) {
+    keywords.add(match[1].toUpperCase());
+  }
+
+  // Action words
+  const actionWords = [
+    "shipped", "fixed", "blocked", "completed", "started",
+    "deployed", "merged", "done", "working", "reviewing",
+    "testing", "failed", "passed", "error", "success",
+    "✅", "❌", "🔄", "🚀", "⚠️"
+  ];
+  const contentLower = content.toLowerCase();
+  for (const action of actionWords) {
+    if (contentLower.includes(action.toLowerCase())) {
+      keywords.add(action);
+    }
+  }
+
+  // Component/area keywords
+  const componentWords = [
+    "dashboard", "api", "backend", "frontend", "convex",
+    "schema", "endpoint", "widget", "component", "hook",
+    "agent", "dispatch", "health", "metrics", "test"
+  ];
+  for (const comp of componentWords) {
+    if (contentLower.includes(comp)) {
+      keywords.add(comp);
+    }
+  }
+
+  // Limit to 5 keywords, prioritize tickets
+  const result = Array.from(keywords);
+  const tickets = result.filter(k => k.startsWith("AGT-"));
+  const others = result.filter(k => !k.startsWith("AGT-"));
+  return [...tickets, ...others].slice(0, 5);
+}
+
+/**
+ * Get channel messages with extracted keywords
+ * For AgentCommsWidget - shows agent communication activity
+ */
+export const getChannelMessagesWithKeywords = query({
+  args: {
+    channel: v.optional(v.string()), // Filter by channel (dev, general, design)
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, { channel, limit = 20 }) => {
+    // Get channel messages from activityEvents
+    let events = await ctx.db
+      .query("activityEvents")
+      .withIndex("by_category", (q) => q.eq("category", "message"))
+      .order("desc")
+      .take(limit * 2); // Get more to filter
+
+    // Filter by channel if specified
+    if (channel) {
+      events = events.filter((e) =>
+        e.title?.toLowerCase().includes(`#${channel.toLowerCase()}`)
+      );
+    }
+
+    // Limit after filtering
+    events = events.slice(0, limit);
+
+    // Transform to response format
+    const messages = events.map((e) => {
+      const content = e.description ?? "";
+      const keywords = extractKeywords(content);
+
+      // Extract channel from title (e.g., "Posted to #dev")
+      const channelMatch = e.title?.match(/#(\w+)/);
+      const msgChannel = channelMatch ? channelMatch[1] : "general";
+
+      // Create summary (first 100 chars)
+      const summary = content.length > 100
+        ? content.slice(0, 100) + "..."
+        : content;
+
+      return {
+        id: e._id,
+        sender: e.agentName,
+        channel: msgChannel,
+        keywords,
+        summary,
+        timestamp: e.timestamp,
+      };
+    });
+
+    return {
+      messages,
+      count: messages.length,
+      updatedAt: Date.now(),
+    };
+  },
+});

@@ -43,18 +43,18 @@ Rationale: Self-healing is prerequisite for Agent-Led Development and Revenue-Ge
 | v2 Messaging Endpoints | Sam | AGT-236 |
 | QA Agent Integration | Quinn | AGT-225 |
 
-### 🔴 P0 — In Progress
+### 🔴 P0 — Final Item
 
 | ID | Feature | Owner | Status | Linear |
 |----|---------|-------|--------|--------|
-| F1.1 | @mention notification alerts | Sam | 📋 To Do | [AGT-271](https://linear.app/affitorai/issue/AGT-271) |
-| F1.2 | Agent heartbeat monitoring | Sam | 📋 To Do | [AGT-273](https://linear.app/affitorai/issue/AGT-273) |
-| F1.3 | Terminal UI for Agents | Sam | ✅ MVP Done | [AGT-274](https://linear.app/affitorai/issue/AGT-274) |
+| F1.2 | Agent heartbeat UI (frontend) | Leo | ⏳ Pending | [AGT-273](https://linear.app/affitorai/issue/AGT-273) |
 
 ### ✅ Recently Completed
 
 | Feature | Owner | Ticket |
 |---------|-------|--------|
+| @mention notification alerts | Sam | AGT-271 |
+| Terminal UI for Agents | Sam | AGT-274 |
 | Git activity on dashboard | Leo | AGT-272 |
 | Per-agent completion stats | Sam | AGT-268 |
 | Cost tracking per task | Sam | AGT-193, AGT-81 |
@@ -63,7 +63,7 @@ Rationale: Self-healing is prerequisite for Agent-Led Development and Revenue-Ge
 | CEO Dashboard North Star | Leo | AGT-254 |
 | Elon Dashboard Metrics | Leo | AGT-238 |
 
-### Success Criteria
+### Success Criteria (7/8 = 87.5%)
 
 - [x] All 4 agents communicating via Convex
 - [x] CEO can see all agent activity in <3 seconds
@@ -71,8 +71,8 @@ Rationale: Self-healing is prerequisite for Agent-Led Development and Revenue-Ge
 - [x] Per-agent stats visible (AGT-268)
 - [x] Cost tracking implemented (AGT-193)
 - [x] Git activity visible (AGT-272)
-- [ ] @mentions alert the relevant agent (AGT-271)
-- [ ] Heartbeat shows online/offline status (AGT-273)
+- [x] @mentions alert the relevant agent (AGT-271) ✅
+- [ ] Heartbeat shows online/offline status (AGT-273) — Backend ✅, Frontend ⏳
 
 ---
 
@@ -80,16 +80,16 @@ Rationale: Self-healing is prerequisite for Agent-Led Development and Revenue-Ge
 
 > **Goal:** Agents detect problems, fix them automatically, and learn from mistakes.
 
-### Tickets Created
+### Progress: 4/6 = 66% Complete
 
-| Ticket | Feature | Owner | Priority |
-|--------|---------|-------|----------|
-| [AGT-276](https://linear.app/affitorai/issue/AGT-276) | Auto-Retry Failed Tasks | Sam | High |
-| [AGT-277](https://linear.app/affitorai/issue/AGT-277) | Git Rollback Mechanism | Sam | High |
-| [AGT-278](https://linear.app/affitorai/issue/AGT-278) | Auto-Detect Blockers & Escalate | Max | High |
-| [AGT-279](https://linear.app/affitorai/issue/AGT-279) | Quinn Auto-Review on PR | Quinn | High |
-| [AGT-280](https://linear.app/affitorai/issue/AGT-280) | Self-Improvement Loop | All | Medium |
-| [AGT-281](https://linear.app/affitorai/issue/AGT-281) | Health & Error Dashboard | Leo | Medium |
+| Ticket | Feature | Owner | Status |
+|--------|---------|-------|--------|
+| [AGT-276](https://linear.app/affitorai/issue/AGT-276) | Auto-Retry Failed Tasks | Sam | ✅ Done |
+| [AGT-277](https://linear.app/affitorai/issue/AGT-277) | Git Rollback Mechanism | Sam | ✅ Done |
+| [AGT-278](https://linear.app/affitorai/issue/AGT-278) | Auto-Detect Blockers & Escalate | Max | ⏳ Backlog |
+| [AGT-279](https://linear.app/affitorai/issue/AGT-279) | Quinn Auto-Review on PR | Quinn | ✅ Done |
+| [AGT-280](https://linear.app/affitorai/issue/AGT-280) | Self-Improvement Loop | All | ⏳ Backlog |
+| [AGT-281](https://linear.app/affitorai/issue/AGT-281) | Health & Error Dashboard | Leo | ✅ Done |
 
 ### Success Criteria
 
@@ -129,10 +129,10 @@ Rationale: Self-healing is prerequisite for Agent-Led Development and Revenue-Ge
 
 | Priority | Ticket | Task | Owner | Status |
 |----------|--------|------|-------|--------|
-| P0 | [AGT-274](https://linear.app/affitorai/issue/AGT-274) | Terminal UI | Sam | ✅ MVP Done |
+| P0 | [AGT-273](https://linear.app/affitorai/issue/AGT-273) | Heartbeat UI (frontend) | Leo | ⏳ Pending |
 | P0 | [AGT-251](https://linear.app/affitorai/issue/AGT-251) | 100x Autonomy | All | In Progress |
-| P0 | [AGT-271](https://linear.app/affitorai/issue/AGT-271) | @mention notifications | Sam | To Do |
-| P0 | [AGT-273](https://linear.app/affitorai/issue/AGT-273) | Agent heartbeat | Sam | To Do |
+| ✅ | [AGT-274](https://linear.app/affitorai/issue/AGT-274) | Terminal UI | Sam | Done |
+| ✅ | [AGT-271](https://linear.app/affitorai/issue/AGT-271) | @mention notifications | Sam | Done |
 | ✅ | [AGT-272](https://linear.app/affitorai/issue/AGT-272) | Git activity feed | Leo | Done |
 | ✅ | [AGT-268](https://linear.app/affitorai/issue/AGT-268) | Per-agent stats | Sam | Done |
 | ✅ | [AGT-193](https://linear.app/affitorai/issue/AGT-193) | Cost tracking | Sam | Done |
@@ -177,6 +177,8 @@ All goals achieved:
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
+| Feb 5 | Phase 1 at 87.5%, only AGT-273 UI remaining | CEO review confirmed progress |
+| Feb 5 | Phase 2 at 66% (4/6 items done) | Self-healing momentum strong |
 | Feb 5 | Next North Star: Self-Healing System | Foundation for Agent-Led Development; lower risk |
 | Feb 5 | Phase 2 = Self-Healing, Phase 3 = Agent-Led | Logical progression: visibility → resilience → autonomy |
 | Feb 5 | Created 10 new tickets (AGT-276 to AGT-288) | Concrete roadmap for next 3 months |

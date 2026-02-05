@@ -1,7 +1,13 @@
+- [AGT-314] [P0] Dashboard v0.2 — Lean Rebuild (Todo) @unassigned
+- [AGT-309] [AGT-293-R] Research: CEO dashboard patterns (Todo) @unassigned
+- [AGT-306] [AGT-292-1] Fix markDispatch POST APIs - Deploy to Convex (Todo) @unassigned
 - [AGT-304] [EPIC-MAX] System Redesign & Coordination (In Progress) @guru.sonpiaz@gmail.com
+- [AGT-296] [EPIC-ALEX] Documentation Overhaul (Todo) @unassigned
 - [AGT-295] [EPIC-QUINN] Test Automation Suite (Todo) @unassigned
 - [AGT-294] [EPIC-MAYA] Design System - EVOX Visual Language (Todo) @unassigned
 - [AGT-285] Refactor: Use AgentStatusIndicator consistently across all components (In Review) @guru.sonpiaz@gmail.com
+- [AGT-280] [Phase 2] Self-Improvement Loop - Learn from Mistakes (Todo) @unassigned
+- [AGT-278] [Phase 2] Auto-Detect Blockers & Escalate (Todo) @unassigned
 - [AGT-273] Agent heartbeat monitoring (In Progress) @unassigned
 - [AGT-251] [P0] 100x Autonomy — Delete All Human Bottlenecks (In Progress) @unassigned
 - [AGT-187] [VoiceFlow] P1: Setup iOS Shortcut + Whisper API (Todo) @Son Piaz

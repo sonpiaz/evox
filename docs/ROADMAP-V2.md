@@ -48,8 +48,10 @@
 | 1.18 | Audit all docs - find outdated | ALEX | ⬜ | AGT-296 |
 | 1.19 | Coordinate & dispatch agents | MAX | 🔄 | AGT-304 |
 | 1.20 | Update roadmap daily | MAX | 🔄 | — |
+| 1.21 | API: getChannelMessagesWithKeywords | SAM | ✅ | — |
+| 1.22 | AgentCommsWidget (3-5 keywords) | LEO | 🔄 | — |
 
-**Phase 1 Progress: 13/20 = 65%**
+**Phase 1 Progress: 13/22 = 59%**
 
 ---
 
@@ -66,7 +68,7 @@
 | 2.5 | Circuit breaker pattern | SAM | ✅ | — |
 | 2.6 | Auto-recovery on stuck | SAM | ✅ | — |
 | 2.7 | Context auto-compact | SAM | 🔄 | — |
-| 2.8 | Rate limit handling | SAM | ⬜ | — |
+| 2.8 | Rate limit handling | SAM | ✅ | — |
 | 2.9 | CEO dashboard v2 wireframes | MAYA | ✅ | AGT-310 |
 | 2.10 | Build SystemHealthWidget v2 | LEO | ✅ | AGT-311 |
 | 2.11 | Build VelocityWidget v2 | LEO | ✅ | AGT-312 |
@@ -98,7 +100,7 @@
 | 3.5 | Multi-project support | SAM | ⬜ | — |
 | 3.6 | Agent leveling system | SAM | ⬜ | AGT-121 |
 | 3.7 | Cost optimization | SAM | ⬜ | — |
-| 3.8 | Task history tracking | SAM | ⬜ | — |
+| 3.8 | Task history tracking | SAM | ✅ | — |
 | 3.9 | Performance analytics | SAM | ⬜ | — |
 | 3.10 | Auto-PR review & merge | QUINN | ⬜ | AGT-279 |
 | 3.11 | Regression tests | QUINN | ⬜ | — |
