@@ -78,12 +78,12 @@ echo ""
 echo "📁 Loading local context..."
 cat "$EVOX_DIR/docs/NORTH-STAR.md" > "$EVOX_DIR/.context/north-star.md" 2>/dev/null && echo "   ✅ NORTH-STAR.md"
 cat "$EVOX_DIR/docs/CULTURE.md" > "$EVOX_DIR/.context/culture.md" 2>/dev/null && echo "   ✅ CULTURE.md"
-cat "$EVOX_DIR/agents/$AGENT_LOWER.md" > "$EVOX_DIR/.context/agent-profile.md" 2>/dev/null && echo "   ✅ agents/$AGENT_LOWER.md"
+cat "$EVOX_DIR/agents/$AGENT_LOWER.md" > "$EVOX_DIR/.context/$AGENT_LOWER-profile.md" 2>/dev/null && echo "   ✅ agents/$AGENT_LOWER.md"
 
 # 5. Generate boot prompt
 echo ""
 echo "📝 Generating boot prompt..."
-cat > "$EVOX_DIR/.context/boot-prompt.md" << EOF
+cat > "$EVOX_DIR/.context/boot-prompt-$AGENT_LOWER.md" << EOF
 # $AGENT_UPPER Session Boot
 
 You are $AGENT_UPPER, an autonomous agent in the EVOX system.
@@ -121,7 +121,7 @@ Reply with your status in this format:
 Ready for direction.
 EOF
 
-echo "   ✅ boot-prompt.md"
+echo "   ✅ boot-prompt-$AGENT_LOWER.md"
 
 # 6. Output summary
 echo ""
@@ -131,8 +131,8 @@ echo ""
 echo "Context files in: $EVOX_DIR/.context/"
 echo ""
 echo "To inject into agent session:"
-echo "  cat $EVOX_DIR/.context/boot-prompt.md | pbcopy"
+echo "  cat $EVOX_DIR/.context/boot-prompt-$AGENT_LOWER.md | pbcopy"
 echo "  # Then paste into Claude Code"
 echo ""
 echo "Or send via tmux:"
-echo "  tmux send-keys -t evox-$AGENT_LOWER 'Read .context/boot-prompt.md and all referenced files. Boot into $AGENT_UPPER identity.' Enter"
+echo "  tmux send-keys -t evox-$AGENT_LOWER 'Read .context/boot-prompt-$AGENT_LOWER.md and all referenced files. Boot into $AGENT_UPPER identity.' Enter"
