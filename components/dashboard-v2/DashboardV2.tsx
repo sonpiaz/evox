@@ -19,6 +19,7 @@ import { AlertsBanner } from "./AlertsBanner";
 import { ActivityFeed } from "./ActivityFeed";
 import { DispatchList } from "./DispatchList";
 import { AgentCommsWidget } from "./AgentCommsWidget";
+import { ProposalList } from "./ProposalList";
 
 export function DashboardV2() {
   const status = useQuery(api.http.getStatus);
@@ -119,10 +120,15 @@ export function DashboardV2() {
           <ActivityFeed activities={activities} limit={10} />
         </section>
 
-        {/* Dispatch List */}
-        <section>
-          <DispatchList dispatches={dispatches} limit={5} />
-        </section>
+        {/* Proposals + Dispatch */}
+        <div className="space-y-6">
+          <section>
+            <ProposalList limit={5} />
+          </section>
+          <section>
+            <DispatchList dispatches={dispatches} limit={5} />
+          </section>
+        </div>
       </div>
 
       {/* Footer */}

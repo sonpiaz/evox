@@ -108,6 +108,9 @@ export default defineSchema({
     retryCount: v.optional(v.number()),
     lastError: v.optional(v.string()),
     escalatedAt: v.optional(v.number()),
+    // AGT-316: Blocker Detection
+    blockedBy: v.optional(v.array(v.string())),  // Task IDs or Linear identifiers blocking this task
+    blockedSince: v.optional(v.number()),         // Timestamp when task became blocked
   })
     .index("by_project", ["projectId"])
     .index("by_status", ["status"])

@@ -158,53 +158,6 @@ function MetricCard({
   );
 }
 
-/** Agent row with status - Mobile optimized with 44px touch target */
-function AgentRow({ agent, tasksToday, cost, isActive }: {
-  agent: AgentDoc;
-  tasksToday: number;
-  cost: number;
-  isActive: boolean;
-}) {
-  const status = agent.status?.toLowerCase() || "offline";
-
-  // AGT-285: Use consistent status colors per AGT-273
-  const statusColors = {
-    online: "bg-green-500",
-    busy: "bg-yellow-500",
-    idle: "bg-zinc-500",
-    offline: "bg-red-500",
-  };
-
-  const dotColor = statusColors[status as keyof typeof statusColors] || statusColors.offline;
-
-  return (
-    <button
-      type="button"
-      className={cn(
-        // 44px min touch target
-        "flex items-center gap-3 rounded-lg border border-white/5 bg-zinc-900/30 px-3 sm:px-4 py-3 min-h-[52px] w-full text-left",
-        "transition-all active:scale-[0.98] touch-manipulation hover:bg-zinc-800/50",
-        !isActive && "opacity-50"
-      )}
-    >
-      <div className="text-xl sm:text-2xl">{agent.avatar || "🤖"}</div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className={cn(
-            "h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full shrink-0",
-            dotColor,
-            isActive && status === "busy" && "animate-pulse"
-          )} />
-          <span className="text-sm sm:text-base font-semibold uppercase text-white/90">{agent.name}</span>
-        </div>
-      </div>
-      <div className="text-right">
-        <div className="text-base sm:text-lg font-bold text-white tabular-nums">{tasksToday}</div>
-        <div className="text-[11px] sm:text-xs text-white/50">${cost.toFixed(2)}</div>
-      </div>
-    </button>
-  );
-}
 
 /** Alert Row - Mobile optimized with touch target */
 function AlertRow({ icon, text, severity }: {
@@ -506,21 +459,56 @@ export function CEODashboard({ className }: CEODashboardProps) {
 
       {/* Row 2: Team + Alerts + Activity - Mobile responsive */}
       <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-        {/* Team Status */}
-        <div className="flex flex-col min-h-0">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2">
-            Team Status
+        {/* Team Summary (compact — full list in Agents tab) */}
+        <div className="flex flex-col min-h-0 gap-3">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-white/40">
+            Team Summary
           </div>
-          <div className="flex-1 min-h-0 overflow-y-auto space-y-2">
-            {agentMetrics.map(({ agent, tasksToday, cost, isActive }) => (
-              <AgentRow
-                key={agent._id}
-                agent={agent}
-                tasksToday={tasksToday}
-                cost={cost}
-                isActive={isActive}
-              />
-            ))}
+          <div className="rounded-lg border border-white/10 bg-zinc-900/50 p-3 space-y-3">
+            {/* Online / Total */}
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-white/50">Status</span>
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-green-500" />
+                <span className="text-sm font-bold text-white tabular-nums">
+                  {metrics.activeAgents}/{metrics.totalAgents}
+                </span>
+                <span className="text-xs text-white/40">online</span>
+              </div>
+            </div>
+            {/* Top Performer */}
+            {agentMetrics.length > 0 && agentMetrics[0].tasksToday > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-white/50">Top Performer</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-base">{agentMetrics[0].agent.avatar || "🤖"}</span>
+                  <span className="text-sm font-semibold text-emerald-400 uppercase">
+                    {agentMetrics[0].agent.name}
+                  </span>
+                  <span className="text-xs text-white/40">{agentMetrics[0].tasksToday} tasks</span>
+                </div>
+              </div>
+            )}
+            {/* Per-agent mini strip */}
+            <div className="flex gap-2 pt-1 border-t border-white/5">
+              {agentMetrics.map(({ agent, isActive }) => {
+                const status = agent.status?.toLowerCase() || "offline";
+                const dotColors: Record<string, string> = {
+                  online: "bg-green-500",
+                  busy: "bg-yellow-500",
+                  idle: "bg-zinc-500",
+                  offline: "bg-red-500",
+                };
+                return (
+                  <div key={agent._id} className="flex items-center gap-1.5" title={`${agent.name} — ${status}`}>
+                    <span className={cn("h-2 w-2 rounded-full shrink-0", dotColors[status] || dotColors.offline)} />
+                    <span className={cn("text-[10px] font-medium uppercase", isActive ? "text-white/70" : "text-white/30")}>
+                      {agent.name}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 

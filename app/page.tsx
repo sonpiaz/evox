@@ -27,6 +27,7 @@ import { DirectMessagesView } from "@/components/evox/DirectMessagesView";
 import { CommunicationLog } from "@/components/evox/CommunicationLog";
 import { ElonDashboard } from "@/components/evox/ElonDashboard";
 import { CEODashboard } from "@/components/evox/CEODashboard";
+import { AgentsPage } from "@/components/dashboard-v2/agents-page";
 import type { KanbanTask } from "@/components/dashboard-v2/task-card";
 import type { DateFilterMode } from "@/components/dashboard-v2/date-filter";
 
@@ -172,6 +173,9 @@ export default function Home() {
           <div className="flex-1 min-h-0 overflow-hidden">
             {activeViewTab === "ceo" && (
               <CEODashboard className="h-full" />
+            )}
+            {activeViewTab === "agents" && (
+              <AgentsPage agents={agentsList} />
             )}
             {activeViewTab === "kanban" && (
               <MissionQueue

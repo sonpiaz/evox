@@ -17,3 +17,7 @@ export { VelocityWidget } from "./VelocityWidget";
 
 // Agent communication widget
 export { AgentCommsWidget } from "./AgentCommsWidget";
+
+// Proposal voting (AGT-283/AGT-284)
+export { ProposalCard } from "./ProposalCard";
+export { ProposalList } from "./ProposalList";
