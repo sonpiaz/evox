@@ -77,7 +77,7 @@
 | 2.16 | Integration tests - Convex | QUINN | 🔄 | AGT-295 |
 | 2.17 | API documentation update | ALEX | ⬜ | AGT-296 |
 | 2.18 | Agent onboarding guide | ELLA | ⬜ | AGT-299 |
-| 2.19 | Alert design system | MAYA | 🔄 | — |
+| 2.19 | Alert design system | MAYA | ✅ | — |
 | 2.20 | Research self-healing patterns | COLE | 🔄 | — |
 | 2.21 | Priority voting design | MAX | ⬜ | AGT-284 |
 

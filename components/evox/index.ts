@@ -81,6 +81,25 @@ export { ScratchPad } from "./ScratchPad";
 export { CommentThreadV2 } from "./CommentThreadV2";
 
 // ============================================
+// ALERTS & NOTIFICATIONS
+// ============================================
+export { Toast, type ToastProps, type ToastSeverity } from "./Toast";
+export {
+  AlertBanner,
+  AgentOfflineAlert,
+  TaskBlockedAlert,
+  type AlertBannerProps,
+  type AlertBannerAction,
+} from "./AlertBanner";
+export {
+  InlineAlert,
+  ValidationAlert,
+  SuccessMessage,
+  ErrorMessage,
+  type InlineAlertProps,
+} from "./InlineAlert";
+
+// ============================================
 // MODALS & OVERLAYS
 // ============================================
 export { AgentSettingsModal } from "./AgentSettingsModal";
