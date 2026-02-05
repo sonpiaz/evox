@@ -73,15 +73,15 @@
 | 2.12 | Mobile responsive dashboard | LEO | ✅ | — |
 | 2.13 | Dashboard alerts | LEO | ⬜ | — |
 | 2.14 | E2E tests - dashboard | QUINN | ✅ | AGT-295 |
-| 2.15 | E2E tests - dispatch flow | QUINN | 🔄 | AGT-295 |
-| 2.16 | Integration tests - Convex | QUINN | ⬜ | AGT-295 |
+| 2.15 | E2E tests - dispatch flow | QUINN | ✅ | AGT-295 |
+| 2.16 | Integration tests - Convex | QUINN | 🔄 | AGT-295 |
 | 2.17 | API documentation update | ALEX | ⬜ | AGT-296 |
 | 2.18 | Agent onboarding guide | ELLA | ⬜ | AGT-299 |
 | 2.19 | Alert design system | MAYA | 🔄 | — |
 | 2.20 | Research self-healing patterns | COLE | 🔄 | — |
 | 2.21 | Priority voting design | MAX | ⬜ | AGT-284 |
 
-**Phase 2 Progress: 4/21 = 19%**
+**Phase 2 Progress: 5/21 = 24%**
 
 ---
 
