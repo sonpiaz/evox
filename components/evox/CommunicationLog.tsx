@@ -5,6 +5,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { extractKeywords, generateSummary, formatAsHashtags } from "@/lib/extractKeywords";
 
 interface CommunicationLogProps {
   className?: string;
@@ -206,6 +207,25 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                   <p className="text-sm text-zinc-300 leading-relaxed">
                     {msg.content}
                   </p>
+
+                  {/* Keywords */}
+                  {(() => {
+                    const keywords = extractKeywords(msg.content || "");
+                    const hashtags = formatAsHashtags(keywords.all, 4);
+                    if (hashtags.length === 0) return null;
+                    return (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {hashtags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-[10px] text-cyan-400 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    );
+                  })()}
 
                   {/* Task Reference */}
                   {msg.taskRefDisplay && (

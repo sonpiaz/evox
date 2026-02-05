@@ -309,7 +309,6 @@ export const checkAndAutoSpawn = internalAction({
       // Limit: max 2 agents per role
       const currentCount = await ctx.runQuery(internal.agentTemplates.countAgentsByRole, { role: rec.role });
       if (currentCount >= 2) {
-        console.log(`[AutoSpawn] Skipping ${rec.role}: already at max (2 agents)`);
         continue;
       }
 
@@ -321,7 +320,6 @@ export const checkAndAutoSpawn = internalAction({
 
         if (result.success) {
           spawned.push({ role: rec.role, name: result.name });
-          console.log(`[AutoSpawn] Spawned ${result.name} (${rec.role}): ${rec.reason}`);
         }
       } catch (error) {
         console.error(`[AutoSpawn] Failed to spawn ${rec.role}:`, error);

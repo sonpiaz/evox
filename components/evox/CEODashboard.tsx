@@ -557,8 +557,19 @@ export function CEODashboard({ className }: CEODashboardProps) {
           </div>
         </div>
 
-        {/* Activity Feed */}
+        {/* Activity + Agent Comms */}
         <div className="flex flex-col min-h-0">
+          {/* Agent Communications with Keywords */}
+          <div className="mb-3">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2 flex items-center gap-1">
+              <span>💬</span> Agent Comms
+            </div>
+            <div className="rounded border border-white/5 bg-zinc-900/30 p-2 max-h-40 overflow-y-auto">
+              <AgentCommunicationFeed limit={5} compact />
+            </div>
+          </div>
+
+          {/* Live Activity */}
           <div className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2">
             Live Activity
           </div>

@@ -75,11 +75,6 @@ export async function POST(request: NextRequest) {
 
     const payload = JSON.parse(bodyText);
 
-    console.log(`GitHub webhook: ${eventType}`, {
-      ref: payload.ref,
-      commits: payload.commits?.length,
-    });
-
     // Only process push events
     if (eventType !== "push") {
       return NextResponse.json({
@@ -94,8 +89,6 @@ export async function POST(request: NextRequest) {
     const result = await convex.action(api.webhooks.processGitHubPush, {
       payload,
     });
-
-    console.log("GitHub push processed:", result);
 
     return NextResponse.json({
       success: true,
