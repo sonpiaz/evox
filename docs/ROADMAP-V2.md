@@ -71,7 +71,7 @@
 | 2.10 | Build SystemHealthWidget v2 | LEO | ✅ | AGT-311 |
 | 2.11 | Build VelocityWidget v2 | LEO | ✅ | AGT-312 |
 | 2.12 | Mobile responsive dashboard | LEO | ✅ | — |
-| 2.13 | Dashboard alerts | LEO | ⬜ | — |
+| 2.13 | Dashboard alerts | LEO | ✅ | — |
 | 2.14 | E2E tests - dashboard | QUINN | ✅ | AGT-295 |
 | 2.15 | E2E tests - dispatch flow | QUINN | ✅ | AGT-295 |
 | 2.16 | Integration tests - Convex | QUINN | 🔄 | AGT-295 |
@@ -81,7 +81,7 @@
 | 2.20 | Research self-healing patterns | COLE | 🔄 | — |
 | 2.21 | Priority voting design | MAX | ⬜ | AGT-284 |
 
-**Phase 2 Progress: 7/21 = 33%**
+**Phase 2 Progress: 8/21 = 38%**
 
 ---
 
