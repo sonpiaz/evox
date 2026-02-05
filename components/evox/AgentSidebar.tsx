@@ -7,15 +7,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { useViewerMode } from "@/contexts/ViewerModeContext";
-
-/** Status colors per ticket spec */
-const statusColors: Record<string, string> = {
-  idle: "#00cc88",
-  online: "#00cc88",
-  working: "#3b82f6",
-  busy: "#3b82f6",
-  offline: "#555555",
-};
+import { AgentStatusIndicator } from "./AgentStatusIndicator";
 
 const roleLabels: Record<string, string> = {
   pm: "PM",
@@ -127,7 +119,6 @@ export function AgentSidebar({
       <nav className="flex-1 overflow-y-auto" aria-label="Agent list">
         {agents.map((agent) => {
           const status = (agent.status ?? "offline").toLowerCase();
-          const dotColor = statusColors[status] ?? statusColors.offline;
           const isSelected = selectedAgentId === agent._id;
           const working = isWorking(status);
 
@@ -145,11 +136,11 @@ export function AgentSidebar({
                 isSelected && "border-l-2 border-white bg-[#1a1a1a]"
               )}
             >
-              {/* Status dot */}
-              <div
-                className={cn("h-2.5 w-2.5 shrink-0 rounded-full", working && "agent-pulse")}
-                style={{ backgroundColor: dotColor }}
-                aria-hidden
+              {/* Status dot — AGT-285: Use AgentStatusIndicator for consistency */}
+              <AgentStatusIndicator
+                status={status}
+                showPulse={working}
+                size="md"
               />
 
               {/* Avatar */}
