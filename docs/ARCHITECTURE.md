@@ -60,11 +60,32 @@ Agent commits → GitHub webhook → Convex logs → Dashboard shows
 
 | Table | Purpose | Key Fields |
 |-------|---------|------------|
-| `agents` | Agent registry | name, role, status |
-| `dispatches` | Task queue | agentId, command, status |
-| `unifiedMessages` | All comms | fromAgent, toAgent, content |
-| `activityEvents` | Activity log | agentName, category, title |
+| `agents` | Agent registry | name, role, status, currentTask |
+| `dispatches` | Task queue | agentId, command, status, priority |
+| `unifiedMessages` | All comms | fromAgent, toAgent, content, type |
+| `activityEvents` | Activity log | agentName, eventType, linearIdentifier |
 | `gitActivity` | Commits | commitHash, agentName, branch |
+| `executionLogs` | Agent logs | agentName, level, message |
+| `learnings` | Team knowledge | agentName, category, content |
+
+## Activity Feed System
+
+Real-time activity tracking with Linear-style events.
+
+### Event Types
+| Type | Icon | Trigger |
+|------|------|---------|
+| `created` | 🟢 | Task created |
+| `status_change` | 🔵 | Task moved |
+| `completed` | ✅ | Task done |
+| `assigned` | 👤 | Task assigned |
+| `push` | 📤 | Git push |
+| `deploy_success` | 🚀 | Deploy complete |
+
+### Components
+- `ActivityFeed.tsx` - General event stream
+- `AgentActivityFeed.tsx` - Per-agent status
+- `CommunicationLog.tsx` - Message history
 
 ## API Layers
 
