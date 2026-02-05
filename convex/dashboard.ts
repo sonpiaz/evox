@@ -12,6 +12,7 @@
  */
 import { query } from "./_generated/server";
 import { v } from "convex/values";
+import { Doc } from "./_generated/dataModel";
 
 // Agent is "active" if lastSeen within 5 minutes
 const ACTIVE_THRESHOLD_MS = 5 * 60 * 1000;
@@ -105,5 +106,76 @@ export const getStats = query({
       taskCounts,
       lastSyncTime,
     };
+  },
+});
+
+// Agent avatar/color mapping for live stream display
+const AGENT_COLORS: Record<string, string> = {
+  max: "#8B5CF6",   // purple
+  sam: "#3B82F6",   // blue
+  leo: "#10B981",   // green
+  quinn: "#F59E0B", // amber
+  ella: "#EC4899",  // pink
+  maya: "#F97316",  // orange
+};
+
+const AGENT_AVATARS: Record<string, string> = {
+  max: "👨‍💼",
+  sam: "⚙️",
+  leo: "🎨",
+  quinn: "🔍",
+  ella: "📝",
+  maya: "🎯",
+};
+
+/**
+ * AGT-321: Live Activity Stream
+ *
+ * Aggregates recent activity events across all agents into a unified
+ * real-time feed. Uses Convex subscriptions for instant updates.
+ *
+ * Returns last N events sorted by timestamp (newest first), enriched
+ * with agent color/avatar for frontend rendering.
+ */
+export const getLiveStream = query({
+  args: {
+    limit: v.optional(v.number()), // Default 20, max 50
+  },
+  handler: async (ctx, args) => {
+    const limit = Math.min(args.limit ?? 20, 50);
+
+    // Query activityEvents by timestamp (desc) — uses by_timestamp index
+    const events = await ctx.db
+      .query("activityEvents")
+      .withIndex("by_timestamp")
+      .order("desc")
+      .take(limit);
+
+    // Enrich with agent display info
+    return events.map((event) => {
+      const agentKey = event.agentName?.toLowerCase() ?? "system";
+      return {
+        _id: event._id,
+        // Agent info
+        agentName: event.agentName,
+        agentColor: AGENT_COLORS[agentKey] ?? "#6B7280",
+        agentAvatar: AGENT_AVATARS[agentKey] ?? "🤖",
+        // Event info
+        category: event.category,
+        eventType: event.eventType,
+        title: event.title,
+        description: event.description,
+        // References
+        linearIdentifier: event.linearIdentifier,
+        taskId: event.taskId,
+        // Metadata subset for display
+        commitHash: event.metadata?.commitHash,
+        branch: event.metadata?.branch,
+        fromStatus: event.metadata?.fromStatus,
+        toStatus: event.metadata?.toStatus,
+        // Timing
+        timestamp: event.timestamp,
+      };
+    });
   },
 });
