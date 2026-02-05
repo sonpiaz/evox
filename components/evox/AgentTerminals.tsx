@@ -57,13 +57,13 @@ export function AgentTerminals() {
         </button>
       </div>
 
-      {/* Agent Tabs */}
-      <div className="flex border-b border-gray-800">
+      {/* Agent Tabs - Scrollable on mobile */}
+      <div className="flex overflow-x-auto border-b border-gray-800 scrollbar-hide">
         {AGENTS.map((agent) => (
           <button
             key={agent.id}
             onClick={() => setSelectedAgent(selectedAgent?.id === agent.id ? null : agent)}
-            className={`flex-1 px-4 py-2 text-sm font-medium transition ${
+            className={`flex-shrink-0 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition ${
               selectedAgent?.id === agent.id
                 ? 'bg-gray-800 text-white border-b-2'
                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
@@ -72,23 +72,23 @@ export function AgentTerminals() {
               borderBottomColor: selectedAgent?.id === agent.id ? agent.color : 'transparent',
             }}
           >
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-1 sm:gap-2">
               <span
                 className="w-2 h-2 rounded-full animate-pulse"
                 style={{ backgroundColor: agent.color }}
               />
               <span>{agent.name}</span>
-              <span className="text-xs text-gray-500">({agent.role})</span>
+              <span className="hidden sm:inline text-xs text-gray-500">({agent.role})</span>
             </div>
           </button>
         ))}
       </div>
 
-      {/* Terminal Iframe */}
+      {/* Terminal Iframe - Responsive height */}
       {selectedAgent && (
         <div
           className={`transition-all duration-300 ${
-            isExpanded ? 'h-[600px]' : 'h-[300px]'
+            isExpanded ? 'h-[400px] sm:h-[600px]' : 'h-[200px] sm:h-[300px]'
           }`}
         >
           <iframe

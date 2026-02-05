@@ -104,15 +104,15 @@ export function AgentSidebar({
   return (
     <aside
       className={cn(
-        "flex w-[220px] shrink-0 flex-col border-r border-[#222222] bg-[#111111]",
+        "flex w-[220px] shrink-0 flex-col border-r border-zinc-800 bg-zinc-900",
         className
       )}
     >
-      <div className="flex shrink-0 items-center justify-between border-b border-[#222222] px-3 py-2">
-        <span className="text-[10px] uppercase tracking-[0.2em] text-[#888888]">
+      <div className="flex shrink-0 items-center justify-between border-b border-zinc-800 px-3 py-2">
+        <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">
           Agents
         </span>
-        <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-[#888888]">
+        <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500">
           {agents.length}
         </span>
       </div>
@@ -131,9 +131,9 @@ export function AgentSidebar({
               aria-label={`${agent.name}, ${roleLabels[agent.role] ?? agent.role}, ${working ? "working" : status}`}
               aria-current={isSelected ? "true" : undefined}
               className={cn(
-                "flex h-16 w-full cursor-pointer items-center gap-3 border-b border-[#222222] px-3 text-left transition-colors duration-150",
-                "hover:bg-[#1a1a1a]",
-                isSelected && "border-l-2 border-white bg-[#1a1a1a]"
+                "flex h-16 w-full cursor-pointer items-center gap-3 border-b border-zinc-800 px-3 text-left transition-colors duration-150",
+                "hover:bg-zinc-800",
+                isSelected && "border-l-2 border-white bg-zinc-800"
               )}
             >
               {/* Status dot — AGT-285: Use AgentStatusIndicator for consistency */}
@@ -151,34 +151,34 @@ export function AgentSidebar({
               {/* Name + Role + Task */}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="truncate text-sm font-medium text-[#fafafa]">
+                  <span className="truncate text-sm font-medium text-zinc-50">
                     {agent.name}
                   </span>
-                  <span className="shrink-0 text-xs text-[#888888]">
+                  <span className="shrink-0 text-xs text-zinc-500">
                     {roleLabels[agent.role] ?? agent.role}
                   </span>
                 </div>
                 {working && agent.currentTaskIdentifier && (
                   <>
                     <div className="mt-0.5 flex items-center gap-1.5">
-                      <span className="font-mono text-xs text-[#3b82f6]">
+                      <span className="font-mono text-xs text-blue-500">
                         {agent.currentTaskIdentifier}
                       </span>
                       {agent.statusSince && (
-                        <span className="text-[10px] text-[#555555]">
+                        <span className="text-[10px] text-zinc-600">
                           {formatDistanceToNow(agent.statusSince, { addSuffix: false })}
                         </span>
                       )}
                     </div>
                     {agent.currentTaskTitle && (
-                      <div className="mt-0.5 truncate text-[11px] text-[#888888]">
+                      <div className="mt-0.5 truncate text-[11px] text-zinc-500">
                         {agent.currentTaskTitle}
                       </div>
                     )}
                   </>
                 )}
                 {!working && (
-                  <div className="mt-0.5 text-xs text-[#555555]">
+                  <div className="mt-0.5 text-xs text-zinc-600">
                     {status === "idle" || status === "online" ? "Idle" : "Offline"}
                   </div>
                 )}

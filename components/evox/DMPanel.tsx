@@ -79,7 +79,7 @@ export function DMPanel({
   return (
     <div
       className={cn(
-        "flex flex-col h-full bg-[#0a0a0a] border-l border-[#222]",
+        "flex flex-col h-full bg-zinc-950 border-l border-zinc-800",
         className
       )}
     >
