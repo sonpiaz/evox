@@ -8,16 +8,14 @@
 
 ### 1. Khi BẮT ĐẦU task
 ```bash
-curl -X POST "https://gregarious-elk-556.convex.site/markDispatchRunning" \
-  -H "Content-Type: application/json" \
-  -d '{"dispatchId": "<your-dispatch-id>"}'
+# Use GET with query params (currently deployed)
+curl -s "https://gregarious-elk-556.convex.site/markDispatchRunning?dispatchId=<your-dispatch-id>"
 ```
 
 ### 2. Khi HOÀN THÀNH task
 ```bash
-curl -X POST "https://gregarious-elk-556.convex.site/markDispatchCompleted" \
-  -H "Content-Type: application/json" \
-  -d '{"dispatchId": "<your-dispatch-id>", "result": "Brief summary of what was done"}'
+# Use GET with query params (currently deployed)
+curl -s "https://gregarious-elk-556.convex.site/markDispatchCompleted?dispatchId=<your-dispatch-id>&result=Brief+summary"
 ```
 
 ### 3. Khi BỊ BLOCK
@@ -55,15 +53,10 @@ curl -X POST "https://gregarious-elk-556.convex.site/v2/sendMessage" \
 ## Example: SAM completes AGT-268
 
 ```bash
-# 1. Mark complete
-curl -X POST "https://gregarious-elk-556.convex.site/markDispatchCompleted" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "dispatchId": "jx7bz4vw1smqssfz664f",
-    "result": "AGT-268 implemented: agentStats endpoints added to convex/"
-  }'
+# 1. Mark complete (GET with query params)
+curl -s "https://gregarious-elk-556.convex.site/markDispatchCompleted?dispatchId=jx7bz4vw1smqssfz664f&result=AGT-268+implemented"
 
-# 2. Post to channel
+# 2. Post to channel (POST with JSON body)
 curl -X POST "https://gregarious-elk-556.convex.site/postToChannel" \
   -H "Content-Type: application/json" \
   -d '{
@@ -88,8 +81,8 @@ curl -X POST "https://gregarious-elk-556.convex.site/postToChannel" \
 
 | Action | Endpoint |
 |--------|----------|
-| Start task | `POST /markDispatchRunning` |
-| Complete task | `POST /markDispatchCompleted` |
+| Start task | `GET /markDispatchRunning?dispatchId=ID` |
+| Complete task | `GET /markDispatchCompleted?dispatchId=ID&result=summary` |
 | Post update | `POST /postToChannel` |
 | Report blocker | `POST /v2/sendMessage` (to CEO) |
 | Get next task | `GET /getNextDispatchForAgent?agent=NAME` |

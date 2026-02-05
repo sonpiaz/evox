@@ -81,21 +81,20 @@ After responding to ALL messages, say MESSAGES_DONE."
   # 2. Check for work
   echo "📋 Checking dispatch queue..."
   WORK=$(check_work)
-  HAS_WORK=$(echo "$WORK" | python3 -c "import sys,json; d=json.load(sys.stdin); print('yes' if d and d.get('_id') else 'no')" 2>/dev/null || echo "no")
-  
+  # API returns dispatchId, not _id
+  HAS_WORK=$(echo "$WORK" | python3 -c "import sys,json; d=json.load(sys.stdin); print('yes' if d and d.get('dispatchId') else 'no')" 2>/dev/null || echo "no")
+
   if [ "$HAS_WORK" = "yes" ]; then
-    DISPATCH_ID=$(echo "$WORK" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('_id',''))" 2>/dev/null)
+    DISPATCH_ID=$(echo "$WORK" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('dispatchId',''))" 2>/dev/null)
     COMMAND=$(echo "$WORK" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('command',''))" 2>/dev/null)
     PAYLOAD=$(echo "$WORK" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('payload',''))" 2>/dev/null)
-    
+
     echo "   🎯 Found work: $COMMAND"
     echo "   📦 Dispatch ID: $DISPATCH_ID"
-    
-    # Mark as running
-    curl -s -X POST "$EVOX_API/markDispatchRunning" \
-      -H "Content-Type: application/json" \
-      -d "{\"dispatchId\": \"$DISPATCH_ID\"}" 2>/dev/null
-    
+
+    # Mark as running (using GET with query param - deployed endpoint)
+    curl -s "$EVOX_API/markDispatchRunning?dispatchId=$DISPATCH_ID" 2>/dev/null
+
     PROMPT="You are $AGENT_UPPER. You have a task assigned.
 
 TASK: $COMMAND
@@ -109,7 +108,7 @@ DO THE WORK. When complete:
 1. Commit your changes if any: git add -A && git commit -m 'feat: description'
 2. Mark complete:
    \`\`\`bash
-   curl -X POST '$EVOX_API/markDispatchCompleted' -H 'Content-Type: application/json' -d '{\"dispatchId\": \"$DISPATCH_ID\", \"result\": \"Brief summary of what you did\"}'
+   curl -s '$EVOX_API/markDispatchCompleted?dispatchId=$DISPATCH_ID&result=Brief+summary'
    \`\`\`
 3. Post to dev channel:
    \`\`\`bash
@@ -119,7 +118,7 @@ DO THE WORK. When complete:
 Start working now."
 
     timeout 600 claude --dangerously-skip-permissions "$PROMPT" 2>/dev/null || true
-    
+
   else
     echo "   😴 No pending work"
   fi

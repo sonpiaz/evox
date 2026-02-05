@@ -47,10 +47,10 @@ curl -X POST '$EVOX_API/v2/sendMessage' -H 'Content-Type: application/json' -d '
 curl -s '$EVOX_API/getNextDispatchForAgent?agent=$AGENT_UPPER'
 \`\`\`
 
-If you have a dispatch:
-1. Mark it running: curl -X POST '$EVOX_API/markDispatchRunning' -H 'Content-Type: application/json' -d '{\"dispatchId\": \"ID\"}'
+If you have a dispatch (dispatchId in response):
+1. Mark it running: curl -s '$EVOX_API/markDispatchRunning?dispatchId=ID'
 2. Do the work
-3. Mark complete: curl -X POST '$EVOX_API/markDispatchCompleted' -H 'Content-Type: application/json' -d '{\"dispatchId\": \"ID\", \"result\": \"summary\"}'
+3. Mark complete: curl -s '$EVOX_API/markDispatchCompleted?dispatchId=ID&result=summary'
 
 ## STEP 3: IF NO DISPATCH, CHECK BACKLOG
 Read your agent file first: cat agents/$AGENT_LOWER.md
