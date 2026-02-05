@@ -423,3 +423,460 @@ export const getCostSummary = query({
     };
   },
 });
+
+// =============================================================================
+// P1 METRICS: VELOCITY, COMPLETION TIME, COST PER TASK
+// =============================================================================
+
+/**
+ * P1: Get agent velocity metrics
+ * Tasks per hour, per agent, with trend analysis
+ */
+export const getAgentVelocity = query({
+  args: {
+    agentName: v.optional(v.string()),
+    hours: v.optional(v.number()), // Last N hours (default 24)
+  },
+  handler: async (ctx, args) => {
+    const hours = args.hours || 24;
+    const now = Date.now();
+    const startTime = now - hours * 60 * 60 * 1000;
+
+    // Get performance metrics for the period
+    const metrics = await ctx.db
+      .query("performanceMetrics")
+      .collect();
+
+    // Filter by time and optionally by agent
+    const filtered = metrics.filter(m => {
+      const hourTs = new Date(m.hourBucket + ":00:00Z").getTime();
+      if (hourTs < startTime) return false;
+      if (args.agentName && m.agentName !== args.agentName) return false;
+      return true;
+    });
+
+    // Group by agent
+    const byAgent: Record<string, {
+      agentName: string;
+      totalCompleted: number;
+      totalFailed: number;
+      hoursActive: number;
+      velocityPerHour: number;
+      peakHour: string;
+      peakVelocity: number;
+    }> = {};
+
+    for (const m of filtered) {
+      if (!byAgent[m.agentName]) {
+        byAgent[m.agentName] = {
+          agentName: m.agentName,
+          totalCompleted: 0,
+          totalFailed: 0,
+          hoursActive: 0,
+          velocityPerHour: 0,
+          peakHour: "",
+          peakVelocity: 0,
+        };
+      }
+      byAgent[m.agentName].totalCompleted += m.tasksCompleted;
+      byAgent[m.agentName].totalFailed += m.tasksFailed;
+      byAgent[m.agentName].hoursActive += 1;
+
+      // Track peak hour
+      if (m.tasksCompleted > byAgent[m.agentName].peakVelocity) {
+        byAgent[m.agentName].peakVelocity = m.tasksCompleted;
+        byAgent[m.agentName].peakHour = m.hourBucket;
+      }
+    }
+
+    // Calculate velocity per hour
+    for (const agent of Object.values(byAgent)) {
+      agent.velocityPerHour = agent.hoursActive > 0
+        ? Math.round((agent.totalCompleted / agent.hoursActive) * 10) / 10
+        : 0;
+    }
+
+    // Hourly trend (all agents combined or single agent)
+    const hourlyTrend: { hour: string; completed: number; failed: number }[] = [];
+    const hourBuckets = new Map<string, { completed: number; failed: number }>();
+
+    for (const m of filtered) {
+      const existing = hourBuckets.get(m.hourBucket) || { completed: 0, failed: 0 };
+      existing.completed += m.tasksCompleted;
+      existing.failed += m.tasksFailed;
+      hourBuckets.set(m.hourBucket, existing);
+    }
+
+    for (const [hour, data] of Array.from(hourBuckets.entries()).sort()) {
+      hourlyTrend.push({ hour, ...data });
+    }
+
+    const totalCompleted = Object.values(byAgent).reduce((sum, a) => sum + a.totalCompleted, 0);
+    const totalHours = Object.values(byAgent).reduce((sum, a) => sum + a.hoursActive, 0);
+
+    return {
+      hours,
+      agentName: args.agentName,
+      totalCompleted,
+      overallVelocity: totalHours > 0 ? Math.round((totalCompleted / totalHours) * 10) / 10 : 0,
+      byAgent: Object.values(byAgent).sort((a, b) => b.velocityPerHour - a.velocityPerHour),
+      hourlyTrend,
+    };
+  },
+});
+
+/**
+ * P1: Get task completion time metrics
+ * Average time from task start to completion
+ */
+export const getTaskCompletionTime = query({
+  args: {
+    agentName: v.optional(v.string()),
+    days: v.optional(v.number()), // Last N days (default 7)
+  },
+  handler: async (ctx, args) => {
+    const days = args.days || 7;
+    const now = Date.now();
+    const startTime = now - days * 24 * 60 * 60 * 1000;
+
+    // Get completed tasks with timing data
+    const tasks = await ctx.db
+      .query("tasks")
+      .withIndex("by_status", (q) => q.eq("status", "done"))
+      .collect();
+
+    // Filter by time and agent
+    const completedTasks = tasks.filter(t => {
+      if (!t.completedAt || t.completedAt < startTime) return false;
+      if (args.agentName && t.agentName !== args.agentName) return false;
+      return true;
+    });
+
+    // Calculate completion times
+    const completionTimes: {
+      taskId: string;
+      agentName: string;
+      durationMinutes: number;
+      completedAt: number;
+    }[] = [];
+
+    for (const task of completedTasks) {
+      // Duration = completedAt - updatedAt (when moved to in_progress)
+      // Approximation: use createdAt if no better data
+      const startTime = task.createdAt;
+      const endTime = task.completedAt!;
+      const durationMinutes = Math.round((endTime - startTime) / (60 * 1000));
+
+      completionTimes.push({
+        taskId: task.linearIdentifier || task._id,
+        agentName: task.agentName || "unknown",
+        durationMinutes,
+        completedAt: endTime,
+      });
+    }
+
+    // Group by agent
+    const byAgent: Record<string, {
+      agentName: string;
+      taskCount: number;
+      totalMinutes: number;
+      avgMinutes: number;
+      minMinutes: number;
+      maxMinutes: number;
+    }> = {};
+
+    for (const ct of completionTimes) {
+      if (!byAgent[ct.agentName]) {
+        byAgent[ct.agentName] = {
+          agentName: ct.agentName,
+          taskCount: 0,
+          totalMinutes: 0,
+          avgMinutes: 0,
+          minMinutes: Infinity,
+          maxMinutes: 0,
+        };
+      }
+      byAgent[ct.agentName].taskCount += 1;
+      byAgent[ct.agentName].totalMinutes += ct.durationMinutes;
+      byAgent[ct.agentName].minMinutes = Math.min(byAgent[ct.agentName].minMinutes, ct.durationMinutes);
+      byAgent[ct.agentName].maxMinutes = Math.max(byAgent[ct.agentName].maxMinutes, ct.durationMinutes);
+    }
+
+    // Calculate averages
+    for (const agent of Object.values(byAgent)) {
+      agent.avgMinutes = agent.taskCount > 0
+        ? Math.round(agent.totalMinutes / agent.taskCount)
+        : 0;
+      if (agent.minMinutes === Infinity) agent.minMinutes = 0;
+    }
+
+    // Daily trend
+    const dailyTrend: { date: string; avgMinutes: number; taskCount: number }[] = [];
+    const byDay = new Map<string, { total: number; count: number }>();
+
+    for (const ct of completionTimes) {
+      const date = new Date(ct.completedAt).toISOString().split("T")[0];
+      const existing = byDay.get(date) || { total: 0, count: 0 };
+      existing.total += ct.durationMinutes;
+      existing.count += 1;
+      byDay.set(date, existing);
+    }
+
+    for (const [date, data] of Array.from(byDay.entries()).sort()) {
+      dailyTrend.push({
+        date,
+        avgMinutes: Math.round(data.total / data.count),
+        taskCount: data.count,
+      });
+    }
+
+    const totalMinutes = completionTimes.reduce((sum, ct) => sum + ct.durationMinutes, 0);
+    const avgMinutes = completionTimes.length > 0 ? Math.round(totalMinutes / completionTimes.length) : 0;
+
+    return {
+      days,
+      agentName: args.agentName,
+      totalTasks: completionTimes.length,
+      avgCompletionMinutes: avgMinutes,
+      byAgent: Object.values(byAgent).sort((a, b) => a.avgMinutes - b.avgMinutes),
+      dailyTrend,
+      recentCompletions: completionTimes.slice(-10).reverse(),
+    };
+  },
+});
+
+/**
+ * P1: Get cost per task metrics
+ * Detailed cost breakdown per task and agent
+ */
+export const getCostPerTask = query({
+  args: {
+    agentName: v.optional(v.string()),
+    days: v.optional(v.number()), // Last N days (default 7)
+  },
+  handler: async (ctx, args) => {
+    const days = args.days || 7;
+    const now = Date.now();
+    const startTime = now - days * 24 * 60 * 60 * 1000;
+
+    // Get cost logs
+    const costLogs = await ctx.db
+      .query("costLogs")
+      .withIndex("by_timestamp")
+      .filter((q) => q.gte(q.field("timestamp"), startTime))
+      .collect();
+
+    // Filter by agent if specified
+    const filtered = args.agentName
+      ? costLogs.filter(l => l.agentName === args.agentName)
+      : costLogs;
+
+    // Group by task
+    const byTask: Record<string, {
+      taskId: string;
+      agentName: string;
+      totalCost: number;
+      totalTokens: number;
+      entries: number;
+    }> = {};
+
+    for (const log of filtered) {
+      const taskKey = log.linearIdentifier || log.taskId?.toString() || "no-task";
+      if (!byTask[taskKey]) {
+        byTask[taskKey] = {
+          taskId: taskKey,
+          agentName: log.agentName,
+          totalCost: 0,
+          totalTokens: 0,
+          entries: 0,
+        };
+      }
+      byTask[taskKey].totalCost += log.cost;
+      byTask[taskKey].totalTokens += log.inputTokens + log.outputTokens;
+      byTask[taskKey].entries += 1;
+    }
+
+    // Group by agent
+    const byAgent: Record<string, {
+      agentName: string;
+      totalCost: number;
+      taskCount: number;
+      avgCostPerTask: number;
+      totalTokens: number;
+      avgTokensPerTask: number;
+    }> = {};
+
+    for (const task of Object.values(byTask)) {
+      if (!byAgent[task.agentName]) {
+        byAgent[task.agentName] = {
+          agentName: task.agentName,
+          totalCost: 0,
+          taskCount: 0,
+          avgCostPerTask: 0,
+          totalTokens: 0,
+          avgTokensPerTask: 0,
+        };
+      }
+      byAgent[task.agentName].totalCost += task.totalCost;
+      byAgent[task.agentName].totalTokens += task.totalTokens;
+      byAgent[task.agentName].taskCount += 1;
+    }
+
+    // Calculate averages
+    for (const agent of Object.values(byAgent)) {
+      agent.avgCostPerTask = agent.taskCount > 0
+        ? Math.round((agent.totalCost / agent.taskCount) * 10000) / 10000
+        : 0;
+      agent.avgTokensPerTask = agent.taskCount > 0
+        ? Math.round(agent.totalTokens / agent.taskCount)
+        : 0;
+    }
+
+    // Cost distribution (buckets)
+    const costBuckets = {
+      under1cent: 0,
+      under5cents: 0,
+      under10cents: 0,
+      under50cents: 0,
+      under1dollar: 0,
+      over1dollar: 0,
+    };
+
+    for (const task of Object.values(byTask)) {
+      if (task.totalCost < 0.01) costBuckets.under1cent++;
+      else if (task.totalCost < 0.05) costBuckets.under5cents++;
+      else if (task.totalCost < 0.10) costBuckets.under10cents++;
+      else if (task.totalCost < 0.50) costBuckets.under50cents++;
+      else if (task.totalCost < 1.00) costBuckets.under1dollar++;
+      else costBuckets.over1dollar++;
+    }
+
+    const totalCost = filtered.reduce((sum, l) => sum + l.cost, 0);
+    const taskCount = Object.keys(byTask).length;
+
+    return {
+      days,
+      agentName: args.agentName,
+      totalCost,
+      totalTasks: taskCount,
+      avgCostPerTask: taskCount > 0 ? Math.round((totalCost / taskCount) * 10000) / 10000 : 0,
+      byAgent: Object.values(byAgent).sort((a, b) => b.avgCostPerTask - a.avgCostPerTask),
+      costDistribution: costBuckets,
+      topCostlyTasks: Object.values(byTask).sort((a, b) => b.totalCost - a.totalCost).slice(0, 10),
+    };
+  },
+});
+
+/**
+ * P1: Get combined P1 metrics snapshot
+ * Single query for all P1 metrics (velocity, completion time, cost per task)
+ */
+export const getP1Metrics = query({
+  args: {
+    agentName: v.optional(v.string()),
+    hours: v.optional(v.number()), // For velocity (default 24)
+    days: v.optional(v.number()),  // For completion time and cost (default 7)
+  },
+  handler: async (ctx, args) => {
+    const hours = args.hours || 24;
+    const days = args.days || 7;
+    const now = Date.now();
+
+    // Get agents for reference
+    const agents = await ctx.db.query("agents").collect();
+    const agentFilter = args.agentName;
+
+    // --- VELOCITY ---
+    const velocityStartTime = now - hours * 60 * 60 * 1000;
+    const perfMetrics = await ctx.db.query("performanceMetrics").collect();
+    const velocityMetrics = perfMetrics.filter(m => {
+      const hourTs = new Date(m.hourBucket + ":00:00Z").getTime();
+      if (hourTs < velocityStartTime) return false;
+      if (agentFilter && m.agentName !== agentFilter) return false;
+      return true;
+    });
+
+    let velocityTotal = 0;
+    let velocityHours = 0;
+    for (const m of velocityMetrics) {
+      velocityTotal += m.tasksCompleted;
+      velocityHours += 1;
+    }
+
+    // --- COMPLETION TIME ---
+    const completionStartTime = now - days * 24 * 60 * 60 * 1000;
+    const doneTasks = await ctx.db
+      .query("tasks")
+      .withIndex("by_status", (q) => q.eq("status", "done"))
+      .collect();
+
+    const completedTasks = doneTasks.filter(t => {
+      if (!t.completedAt || t.completedAt < completionStartTime) return false;
+      if (agentFilter && t.agentName !== agentFilter) return false;
+      return true;
+    });
+
+    let totalDuration = 0;
+    for (const t of completedTasks) {
+      totalDuration += (t.completedAt! - t.createdAt) / (60 * 1000);
+    }
+    const avgCompletionMinutes = completedTasks.length > 0
+      ? Math.round(totalDuration / completedTasks.length)
+      : 0;
+
+    // --- COST PER TASK ---
+    const costLogs = await ctx.db
+      .query("costLogs")
+      .withIndex("by_timestamp")
+      .filter((q) => q.gte(q.field("timestamp"), completionStartTime))
+      .collect();
+
+    const filteredCosts = agentFilter
+      ? costLogs.filter(l => l.agentName === agentFilter)
+      : costLogs;
+
+    const taskCosts = new Map<string, number>();
+    for (const log of filteredCosts) {
+      const key = log.linearIdentifier || log.taskId?.toString() || "no-task";
+      taskCosts.set(key, (taskCosts.get(key) || 0) + log.cost);
+    }
+
+    const totalCost = filteredCosts.reduce((sum, l) => sum + l.cost, 0);
+    const taskCount = taskCosts.size;
+    const avgCostPerTask = taskCount > 0
+      ? Math.round((totalCost / taskCount) * 10000) / 10000
+      : 0;
+
+    return {
+      timestamp: now,
+      agentName: agentFilter,
+      velocity: {
+        hours,
+        tasksCompleted: velocityTotal,
+        velocityPerHour: velocityHours > 0 ? Math.round((velocityTotal / velocityHours) * 10) / 10 : 0,
+      },
+      completionTime: {
+        days,
+        tasksCompleted: completedTasks.length,
+        avgMinutes: avgCompletionMinutes,
+        avgFormatted: avgCompletionMinutes < 60
+          ? `${avgCompletionMinutes}m`
+          : `${Math.floor(avgCompletionMinutes / 60)}h ${avgCompletionMinutes % 60}m`,
+      },
+      costPerTask: {
+        days,
+        totalCost,
+        taskCount,
+        avgCostPerTask,
+        avgFormatted: avgCostPerTask < 0.01
+          ? `$${avgCostPerTask.toFixed(4)}`
+          : `$${avgCostPerTask.toFixed(2)}`,
+      },
+      agents: agents.map(a => ({
+        name: a.name,
+        status: a.status,
+        role: a.role,
+      })),
+    };
+  },
+});
