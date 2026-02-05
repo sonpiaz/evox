@@ -441,3 +441,110 @@ export const resetAgentDispatches = mutation({
     return { success: true, reset: running.length, agentName: agent.name };
   },
 });
+
+// AGT-279: Create dispatch for PR code review (always dispatched to Quinn)
+export const createPRReviewDispatch = mutation({
+  args: {
+    prNumber: v.number(),
+    prTitle: v.string(),
+    prBody: v.optional(v.string()),
+    prUrl: v.string(),
+    repo: v.string(),
+    branch: v.string(),
+    baseBranch: v.string(),
+    author: v.string(),
+    action: v.string(), // "opened", "synchronize", "reopened"
+  },
+  handler: async (ctx, args) => {
+    // Find Quinn agent
+    const agents = await ctx.db.query("agents").collect();
+    const quinn = agents.find(
+      (a) => a.name.toUpperCase() === "QUINN"
+    );
+
+    if (!quinn) {
+      console.log("Quinn agent not found, cannot dispatch PR review");
+      return null;
+    }
+
+    // Check for existing pending/running dispatch for same PR
+    const existingDispatches = await ctx.db
+      .query("dispatches")
+      .withIndex("by_agent", (q) => q.eq("agentId", quinn._id))
+      .filter((q) =>
+        q.or(
+          q.eq(q.field("status"), "pending"),
+          q.eq(q.field("status"), "running")
+        )
+      )
+      .collect();
+
+    const duplicate = existingDispatches.find((d) => {
+      try {
+        const payload = JSON.parse(d.payload || "{}");
+        return payload.prNumber === args.prNumber && payload.repo === args.repo;
+      } catch {
+        return false;
+      }
+    });
+
+    if (duplicate && args.action === "opened") {
+      console.log(`Duplicate dispatch for PR #${args.prNumber}, skipping`);
+      return duplicate._id;
+    }
+
+    // For synchronize (new commits), update existing dispatch or create new
+    if (duplicate && args.action === "synchronize") {
+      // Update existing dispatch with new info
+      await ctx.db.patch(duplicate._id, {
+        payload: JSON.stringify({
+          command: "review_pr",
+          prNumber: args.prNumber,
+          prTitle: args.prTitle,
+          prBody: args.prBody || "",
+          prUrl: args.prUrl,
+          repo: args.repo,
+          branch: args.branch,
+          baseBranch: args.baseBranch,
+          author: args.author,
+          action: args.action,
+          updatedAt: Date.now(),
+        }),
+      });
+      return duplicate._id;
+    }
+
+    const dispatchId = await ctx.db.insert("dispatches", {
+      agentId: quinn._id,
+      command: "review_pr",
+      payload: JSON.stringify({
+        prNumber: args.prNumber,
+        prTitle: args.prTitle,
+        prBody: args.prBody || "",
+        prUrl: args.prUrl,
+        repo: args.repo,
+        branch: args.branch,
+        baseBranch: args.baseBranch,
+        author: args.author,
+        action: args.action,
+      }),
+      priority: 1, // HIGH priority for PR reviews
+      status: "pending",
+      createdAt: Date.now(),
+    });
+
+    // Fire event bus notification
+    await ctx.scheduler.runAfter(0, internal.agentEvents.publishEvent, {
+      type: "dispatch",
+      targetAgent: "quinn",
+      payload: {
+        dispatchId: dispatchId,
+        message: `PR #${args.prNumber} needs review: ${args.prTitle}`,
+        priority: "high",
+      },
+    });
+
+    console.log(`Created PR review dispatch for Quinn: PR #${args.prNumber}`);
+    return dispatchId;
+  },
+});
