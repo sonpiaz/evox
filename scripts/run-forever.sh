@@ -52,7 +52,7 @@ If you have unread DMs:
 2. RESPOND to each one via:
    \`\`\`bash
    curl -X POST '$EVOX_API/v2/sendMessage' -H 'Content-Type: application/json' \\
-     -d '{\"from\": \"$AGENT_UPPER\", \"to\": \"AGENT_NAME\", \"content\": \"your reply\", \"type\": \"dm\"}'
+     -d '{\"from\": \"$AGENT_UPPER\", \"to\": \"AGENT_NAME\", \"message\": \"your reply\"}'
    \`\`\`
 3. Mark as read
 

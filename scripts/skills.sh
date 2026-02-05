@@ -30,7 +30,7 @@ send_dm() {
 
   curl -s -X POST "$CONVEX_URL/v2/dm" \
     -H "Content-Type: application/json" \
-    -d "{\"from\":\"$from\",\"to\":\"$to\",\"content\":\"$message\"}"
+    -d "{\"from\":\"$from\",\"to\":\"$to\",\"message\":\"$message\"}"
 }
 
 # ============================================================
