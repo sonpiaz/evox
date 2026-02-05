@@ -19,8 +19,11 @@ echo "📤 Sending to $AGENT..."
 tmux send-keys -t "$SESSION" C-c 2>/dev/null
 sleep 0.5
 
+# Auto-prepend agent identity to prevent confusion
+TASK_WITH_IDENTITY="You are $AGENT_UPPER. $TASK"
+
 # Send the task
-tmux send-keys -t "$SESSION" "$TASK"
+tmux send-keys -t "$SESSION" "$TASK_WITH_IDENTITY"
 sleep 0.3
 
 # Send Enter to execute
