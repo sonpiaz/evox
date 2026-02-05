@@ -42,7 +42,8 @@ export function AgentDetailSlidePanel({
           "fixed right-0 top-0 z-50 h-full w-[420px] shrink-0 border-l border-[#222] bg-[#111] shadow-xl transition-transform duration-200 ease-out",
           open ? "translate-x-0" : "translate-x-full"
         )}
-        aria-modal
+        role="dialog"
+        aria-modal="true"
         aria-labelledby="agent-panel-title"
       >
         <div className="flex h-full flex-col min-h-0">

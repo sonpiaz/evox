@@ -47,7 +47,7 @@ export function TopBar({
     <header className="flex h-12 shrink-0 items-center justify-between border-b border-[#222] bg-[#0a0a0a] px-4">
       <div className="flex items-center gap-4">
         <h1 className="text-lg font-semibold text-zinc-50">EVOX</h1>
-        <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Command Center</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Command Center</span>
       </div>
       <div className="flex items-center gap-2">
         <span className="inline-flex items-center gap-1.5 rounded border border-[#222] bg-[#111] px-2 py-1 text-xs text-zinc-500">

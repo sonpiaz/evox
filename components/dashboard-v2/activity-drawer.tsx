@@ -43,7 +43,8 @@ export function ActivityDrawer({ open, onClose }: ActivityDrawerProps) {
           "fixed top-0 right-0 h-full w-[400px] z-40 border-l border-white/[0.08] bg-[#0f0f1a] shadow-xl transition-transform duration-300",
           open ? "translate-x-0" : "translate-x-full"
         )}
-        aria-modal
+        role="dialog"
+        aria-modal="true"
         aria-labelledby="activity-drawer-title"
       >
         <div className="flex h-full flex-col">
