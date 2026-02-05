@@ -5,7 +5,18 @@ import { mutation, query } from "./_generated/server";
 export const create = mutation({
   args: {
     name: v.string(),
-    role: v.union(v.literal("pm"), v.literal("backend"), v.literal("frontend"), v.literal("qa")),
+    role: v.union(
+      v.literal("pm"),
+      v.literal("backend"),
+      v.literal("frontend"),
+      v.literal("qa"),
+      v.literal("devops"),
+      v.literal("content"),
+      v.literal("security"),
+      v.literal("data"),
+      v.literal("research"),
+      v.literal("design")
+    ),
     avatar: v.string(),
   },
   handler: async (ctx, args) => {
@@ -125,7 +136,18 @@ export const update = mutation({
     name: v.optional(v.string()),
     avatar: v.optional(v.string()),
     role: v.optional(
-      v.union(v.literal("pm"), v.literal("backend"), v.literal("frontend"), v.literal("qa"))
+      v.union(
+        v.literal("pm"),
+        v.literal("backend"),
+        v.literal("frontend"),
+        v.literal("qa"),
+        v.literal("devops"),
+        v.literal("content"),
+        v.literal("security"),
+        v.literal("data"),
+        v.literal("research"),
+        v.literal("design")
+      )
     ),
   },
   handler: async (ctx, args) => {
