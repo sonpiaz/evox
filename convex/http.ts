@@ -3664,4 +3664,59 @@ http.route({
   }),
 });
 
+// ============================================================
+// INCIDENT LOGGING (AGT-277: Git Rollback Mechanism)
+// ============================================================
+
+/**
+ * POST /logIncident — Log build failures and auto-rollback events
+ * Called by post-commit hook when build fails
+ */
+http.route({
+  path: "/logIncident",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const {
+        agentName,
+        level = "error",
+        message,
+        metadata,
+        timestamp,
+      } = body;
+
+      if (!agentName || !message) {
+        return new Response(
+          JSON.stringify({ error: "Missing required fields: agentName, message" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      // Log to executionLogs table
+      await ctx.runMutation(api.execution.logExecution, {
+        agentName,
+        level: level as "debug" | "info" | "warn" | "error",
+        message,
+        metadata: metadata ? {
+          command: metadata.command,
+          error: metadata.buildError || metadata.error,
+          filesAffected: metadata.branch ? [metadata.branch] : undefined,
+        } : undefined,
+      });
+
+      return new Response(
+        JSON.stringify({ success: true, logged: true }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } catch (error) {
+      console.error("logIncident error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
 export default http;
