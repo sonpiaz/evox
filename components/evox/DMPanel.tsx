@@ -84,7 +84,7 @@ export function DMPanel({
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#222] px-3 sm:px-4 py-2 sm:py-3">
+      <div className="flex items-center justify-between border-b border-zinc-800 px-3 sm:px-4 py-2 sm:py-3">
         <div className="flex items-center gap-2 sm:gap-3">
           <span className="text-base sm:text-lg">💬</span>
           <span className="text-lg sm:text-xl">{otherAgentAvatar}</span>
@@ -95,7 +95,7 @@ export function DMPanel({
         <button
           type="button"
           onClick={onClose}
-          className="rounded p-1 text-zinc-500 hover:bg-[#222] hover:text-white"
+          className="rounded p-1 text-zinc-500 hover:bg-zinc-800 hover:text-white"
           aria-label="Close"
         >
           ✕

@@ -69,9 +69,9 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
   };
 
   return (
-    <div className={cn("flex flex-col h-full bg-[#0a0a0a]", className)}>
+    <div className={cn("flex flex-col h-full bg-zinc-950", className)}>
       {/* Header */}
-      <div className="border-b border-[#222] px-3 sm:px-6 py-3 sm:py-4">
+      <div className="border-b border-zinc-800 px-3 sm:px-6 py-3 sm:py-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
           <div>
             <h2 className="text-lg sm:text-xl font-bold text-white">Communication Log</h2>
@@ -82,7 +82,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
           <button
             type="button"
             onClick={() => setShowAnalytics(!showAnalytics)}
-            className="px-3 py-1.5 rounded-lg text-sm border border-[#222] hover:bg-[#1a1a1a] transition-colors text-zinc-400 hover:text-white"
+            className="px-3 py-1.5 rounded-lg text-sm border border-zinc-800 hover:bg-zinc-800 transition-colors text-zinc-400 hover:text-white"
           >
             {showAnalytics ? "Hide" : "Show"} Analytics
           </button>
@@ -105,7 +105,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                     "px-3 py-1 rounded-full text-xs font-medium uppercase transition-colors border",
                     selectedAgent === agent
                       ? "bg-blue-500/20 text-blue-400 border-blue-500/40"
-                      : "bg-[#1a1a1a] text-zinc-400 border-[#222] hover:bg-[#222] hover:text-white"
+                      : "bg-zinc-800 text-zinc-400 border-zinc-800 hover:bg-zinc-800 hover:text-white"
                   )}
                 >
                   {agent}
@@ -129,7 +129,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                     "px-3 py-1 rounded-full text-xs font-medium uppercase transition-colors border",
                     selectedType === type
                       ? MESSAGE_TYPE_COLORS[type]
-                      : "bg-[#1a1a1a] text-zinc-400 border-[#222] hover:bg-[#222] hover:text-white"
+                      : "bg-zinc-800 text-zinc-400 border-zinc-800 hover:bg-zinc-800 hover:text-white"
                   )}
                 >
                   {type}
@@ -145,7 +145,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
         <div
           className={cn(
             "overflow-y-auto",
-            showAnalytics ? "flex-1 md:border-r border-[#222]" : "w-full"
+            showAnalytics ? "flex-1 md:border-r border-zinc-800" : "w-full"
           )}
         >
           {messages === undefined ? (
@@ -169,7 +169,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
               {messages.map((msg: any) => (
                 <div
                   key={msg._id}
-                  className="bg-[#0f0f0f] border border-[#222] rounded-lg p-3 sm:p-4 hover:border-[#333] transition-colors"
+                  className="bg-zinc-900 border border-zinc-800 rounded-lg p-3 sm:p-4 hover:border-zinc-700 transition-colors"
                 >
                   {/* Header - Stack on mobile */}
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 sm:gap-2 mb-2">
@@ -248,7 +248,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
 
         {/* Analytics Panel - Full width on mobile, fixed on desktop */}
         {showAnalytics && (
-          <div className="w-full md:w-72 lg:w-80 overflow-y-auto bg-[#0a0a0a] p-4 sm:p-6 border-t md:border-t-0 border-[#222]">
+          <div className="w-full md:w-72 lg:w-80 overflow-y-auto bg-zinc-950 p-4 sm:p-6 border-t md:border-t-0 border-zinc-800">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4">
               Analytics
             </h3>
@@ -262,7 +262,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
             ) : (
               <div className="space-y-6">
                 {/* Total Messages */}
-                <div className="bg-[#0f0f0f] border border-[#222] rounded-lg p-4">
+                <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
                   <div className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-1">
                     Total Messages
                   </div>
@@ -272,7 +272,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                 </div>
 
                 {/* Average Response Time */}
-                <div className="bg-[#0f0f0f] border border-[#222] rounded-lg p-4">
+                <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
                   <div className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-1">
                     Avg Response Time
                   </div>
@@ -292,7 +292,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                     {analytics.volumeByAgent.map((item: any) => (
                       <div
                         key={item.agent}
-                        className="bg-[#0f0f0f] border border-[#222] rounded-lg p-3"
+                        className="bg-zinc-900 border border-zinc-800 rounded-lg p-3"
                       >
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-xs font-medium text-white uppercase">
@@ -302,7 +302,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                             {item.count}
                           </span>
                         </div>
-                        <div className="h-1.5 bg-[#1a1a1a] rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-blue-500 rounded-full"
                             style={{
@@ -324,7 +324,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                     {analytics.topPairs.map((item: any, index: number) => (
                       <div
                         key={item.pair}
-                        className="bg-[#0f0f0f] border border-[#222] rounded-lg p-3"
+                        className="bg-zinc-900 border border-zinc-800 rounded-lg p-3"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
