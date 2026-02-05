@@ -1680,7 +1680,7 @@ http.route({
 });
 
 /**
- * POST /markDispatchRunning — Mark dispatch as running (daemon calls this)
+ * GET /markDispatchRunning — Mark dispatch as running (daemon calls this via GET)
  * Query param: dispatchId
  */
 http.route({
@@ -1786,6 +1786,119 @@ http.route({
       );
     } catch (error) {
       console.error("markDispatchFailed error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * POST /markDispatchRunning — Mark dispatch as running (agent calls this via POST)
+ * Body: { dispatchId: "xxx" }
+ */
+http.route({
+  path: "/markDispatchRunning",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const { dispatchId } = body;
+
+      if (!dispatchId) {
+        return new Response(
+          JSON.stringify({ error: "dispatchId is required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      await ctx.runMutation(api.dispatches.claim, {
+        dispatchId: dispatchId as Id<"dispatches">,
+      });
+
+      return new Response(
+        JSON.stringify({ success: true, dispatchId }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } catch (error) {
+      console.error("markDispatchRunning POST error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * POST /markDispatchCompleted — Mark dispatch as completed (agent calls this via POST)
+ * Body: { dispatchId: "xxx", result: "optional summary" }
+ */
+http.route({
+  path: "/markDispatchCompleted",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const { dispatchId, result } = body;
+
+      if (!dispatchId) {
+        return new Response(
+          JSON.stringify({ error: "dispatchId is required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      await ctx.runMutation(api.dispatches.complete, {
+        dispatchId: dispatchId as Id<"dispatches">,
+        result: result ?? undefined,
+      });
+
+      return new Response(
+        JSON.stringify({ success: true, dispatchId }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } catch (error) {
+      console.error("markDispatchCompleted POST error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * POST /markDispatchFailed — Mark dispatch as failed (agent calls this via POST)
+ * Body: { dispatchId: "xxx", error: "error message" }
+ */
+http.route({
+  path: "/markDispatchFailed",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const { dispatchId, error: errorMsg } = body;
+
+      if (!dispatchId) {
+        return new Response(
+          JSON.stringify({ error: "dispatchId is required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      await ctx.runMutation(api.dispatches.fail, {
+        dispatchId: dispatchId as Id<"dispatches">,
+        error: errorMsg ?? "Unknown error",
+      });
+
+      return new Response(
+        JSON.stringify({ success: true, dispatchId }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } catch (error) {
+      console.error("markDispatchFailed POST error:", error);
       return new Response(
         JSON.stringify({ error: "Internal server error" }),
         { status: 500, headers: { "Content-Type": "application/json" } }
@@ -2698,6 +2811,7 @@ http.route({
 /**
  * POST /postToChannel — Post a message to a team channel
  * Body: { from: string, channel: string, message: string }
+ * AGT-271: Now parses @mentions and creates notifications
  */
 http.route({
   path: "/postToChannel",
@@ -2732,6 +2846,33 @@ http.route({
             source: "agent_session",
           },
         });
+
+        // AGT-271: Parse @mentions and create notifications
+        const mentionRegex = /@(\w+)/gi;
+        const matches = message.matchAll(mentionRegex);
+        const mentionedNames = new Set<string>();
+        for (const match of matches) {
+          mentionedNames.add(match[1].toLowerCase());
+        }
+
+        // Create notification for each mentioned agent (excluding sender)
+        const fromLower = from.toLowerCase();
+        for (const mentionedName of mentionedNames) {
+          if (mentionedName === fromLower) continue; // Don't notify self
+
+          const mentionedAgent = agents.find(
+            (a: any) => a.name.toLowerCase() === mentionedName
+          );
+          if (mentionedAgent) {
+            await ctx.runMutation(api.notifications.create, {
+              to: mentionedAgent._id,
+              from: agent._id,
+              type: "mention",
+              title: `${agent.name} mentioned you in #${channel}`,
+              message: message.slice(0, 150) + (message.length > 150 ? "..." : ""),
+            });
+          }
+        }
       }
 
       return new Response(JSON.stringify({ success: true, channel, from }), {
