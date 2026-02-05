@@ -36,6 +36,10 @@ HEARTBEAT_INTERVAL=300  # Seconds between heartbeats (5 min)
 TASK_TIMEOUT=600        # Max seconds to wait for task completion (10 min)
 COMPLETION_CHECK=30     # Seconds between completion checks
 
+# Retry Configuration (AGT-292: Auto-retry failed tasks)
+MAX_TASK_RETRIES=2      # Max retries per dispatch before giving up
+RETRY_BACKOFF=60        # Seconds to wait before retry
+
 # ============================================================================
 # SETUP
 # ============================================================================
@@ -232,6 +236,43 @@ wait_for_completion() {
 }
 
 # ============================================================================
+# RETRY TRACKING (AGT-292: Auto-retry failed tasks)
+# ============================================================================
+
+RETRY_FILE="$EVOX_DIR/logs/retry-$AGENT_LOWER.json"
+
+# Get retry count for a dispatch
+get_retry_count() {
+  local dispatch_id="$1"
+  if [ -f "$RETRY_FILE" ]; then
+    python3 -c "import json; d=json.load(open('$RETRY_FILE')); print(d.get('$dispatch_id', 0))" 2>/dev/null || echo "0"
+  else
+    echo "0"
+  fi
+}
+
+# Increment retry count for a dispatch
+increment_retry() {
+  local dispatch_id="$1"
+  local current=$(get_retry_count "$dispatch_id")
+  local new=$((current + 1))
+  if [ -f "$RETRY_FILE" ]; then
+    python3 -c "import json; d=json.load(open('$RETRY_FILE')); d['$dispatch_id']=$new; json.dump(d, open('$RETRY_FILE','w'))" 2>/dev/null || echo "{\"$dispatch_id\": $new}" > "$RETRY_FILE"
+  else
+    echo "{\"$dispatch_id\": $new}" > "$RETRY_FILE"
+  fi
+  echo "$new"
+}
+
+# Clear retry tracking for a dispatch (on success)
+clear_retry() {
+  local dispatch_id="$1"
+  if [ -f "$RETRY_FILE" ]; then
+    python3 -c "import json; d=json.load(open('$RETRY_FILE')); d.pop('$dispatch_id', None); json.dump(d, open('$RETRY_FILE','w'))" 2>/dev/null || true
+  fi
+}
+
+# ============================================================================
 # MAIN WORK LOOP
 # ============================================================================
 
@@ -420,7 +461,7 @@ GO. Execute this task now."
   send_to_tmux "$TASK_PROMPT"
 
   # -------------------------------------------------------------------------
-  # 7. WAIT FOR COMPLETION (with stuck detection)
+  # 7. WAIT FOR COMPLETION (with stuck detection and auto-retry)
   # -------------------------------------------------------------------------
   log "   ⏳ Waiting for task completion (max ${TASK_TIMEOUT}s)..."
 
@@ -430,26 +471,70 @@ GO. Execute this task now."
   case $WAIT_RESULT in
     0)
       log "   ✅ Task appears complete"
+      clear_retry "$DISPATCH_ID"  # Clear retry tracking on success
       update_agent_status "idle"
       report_recovery_success
       sleep 5  # Give Claude time to make API calls
       ;;
-    1)
-      log "   ⚠️ Task timed out, marking as failed"
-      mark_failed "$DISPATCH_ID" "Timeout after ${TASK_TIMEOUT}s"
-      post_status "⚠️ Task timed out: $COMMAND"
-      update_agent_status "idle"
-      ;;
-    2)
-      log "   🔴 Claude appears stuck, attempting recovery..."
-      mark_failed "$DISPATCH_ID" "Agent stuck/crashed"
-      post_status "🔴 Agent stuck. Attempting recovery..."
+    1|2)
+      # Handle both timeout (1) and stuck (2) with retry logic
+      RETRY_COUNT=$(get_retry_count "$DISPATCH_ID")
+      log "   ⚠️ Task failed (retry $RETRY_COUNT/$MAX_TASK_RETRIES)"
 
-      # Try to restart Claude in the session
-      send_to_tmux "/exit"
-      sleep 2
-      send_to_tmux "claude"
-      sleep 5
+      if [ "$RETRY_COUNT" -lt "$MAX_TASK_RETRIES" ]; then
+        # Increment retry and attempt again
+        NEW_RETRY=$(increment_retry "$DISPATCH_ID")
+        log "   🔄 Scheduling retry #$NEW_RETRY in ${RETRY_BACKOFF}s..."
+        post_status "🔄 Retry #$NEW_RETRY for: $COMMAND"
+
+        # If stuck, try to recover Claude first
+        if [ "$WAIT_RESULT" -eq 2 ]; then
+          log "   🔧 Recovering Claude before retry..."
+          send_to_tmux "/exit"
+          sleep 2
+          send_to_tmux "claude"
+          sleep 5
+        fi
+
+        # Wait before retry
+        sleep "$RETRY_BACKOFF"
+
+        # Re-send the task (mark as running again and retry)
+        log "   📤 Re-sending task to Claude (retry #$NEW_RETRY)..."
+        update_agent_status "busy" "$COMMAND (retry #$NEW_RETRY)"
+        send_to_tmux "$TASK_PROMPT"
+
+        # Wait again for completion
+        RETRY_WAIT_RESULT=0
+        wait_for_completion "$TASK_TIMEOUT" || RETRY_WAIT_RESULT=$?
+
+        if [ "$RETRY_WAIT_RESULT" -eq 0 ]; then
+          log "   ✅ Retry succeeded!"
+          clear_retry "$DISPATCH_ID"
+          update_agent_status "idle"
+        else
+          log "   ❌ Retry #$NEW_RETRY failed"
+          # Will try again next cycle if under max retries
+        fi
+      else
+        # Max retries exceeded - mark as permanently failed
+        log "   ❌ Max retries exceeded, marking as failed"
+        if [ "$WAIT_RESULT" -eq 1 ]; then
+          mark_failed "$DISPATCH_ID" "Timeout after ${MAX_TASK_RETRIES} retries"
+        else
+          mark_failed "$DISPATCH_ID" "Agent stuck after ${MAX_TASK_RETRIES} retries"
+        fi
+        post_status "❌ Task failed after ${MAX_TASK_RETRIES} retries: $COMMAND"
+        clear_retry "$DISPATCH_ID"
+
+        # Recover Claude if stuck
+        if [ "$WAIT_RESULT" -eq 2 ]; then
+          send_to_tmux "/exit"
+          sleep 2
+          send_to_tmux "claude"
+          sleep 5
+        fi
+      fi
       update_agent_status "idle"
       ;;
   esac
