@@ -193,40 +193,32 @@ export const completeTask = mutation({
       if (task.completedAt && task.createdAt) {
         durationMinutes = Math.round((now - task.createdAt) / 1000 / 60);
       }
-      void ctx.scheduler.runAfter(
-        0,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        internal.performanceMetrics.recordTaskCompletion as any,
-        { agentName: args.agent, taskId: task._id, durationMinutes, success: true }
-      );
+      // @ts-ignore Convex scheduler type inference too deep
+      void ctx.scheduler.runAfter(0, internal.performanceMetrics.recordTaskCompletion, {
+        agentName: args.agent, taskId: task._id, durationMinutes, success: true
+      });
 
       // AGT-247: Fire event bus notification for task completion
-      void ctx.scheduler.runAfter(
-        0,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        internal.agentEvents.publishEvent as any,
-        {
-          type: "task_completed",
-          targetAgent: args.agent,
-          payload: {
-            taskId: task.linearIdentifier ?? args.ticket,
-            fromAgent: args.agent,
-            message: `Task ${task.linearIdentifier ?? args.ticket} completed`,
-            priority: "normal",
-            metadata: { summary: args.summary, filesChanged: args.filesChanged },
-          },
-        }
-      );
+      // @ts-ignore Convex scheduler type inference too deep
+      void ctx.scheduler.runAfter(0, internal.agentEvents.publishEvent, {
+        type: "task_completed",
+        targetAgent: args.agent,
+        payload: {
+          taskId: task.linearIdentifier ?? args.ticket,
+          fromAgent: args.agent,
+          message: `Task ${task.linearIdentifier ?? args.ticket} completed`,
+          priority: "normal",
+          metadata: { summary: args.summary, filesChanged: args.filesChanged },
+        },
+      });
     } else if (args.action === "in_progress") {
       await logToDailyNotes(ctx, agentId, "started", task.linearIdentifier ?? args.ticket, args.summary);
 
       // AGT-242: Record task start for velocity tracking
-      void ctx.scheduler.runAfter(
-        0,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        internal.performanceMetrics.recordTaskStart as any,
-        { agentName: args.agent, taskId: task._id }
-      );
+      // @ts-ignore Convex scheduler type inference too deep
+      void ctx.scheduler.runAfter(0, internal.performanceMetrics.recordTaskStart, {
+        agentName: args.agent, taskId: task._id
+      });
     }
 
     return {
@@ -746,27 +738,21 @@ export const reportFailure = mutation({
     });
 
     // AGT-215: Trigger alert for agent failure
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    void ctx.scheduler.runAfter(0, internal.alerts.triggerAgentFailed as any, {
-      agentName: args.agent,
-      taskId: task?._id,
-      linearIdentifier: args.ticket,
-      error: args.error,
+    // @ts-ignore Convex scheduler type inference too deep
+    void ctx.scheduler.runAfter(0, internal.alerts.triggerAgentFailed, {
+      agentName: args.agent, taskId: task?._id, linearIdentifier: args.ticket, error: args.error,
     });
 
     // AGT-242: Record failed task for performance tracking
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    void ctx.scheduler.runAfter(0, internal.performanceMetrics.recordTaskCompletion as any, {
-      agentName: args.agent,
-      taskId: task?._id,
-      success: false,
+    // @ts-ignore Convex scheduler type inference too deep
+    void ctx.scheduler.runAfter(0, internal.performanceMetrics.recordTaskCompletion, {
+      agentName: args.agent, taskId: task?._id, success: false,
     });
 
     // AGT-242: Record error in performance metrics
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    void ctx.scheduler.runAfter(0, internal.performanceMetrics.recordError as any, {
-      agentName: args.agent,
-      taskId: task?._id,
+    // @ts-ignore Convex scheduler type inference too deep
+    void ctx.scheduler.runAfter(0, internal.performanceMetrics.recordError, {
+      agentName: args.agent, taskId: task?._id,
     });
 
     // Also log to daily notes
@@ -810,8 +796,8 @@ export const requestWork = mutation({
 
     // 2. Try auto-dispatch using existing automation system
     // Schedule it to run asynchronously
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    void ctx.scheduler.runAfter(0, internal.automation.autoDispatchForAgentInternal as any, {
+    // @ts-ignore Convex scheduler type inference too deep
+    void ctx.scheduler.runAfter(0, internal.automation.autoDispatchForAgentInternal, {
       agentName: args.agent,
     });
 
