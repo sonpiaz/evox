@@ -113,4 +113,12 @@ crons.interval(
   {}
 );
 
+// AGT-317: Blocker Detection — Scan for blocked tasks every 5 minutes
+crons.interval(
+  "detect-blocked-tasks",
+  { minutes: 5 },
+  internal.blockerDetection.detectBlockedTasks,
+  {}
+);
+
 export default crons;

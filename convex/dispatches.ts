@@ -110,6 +110,22 @@ export const fail = mutation({
       error,
     });
 
+    // AGT-317: Check if this failure blocks other tasks
+    let linearIdentifier: string | undefined;
+    if (dispatch.payload) {
+      try {
+        const payload = JSON.parse(dispatch.payload);
+        linearIdentifier = payload.identifier || payload.linearIdentifier;
+      } catch {
+        // payload not JSON, skip
+      }
+    }
+    if (linearIdentifier) {
+      await ctx.scheduler.runAfter(0, internal.blockerDetection.checkDependentsOfFailedTask, {
+        taskLinearIdentifier: linearIdentifier,
+      });
+    }
+
     return dispatchId;
   },
 });
