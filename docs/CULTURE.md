@@ -152,3 +152,17 @@ CEO tin tưởng giao việc. Đừng phụ lòng tin đó.
 ```
 Flow: Code → UAT branch → Vercel Preview → CEO Review → Production
 ```
+
+## 🔐 Authentication Rules
+
+1. **OAuth only** — Agents authenticate via OAuth, NEVER API keys
+2. **Terminal visible** — CEO must be able to see agent terminals
+3. **Shared visibility** — `tmux attach -t evox-<agent>` to watch any agent
+
+```bash
+# View agents
+tmux attach -t evox-max    # Watch MAX
+tmux attach -t evox-sam    # Watch SAM
+tmux attach -t evox-leo    # Watch LEO
+tmux attach -t evox-quinn  # Watch QUINN
+```

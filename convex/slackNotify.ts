@@ -108,6 +108,7 @@ export const notifyTaskCompleted = internalAction({
     assigneeName: v.optional(v.string()),
   },
   handler: async (ctx, args): Promise<{ success: boolean; reason?: string }> => {
+    // @ts-ignore - Convex type inference gets too deep with runAction
     return await ctx.runAction(internal.slackNotify.sendSlackNotification, {
       event: "task_completed",
       title: "Task Completed",
