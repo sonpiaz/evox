@@ -318,9 +318,30 @@ export const processGitHubPush = action({
       const hash = (commit.id || "").slice(0, 7);
       const url = commit.url || "";
 
+      // AGT-262: Get agent name for Slack notification
+      const agentName = GITHUB_TO_AGENT[author.toLowerCase()] || null;
+      const filesChanged = (commit.added?.length || 0) + (commit.modified?.length || 0) + (commit.removed?.length || 0);
+
       // Extract all AGT-XX ticket IDs from commit message
       const matches: RegExpMatchArray | null = message.match(TICKET_REGEX);
-      if (!matches) continue;
+
+      // AGT-262: Send Slack notification even if no ticket ID found
+      if (!matches) {
+        if (agentName) {
+          try {
+            await ctx.runAction(internal.slackNotify.notifyGitPush, {
+              agentName,
+              commitHash: hash,
+              commitMessage: message.split("\n")[0],
+              filesChanged,
+              commitUrl: url,
+            });
+          } catch (e) {
+            console.error(`Failed to send Slack notification for ${hash}:`, e);
+          }
+        }
+        continue;
+      }
 
       // Deduplicate ticket IDs
       const ticketIds: string[] = Array.from(new Set(matches.map((m: string) => m.toUpperCase())));
@@ -350,6 +371,22 @@ export const processGitHubPush = action({
           linearTicketId: ticketId,
           commentPosted: result.success,
         });
+
+        // AGT-262: Send Slack notification for agent commits
+        if (agentName) {
+          try {
+            await ctx.runAction(internal.slackNotify.notifyGitPush, {
+              agentName,
+              commitHash: hash,
+              commitMessage: message.split("\n")[0],
+              ticketId,
+              filesChanged,
+              commitUrl: url,
+            });
+          } catch (e) {
+            console.error(`Failed to send Slack notification for ${hash}:`, e);
+          }
+        }
       }
 
       // AGT-132: Track skill completion when "closes AGT-XX" detected

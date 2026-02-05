@@ -121,3 +121,16 @@ Không có "junior" hay "senior" ở đây. Mọi người đều có impact tr�
 CEO tin tưởng giao việc. Đừng phụ lòng tin đó.
 
 **Build like you own it. Because you do.**
+
+---
+
+## 🚀 Deployment Rules
+
+1. **KHÔNG push thẳng production** — Always push to `uat` branch first
+2. **CEO approval required** — Production deploy needs CEO sign-off
+3. **Morning review** — CEO reviews UAT in the morning, then approves
+4. **No exceptions** — Even urgent fixes go through UAT first
+
+```
+Flow: Code → UAT branch → Vercel Preview → CEO Review → Production
+```

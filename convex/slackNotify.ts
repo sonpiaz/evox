@@ -8,7 +8,8 @@ export const sendSlackNotification = internalAction({
     event: v.union(
       v.literal("task_completed"),
       v.literal("agent_blocked"),
-      v.literal("deploy_done")
+      v.literal("deploy_done"),
+      v.literal("git_push")  // AGT-262: Notify on agent commit
     ),
     title: v.string(),
     message: v.string(),
@@ -27,12 +28,14 @@ export const sendSlackNotification = internalAction({
       task_completed: ":white_check_mark:",
       agent_blocked: ":warning:",
       deploy_done: ":rocket:",
+      git_push: ":hammer_and_wrench:",  // AGT-262
     }[args.event];
 
     const color = {
       task_completed: "#10B981", // green
       agent_blocked: "#F59E0B", // yellow
       deploy_done: "#3B82F6", // blue
+      git_push: "#8B5CF6", // purple - AGT-262
     }[args.event];
 
     const payload = {
@@ -151,6 +154,41 @@ export const notifyDeployDone = internalAction({
         args.deployedBy ? `\n*Deployed by:* ${args.deployedBy}` : ""
       }${args.commitHash ? `\n*Commit:* \`${args.commitHash}\`` : ""}`,
       metadata: { environment: args.environment },
+    });
+  },
+});
+
+// AGT-262: Helper to notify on agent git push
+export const notifyGitPush = internalAction({
+  args: {
+    agentName: v.string(),
+    commitHash: v.string(),
+    commitMessage: v.string(),
+    ticketId: v.optional(v.string()),
+    filesChanged: v.optional(v.number()),
+    commitUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, args): Promise<{ success: boolean; reason?: string }> => {
+    // Build message with ticket link if available
+    const ticketInfo = args.ticketId
+      ? `\n*Ticket:* <https://linear.app/affitorai/issue/${args.ticketId}|${args.ticketId}>`
+      : "";
+    const filesInfo = args.filesChanged
+      ? `\n*Files:* ${args.filesChanged} changed`
+      : "";
+    const linkInfo = args.commitUrl
+      ? `\n<${args.commitUrl}|View on GitHub>`
+      : "";
+
+    return await ctx.runAction(internal.slackNotify.sendSlackNotification, {
+      event: "git_push",
+      title: `${args.agentName.toUpperCase()} pushed code`,
+      message: `*Commit:* \`${args.commitHash}\`\n*Message:* ${args.commitMessage}${ticketInfo}${filesInfo}${linkInfo}`,
+      metadata: {
+        agentName: args.agentName,
+        commitHash: args.commitHash,
+        ticketId: args.ticketId,
+      },
     });
   },
 });
