@@ -1,7 +1,6 @@
 "use client";
 
 import type { KanbanTask } from "./task-card";
-import { cn } from "@/lib/utils";
 
 /** AGT-173: Task Detail stub — title + description (full detail in future AGT-114) */
 interface TaskDetailStubProps {
