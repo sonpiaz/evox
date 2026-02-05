@@ -142,6 +142,34 @@ CEO tin tưởng giao việc. Đừng phụ lòng tin đó.
 
 ---
 
+## 📱 Mobile-First Design (P0 REQUIREMENT)
+
+> **CEO Directive: Giao diện phải sử dụng được và nhìn thấy được khi deploy, kể cả xem bằng điện thoại.**
+
+### Hard Rules
+
+1. **Mobile-first** — Design cho mobile trước, scale up cho desktop
+2. **Usable, not just pretty** — UI phải dùng được, không chỉ đẹp
+3. **Test on phone** — Trước khi deploy, phải test trên viewport mobile
+4. **Responsive breakpoints:**
+   - `sm`: 640px (small mobile)
+   - `md`: 768px (tablet)
+   - `lg`: 1024px (desktop)
+   - `xl`: 1280px (large desktop)
+
+### Checklist trước khi ship UI
+
+- [ ] Xem được trên mobile (< 640px)?
+- [ ] Touch targets đủ lớn (44x44px minimum)?
+- [ ] Text đọc được không cần zoom?
+- [ ] Không có horizontal scroll?
+- [ ] Loading states hiển thị đúng?
+- [ ] Empty states có sense trên mobile?
+
+**Nếu không pass checklist → KHÔNG SHIP.**
+
+---
+
 ## 🚀 Deployment Rules
 
 1. **KHÔNG push thẳng production** — Always push to `uat` branch first
