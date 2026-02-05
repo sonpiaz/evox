@@ -790,6 +790,87 @@ http.route({
   }),
 });
 
+// ============================================================
+// AGENT HEALTH MONITORING ENDPOINTS
+// ============================================================
+
+/**
+ * GET /agentHealth - Get comprehensive health status for all agents
+ * Returns: health scores, metrics, status, issues
+ */
+http.route({
+  path: "/agentHealth",
+  method: "GET",
+  handler: httpAction(async (ctx) => {
+    try {
+      const health = await ctx.runQuery(api.agents.getAgentHealth);
+      return new Response(
+        JSON.stringify({
+          success: true,
+          timestamp: Date.now(),
+          agents: health,
+          summary: {
+            total: health.length,
+            healthy: health.filter((h) => h.health.isHealthy).length,
+            unhealthy: health.filter((h) => !h.health.isHealthy).length,
+            avgHealthScore: Math.round(
+              health.reduce((sum, h) => sum + h.health.score, 0) / health.length
+            ),
+          },
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } catch (error) {
+      console.error("Get agent health error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * GET /agentHealthByName?name=<agent> - Get health for specific agent
+ */
+http.route({
+  path: "/agentHealthByName",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const name = url.searchParams.get("name");
+
+      if (!name) {
+        return new Response(
+          JSON.stringify({ error: "name query parameter is required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const health = await ctx.runQuery(api.agents.getAgentHealthByName, { name });
+
+      if (!health) {
+        return new Response(
+          JSON.stringify({ error: `Agent '${name}' not found` }),
+          { status: 404, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, ...health }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } catch (error) {
+      console.error("Get agent health error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
 // POST /api/linear-sync - Trigger Linear sync
 http.route({
   path: "/api/linear-sync",
