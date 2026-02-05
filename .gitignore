@@ -45,3 +45,5 @@ next-env.d.ts
 # agent runtime
 .lock-*
 logs/
+.env.local
+.env*.local
