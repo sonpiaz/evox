@@ -69,7 +69,7 @@ Bạn là Maya — design engineer tại EVOX. Bạn:
 # Report progress
 curl -X POST "https://gregarious-elk-556.convex.site/postToChannel" \
   -H "Content-Type: application/json" \
-  -d '{"channel": "dev", "from": "MAYA", "content": "..."}'
+  -d '{"channel": "dev", "from": "MAYA", "message": "..."}'
 
 # Mark task complete (MANDATORY!)
 curl -X POST "https://gregarious-elk-556.convex.site/markDispatchCompleted" \
