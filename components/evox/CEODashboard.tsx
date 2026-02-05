@@ -48,8 +48,8 @@ type TaskDoc = {
 
 type PerformanceMetric = {
   agentName: string;
-  tasksCompleted: number;
-  tasksFailed: number;
+  totalTasksCompleted: number;
+  totalTasksFailed: number;
   totalCost: number;
   avgDurationMinutes?: number;
 };
@@ -344,7 +344,7 @@ export function CEODashboard({ className }: CEODashboardProps) {
 
       return {
         agent,
-        tasksToday: agentPerf?.tasksCompleted || 0,
+        tasksToday: agentPerf?.totalTasksCompleted || 0,
         cost: agentPerf?.totalCost || 0,
         isActive,
       };
@@ -423,9 +423,9 @@ export function CEODashboard({ className }: CEODashboardProps) {
   }, [dashboardStats]);
 
   return (
-    <div className={cn("flex flex-col h-full overflow-hidden p-4", className)}>
-      {/* Row 1: North Star Metrics */}
-      <div className="grid grid-cols-6 gap-3 mb-4">
+    <div className={cn("flex flex-col h-full overflow-hidden p-2 sm:p-4", className)}>
+      {/* Row 1: North Star Metrics - Mobile responsive */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 mb-4">
         <MetricCard
           title="Automation"
           value={metrics.automationPercent}
@@ -478,8 +478,8 @@ export function CEODashboard({ className }: CEODashboardProps) {
         </div>
       </div>
 
-      {/* Row 2: Team + Alerts + Activity */}
-      <div className="flex-1 min-h-0 grid grid-cols-3 gap-4">
+      {/* Row 2: Team + Alerts + Activity - Mobile responsive */}
+      <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {/* Team Status */}
         <div className="flex flex-col min-h-0">
           <div className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2">
