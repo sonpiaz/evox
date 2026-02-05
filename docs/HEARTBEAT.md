@@ -1,7 +1,7 @@
 # Agent Heartbeat Protocol
 
 > Standard wake-up routine for all EVOX agents.
-> Runs every 15 minutes (staggered: MAX :00, SAM :05, LEO :10)
+> Runs every 15 minutes (staggered: MAX :00, SAM :05, LEO :10, QUINN :12)
 
 ---
 
@@ -74,16 +74,17 @@ Either:
 ### Cron Schedule (convex/crons.ts)
 
 ```
-MAX: 0,15,30,45 * * * *  (every 15 min at :00)
-SAM: 5,20,35,50 * * * *  (every 15 min at :05)
-LEO: 10,25,40,55 * * * * (every 15 min at :10)
+MAX:   0,15,30,45 * * * *  (every 15 min at :00)
+SAM:   5,20,35,50 * * * *  (every 15 min at :05)
+LEO:   10,25,40,55 * * * * (every 15 min at :10)
+QUINN: 12,27,42,57 * * * * (every 15 min at :12)
 ```
 
 ### Backend Functions (convex/heartbeat.ts)
 
 - `checkAgent(agentName)` — Run full heartbeat check
 - `updateHeartbeat(agentName, status, details)` — Log result
-- `heartbeatMax/Sam/Leo()` — Cron entry points
+- `heartbeatMax/Sam/Leo/Quinn()` — Cron entry points
 
 ### Queries
 
