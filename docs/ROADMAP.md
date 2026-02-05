@@ -39,25 +39,31 @@
 | ID | Feature | Owner | Status | Linear |
 |----|---------|-------|--------|--------|
 | F1.1 | @mention notification alerts | Sam | 📋 To Do | [AGT-271](https://linear.app/affitorai/issue/AGT-271) |
-| F1.2 | Git activity on dashboard | Leo | 📋 To Do | [AGT-272](https://linear.app/affitorai/issue/AGT-272) |
-| F1.3 | Agent heartbeat monitoring | Sam | 📋 To Do | [AGT-273](https://linear.app/affitorai/issue/AGT-273) |
+| F1.2 | Agent heartbeat monitoring | Sam | 📋 To Do | [AGT-273](https://linear.app/affitorai/issue/AGT-273) |
+| F1.3 | Terminal UI for Agents | Sam | ✅ MVP Done | [AGT-274](https://linear.app/affitorai/issue/AGT-274) |
 
-### 🟡 P1 — Backlog
+### ✅ Recently Completed
 
-| ID | Feature | Owner | Description |
-|----|---------|-------|-------------|
-| F1.4 | Per-agent completion stats | Leo | Velocity, tickets/day widget |
-| F1.5 | Cost tracking per task | Sam | API tokens used per task |
-| F1.6 | Agent status API | Sam | Query availability/current task |
-| F1.7 | Comment reply threading | Leo | Better collaboration UX |
+| Feature | Owner | Ticket |
+|---------|-------|--------|
+| Git activity on dashboard | Leo | AGT-272 |
+| Per-agent completion stats | Sam | AGT-268 |
+| Cost tracking per task | Sam | AGT-193, AGT-81 |
+| Cost Dashboard Widget | Leo | AGT-200 |
+| Agent Performance Tracking | Sam | AGT-242 |
+| CEO Dashboard North Star | Leo | AGT-254 |
+| Elon Dashboard Metrics | Leo | AGT-238 |
 
 ### Success Criteria
 
 - [x] All 4 agents communicating via Convex
 - [x] CEO can see all agent activity in <3 seconds
-- [ ] @mentions alert the relevant agent
-- [ ] Zero lost messages between agents
-- [ ] Heartbeat shows online/offline status
+- [x] CEO can see agent terminal output (AGT-274)
+- [x] Per-agent stats visible (AGT-268)
+- [x] Cost tracking implemented (AGT-193)
+- [x] Git activity visible (AGT-272)
+- [ ] @mentions alert the relevant agent (AGT-271)
+- [ ] Heartbeat shows online/offline status (AGT-273)
 
 ---
 
@@ -116,11 +122,13 @@
 
 | Priority | Ticket | Task | Owner | Status |
 |----------|--------|------|-------|--------|
+| P0 | [AGT-274](https://linear.app/affitorai/issue/AGT-274) | Terminal UI | Sam | ✅ MVP Done |
+| P0 | [AGT-251](https://linear.app/affitorai/issue/AGT-251) | 100x Autonomy | All | In Progress |
 | P0 | [AGT-271](https://linear.app/affitorai/issue/AGT-271) | @mention notifications | Sam | To Do |
-| P0 | [AGT-272](https://linear.app/affitorai/issue/AGT-272) | Git activity feed | Leo | To Do |
 | P0 | [AGT-273](https://linear.app/affitorai/issue/AGT-273) | Agent heartbeat | Sam | To Do |
-| P1 | — | Per-agent stats widget | Leo | Backlog |
-| P1 | — | Cost tracking | Sam | Backlog |
+| ✅ | [AGT-272](https://linear.app/affitorai/issue/AGT-272) | Git activity feed | Leo | Done |
+| ✅ | [AGT-268](https://linear.app/affitorai/issue/AGT-268) | Per-agent stats | Sam | Done |
+| ✅ | [AGT-193](https://linear.app/affitorai/issue/AGT-193) | Cost tracking | Sam | Done |
 
 ---
 
