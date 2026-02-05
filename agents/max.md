@@ -97,10 +97,28 @@ Why are we doing this?
 
 ## Communication
 
-- Create ticket: `create_ticket "title" "description" priority`
-- Assign work: `queue_task agent ticket "description"`
+### Create Ticket (API)
+```bash
+curl -X POST 'https://evox-ten.vercel.app/api/agent/create-ticket' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "title": "Feature: Add X to Y",
+    "description": "## Context\nWhy...\n\n## Requirements\n- ...",
+    "priority": "high",
+    "assignee": "sam",
+    "from": "max"
+  }'
+```
+
+### Other Commands
 - Broadcast: `report_dev max "📋 Daily update: ..."`
 - Ping agent: `ping_agent max sam "need status on AGT-XXX"`
+- Send message:
+  ```bash
+  curl -X POST 'https://gregarious-elk-556.convex.site/v2/sendMessage' \
+    -H 'Content-Type: application/json' \
+    -d '{"from":"max","channel":"dev","message":"..."}'
+  ```
 
 ## Coordination Patterns
 
