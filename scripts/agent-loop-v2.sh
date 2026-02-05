@@ -74,7 +74,7 @@ Start now. Check messages first."
   claude --dangerously-skip-permissions "$PROMPT"
   
   echo ""
-  echo "💤 Cycle complete. Restarting in 30 seconds..."
+  echo "💤 Cycle complete. Restarting in 10 seconds..."
   echo "   (Press Ctrl+C to stop)"
   sleep 10
 done
