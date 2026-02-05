@@ -179,3 +179,193 @@ export const getLiveStream = query({
     });
   },
 });
+
+/**
+ * AGT-326: Team-level daily velocity trend.
+ *
+ * Returns daily task completion counts for the last N days.
+ * Used by the Stats page velocity chart.
+ */
+export const getVelocityTrend = query({
+  args: {
+    days: v.optional(v.number()), // Default 7, max 30
+  },
+  handler: async (ctx, args) => {
+    const days = Math.min(args.days ?? 7, 30);
+    const now = Date.now();
+    const startTs = now - days * 24 * 60 * 60 * 1000;
+
+    // Get all done tasks in the period
+    const doneTasks = await ctx.db
+      .query("tasks")
+      .withIndex("by_status", (q) => q.eq("status", "done"))
+      .order("desc")
+      .collect();
+
+    // Filter to period and group by date
+    const dailyCounts: Record<string, number> = {};
+
+    // Initialize all days with 0
+    for (let i = 0; i < days; i++) {
+      const d = new Date(now - i * 24 * 60 * 60 * 1000);
+      const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
+      dailyCounts[key] = 0;
+    }
+
+    for (const task of doneTasks) {
+      const completedAt = task.completedAt ?? task.updatedAt;
+      if (completedAt < startTs) continue;
+
+      const d = new Date(completedAt);
+      const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
+      if (dailyCounts[key] !== undefined) {
+        dailyCounts[key]++;
+      }
+    }
+
+    // Return sorted array (oldest first)
+    return Object.entries(dailyCounts)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, count]) => ({ date, tasksCompleted: count }));
+  },
+});
+
+// ─── AGT-327: Activity Feed APIs ─────────────────────────────────────────
+
+// Intent classification keywords
+const INTENT_PATTERNS: Array<{ intent: string; keywords: RegExp }> = [
+  { intent: "completion", keywords: /\b(done|completed|shipped|deployed|merged|closed|fixed)\b/i },
+  { intent: "escalation", keywords: /\b(blocked|stuck|urgent|escalat|T[1-4]|CEO|critical|failed)\b/i },
+  { intent: "request", keywords: /\b(need|please|can you|review|check|fix|help|PR)\b/i },
+  { intent: "update", keywords: /\b(update|progress|status|working on|started|moving to|building)\b/i },
+  { intent: "question", keywords: /\?\s*$/m },
+];
+
+function classifyIntent(content: string): string {
+  for (const { intent, keywords } of INTENT_PATTERNS) {
+    if (keywords.test(content)) return intent;
+  }
+  return "update"; // default
+}
+
+function extractMessageKeywords(content: string): string[] {
+  const keywords: string[] = [];
+
+  // Ticket IDs (AGT-xxx)
+  const tickets = content.match(/AGT-\d+/gi);
+  if (tickets) keywords.push(...tickets.map((t) => t.toUpperCase()));
+
+  // Status words
+  const statusWords = content.match(/\b(done|blocked|deployed|completed|failed|in.progress|review|backlog)\b/gi);
+  if (statusWords) keywords.push(...statusWords.map((w) => w.toLowerCase()));
+
+  // Agent names
+  const agents = content.match(/\b(sam|leo|max|quinn|ella|maya|son)\b/gi);
+  if (agents) keywords.push(...agents.map((a) => a.toLowerCase()));
+
+  // Deduplicate
+  return [...new Set(keywords)];
+}
+
+/**
+ * AGT-327: List all messages (DMs + channels) with extracted keywords and intent.
+ */
+export const getMessagesWithKeywords = query({
+  args: {
+    limit: v.optional(v.number()), // Default 30, max 50
+    type: v.optional(v.string()),  // "dm", "comment", "dispatch", "system" or undefined for all
+  },
+  handler: async (ctx, args) => {
+    const limit = Math.min(args.limit ?? 30, 50);
+
+    let messagesQuery = ctx.db
+      .query("unifiedMessages");
+
+    let messages;
+    if (args.type) {
+      messages = await messagesQuery
+        .withIndex("by_type", (q: any) => q.eq("type", args.type))
+        .order("desc")
+        .take(limit);
+    } else {
+      messages = await messagesQuery
+        .order("desc")
+        .take(limit);
+    }
+
+    return messages.map((msg) => {
+      const keywords = extractMessageKeywords(msg.content);
+      const intent = classifyIntent(msg.content);
+      const agentKey = msg.fromAgent?.toLowerCase() ?? "system";
+
+      return {
+        _id: msg._id,
+        from: msg.fromAgent,
+        to: msg.toAgent,
+        fromColor: AGENT_COLORS[agentKey] ?? "#6B7280",
+        fromAvatar: AGENT_AVATARS[agentKey] ?? "🤖",
+        type: msg.type,
+        content: msg.content,
+        summary: msg.content.length > 120 ? msg.content.slice(0, 120) + "..." : msg.content,
+        keywords,
+        intent,
+        priority: msg.priority,
+        linearIdentifier: msg.linearIdentifier,
+        timestamp: msg.createdAt,
+      };
+    });
+  },
+});
+
+/**
+ * AGT-327: Enriched activity events with intent classification.
+ * Combines activityEvents with agent hydration and intent tagging.
+ */
+export const getActivityFeedEnriched = query({
+  args: {
+    limit: v.optional(v.number()), // Default 30, max 50
+    category: v.optional(v.string()), // "task", "git", "deploy", "system", "message"
+  },
+  handler: async (ctx, args) => {
+    const limit = Math.min(args.limit ?? 30, 50);
+
+    let events;
+    if (args.category) {
+      events = await ctx.db
+        .query("activityEvents")
+        .withIndex("by_category", (q: any) => q.eq("category", args.category))
+        .order("desc")
+        .take(limit);
+    } else {
+      events = await ctx.db
+        .query("activityEvents")
+        .withIndex("by_timestamp")
+        .order("desc")
+        .take(limit);
+    }
+
+    return events.map((event) => {
+      const agentKey = event.agentName?.toLowerCase() ?? "system";
+      const content = event.description ?? event.title ?? "";
+      const keywords = extractMessageKeywords(content);
+      const intent = classifyIntent(content);
+
+      return {
+        _id: event._id,
+        agentName: event.agentName,
+        agentColor: AGENT_COLORS[agentKey] ?? "#6B7280",
+        agentAvatar: AGENT_AVATARS[agentKey] ?? "🤖",
+        category: event.category,
+        eventType: event.eventType,
+        title: event.title,
+        description: event.description,
+        keywords,
+        intent,
+        linearIdentifier: event.linearIdentifier,
+        taskId: event.taskId,
+        metadata: event.metadata,
+        timestamp: event.timestamp,
+      };
+    });
+  },
+});
