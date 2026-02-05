@@ -79,8 +79,26 @@ http.route({
       if (event === "push") {
         const commits = body.commits || [];
         const results: Array<{ ticket: string; completed: boolean }> = [];
+        const repo = body.repository?.full_name ?? "unknown/repo";
+        const branch = body.ref?.replace("refs/heads/", "") ?? "unknown";
+        const pushedBy = body.pusher?.name ?? body.sender?.login;
 
         for (const commit of commits) {
+          // AGT-80: Log git activity
+          await ctx.runMutation(api.gitActivity.logCommit, {
+            commitHash: commit.id,
+            message: commit.message,
+            authorName: commit.author?.name ?? "unknown",
+            authorUsername: commit.author?.username,
+            authorEmail: commit.author?.email,
+            repo,
+            branch,
+            url: commit.url,
+            pushedBy,
+            commitTimestamp: commit.timestamp ? new Date(commit.timestamp).getTime() : undefined,
+          });
+
+          // Auto-complete task if commit message contains "closes AGT-XXX"
           const match = commit.message.match(/closes?\s+(AGT-\d+)/i);
           if (match) {
             const result = await ctx.runMutation(api.tasks.markCompletedByIdentifier, {
@@ -93,7 +111,11 @@ http.route({
         }
 
         return new Response(
-          JSON.stringify({ processed: true, results }),
+          JSON.stringify({
+            processed: true,
+            commitsLogged: commits.length,
+            tasksCompleted: results,
+          }),
           { status: 200, headers: { "Content-Type": "application/json" } }
         );
       }
@@ -3247,6 +3269,80 @@ http.route({
       });
     } catch (error) {
       console.error("Event publish error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+// ============================================================
+// GIT ACTIVITY ENDPOINTS (AGT-80)
+// ============================================================
+
+/**
+ * GET /getGitActivity — Get recent git activity
+ * Query params: agentName (optional), limit (optional, default 20)
+ */
+http.route({
+  path: "/getGitActivity",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const agentName = url.searchParams.get("agentName");
+      const limitStr = url.searchParams.get("limit");
+      const limit = limitStr ? Math.min(parseInt(limitStr, 10), 100) : 20;
+
+      let commits;
+      if (agentName) {
+        commits = await ctx.runQuery(api.gitActivity.getByAgent, {
+          agentName,
+          limit,
+        });
+      } else {
+        commits = await ctx.runQuery(api.gitActivity.getRecent, { limit });
+      }
+
+      return new Response(
+        JSON.stringify({ commits, count: commits.length }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } catch (error) {
+      console.error("Get git activity error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * GET /getGitActivitySummary — Get git activity summary by agent
+ * Query params: startTs, endTs (optional, default last 7 days)
+ */
+http.route({
+  path: "/getGitActivitySummary",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const startTs = url.searchParams.get("startTs");
+      const endTs = url.searchParams.get("endTs");
+
+      const summary = await ctx.runQuery(api.gitActivity.getSummaryByAgent, {
+        startTs: startTs ? parseInt(startTs, 10) : undefined,
+        endTs: endTs ? parseInt(endTs, 10) : undefined,
+      });
+
+      return new Response(JSON.stringify(summary), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Get git summary error:", error);
       return new Response(
         JSON.stringify({ error: "Internal server error" }),
         { status: 500, headers: { "Content-Type": "application/json" } }

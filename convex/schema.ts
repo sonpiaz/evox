@@ -503,6 +503,40 @@ export default defineSchema({
     .index("by_task", ["taskId", "timestamp"])
     .index("by_timestamp", ["timestamp"]),
 
+  // AGT-80: Git Activity Tracking — Commits per agent
+  gitActivity: defineTable({
+    // Commit info
+    commitHash: v.string(),               // Full SHA
+    shortHash: v.string(),                // 7-char short SHA
+    message: v.string(),                  // Commit message
+    timestamp: v.number(),                // Commit timestamp
+
+    // Author info (from GitHub)
+    authorName: v.string(),               // Git author name
+    authorUsername: v.optional(v.string()), // GitHub username if available
+    authorEmail: v.optional(v.string()),  // Git author email
+
+    // Agent attribution (mapped from author)
+    agentName: v.optional(v.string()),    // "sam", "leo", "max" if matched
+
+    // Task linkage
+    linkedTaskId: v.optional(v.id("tasks")),
+    linkedTicketId: v.optional(v.string()), // "AGT-XXX" from commit message
+
+    // GitHub context
+    repo: v.string(),                     // "owner/repo"
+    branch: v.string(),                   // Branch name
+    url: v.optional(v.string()),          // Commit URL
+
+    // Push info
+    pushedAt: v.number(),                 // When webhook received
+    pushedBy: v.optional(v.string()),     // Pusher username
+  })
+    .index("by_agent", ["agentName", "pushedAt"])
+    .index("by_timestamp", ["pushedAt"])
+    .index("by_task", ["linkedTaskId"])
+    .index("by_commit", ["commitHash"]),
+
   // AGT-215: Alert System — Push Notifications for Agent Events
   alerts: defineTable({
     // Alert type: what triggered this alert
