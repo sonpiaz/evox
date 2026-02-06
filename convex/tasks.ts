@@ -158,7 +158,7 @@ export const getByStatus = query({
  * AGT-150: Get tasks grouped by status for Kanban view
  * - Uses indexed queries per status (no full table scan)
  * - DONE column filtered by date range (startTs/endTs)
- * - Other columns limited to 100 each
+ * - All columns limited to 500 each (matches getStats)
  * @returns { backlog: Task[], todo: Task[], inProgress: Task[], review: Task[], done: Task[] }
  */
 export const getGroupedByStatus = query({
@@ -170,12 +170,12 @@ export const getGroupedByStatus = query({
   handler: async (ctx, args) => {
     // Query each status separately using index (much more efficient)
     const [backlog, todo, inProgress, review, done] = await Promise.all([
-      ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "backlog")).order("desc").take(100),
-      ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "todo")).order("desc").take(100),
-      ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "in_progress")).order("desc").take(100),
-      ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "review")).order("desc").take(100),
-      // AGT-192: Limit done tasks to 200 to reduce bandwidth (was .collect())
-      ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "done")).order("desc").take(200),
+      ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "backlog")).order("desc").take(500),
+      ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "todo")).order("desc").take(500),
+      ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "in_progress")).order("desc").take(500),
+      ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "review")).order("desc").take(500),
+      // Match getStats take(500) so counts are consistent across views
+      ctx.db.query("tasks").withIndex("by_status", q => q.eq("status", "done")).order("desc").take(500),
     ]);
 
     // AGT-189: Filter done tasks by completedAt (not updatedAt) if date range provided

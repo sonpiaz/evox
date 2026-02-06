@@ -8,7 +8,7 @@
  * - Check tasks for unstarted assignments
  * - Log HEARTBEAT_OK or flag pending work
  * - Update agent.lastHeartbeat timestamp
- * - Emit activityEvent on each heartbeat
+ * - (Removed: no longer emits activityEvent — reduces feed noise)
  */
 import { v } from "convex/values";
 import { internalMutation, internalAction, query } from "./_generated/server";
@@ -47,26 +47,6 @@ export const updateHeartbeat = internalMutation({
     await ctx.db.patch(agent._id, {
       lastHeartbeat: now,
       lastSeen: now,
-    });
-
-    // Emit activityEvent
-    const displayName = agent.name.toUpperCase();
-    const title =
-      args.status === "ok"
-        ? `${displayName} heartbeat OK`
-        : `${displayName} has pending work`;
-
-    await ctx.db.insert("activityEvents", {
-      agentId: agent._id,
-      agentName: agent.name.toLowerCase(),
-      category: "system",
-      eventType: "heartbeat",
-      title,
-      description: args.details,
-      metadata: {
-        source: "heartbeat_scheduler",
-      },
-      timestamp: now,
     });
 
     return {

@@ -18,11 +18,9 @@ interface AgentProfileProps {
   status: string;
   avatar: string;
   onClose: () => void;
-  /** AGT-173: When true, omit header (used inside context panel) */
   embedded?: boolean;
 }
 
-/** AGT-155: Status dots — green / yellow / gray only (spec 5.6) */
 const statusDot: Record<string, string> = {
   online: "bg-green-500",
   busy: "bg-yellow-500",
@@ -37,10 +35,11 @@ const roleLabels: Record<string, string> = {
   qa: "QA",
 };
 
-type TabId = "overview" | "tasks" | "activity" | "memory" | "messages";
+type TabId = "profile" | "stats" | "tasks" | "activity" | "memory" | "messages";
 
-const TABS: { id: TabId; label: string; count?: number }[] = [
-  { id: "overview", label: "Overview" },
+const TABS: { id: TabId; label: string }[] = [
+  { id: "profile", label: "Profile" },
+  { id: "stats", label: "Stats" },
   { id: "tasks", label: "Tasks" },
   { id: "activity", label: "Activity" },
   { id: "memory", label: "Memory" },
@@ -48,7 +47,7 @@ const TABS: { id: TabId; label: string; count?: number }[] = [
 ];
 
 /**
- * AGT-155: Agent Profile v2 — 6 tabs, surface all available data
+ * AGT-155/AGT-342: Agent Profile — Career profile as default tab
  * AGT-230: Send message section hidden in demo mode
  */
 export function AgentProfile({
@@ -61,50 +60,53 @@ export function AgentProfile({
   embedded = false,
 }: AgentProfileProps) {
   const { isViewerMode } = useViewerMode();
-  const [activeTab, setActiveTab] = useState<TabId>("overview");
+  const [activeTab, setActiveTab] = useState<TabId>("profile");
   const [sendAsName, setSendAsName] = useState<string>("max");
   const [messageDraft, setMessageDraft] = useState("");
 
-  // Core agent data - always loaded
+  // Core agent data
   const agent = useQuery(api.agents.get, { id: agentId });
   const currentTaskId = (agent as { currentTask?: Id<"tasks"> } | null)?.currentTask;
   const currentTask = useQuery(api.tasks.get, currentTaskId ? { id: currentTaskId } : "skip");
 
-  // AGT-245: Load metrics data upfront for brutal metrics header
-  // Load always: skills (for tasksCompleted), tasks (for count), messages (for count), notifications (for alerts)
-  const agentSkills = useQuery(api.skills.getByAgent, { agentId });
+  // Career profile data (for Profile tab)
+  const careerProfile = useQuery(
+    api.agentProfiles.getCareerProfile,
+    activeTab === "profile" ? { agentName: name.toLowerCase() } : "skip"
+  );
+
+  // Tasks + messages (always loaded for tab counts)
   const tasksForAgent = useQuery(api.tasks.getByAssignee, { assignee: agentId, limit: 50 });
   const messagesForAgent = useQuery(api.agentMessages.listForAgent, { agentId, limit: 30 });
-  const notificationsForAgent = useQuery(api.notifications.getByAgent, { agent: agentId });
 
-  // AGT-245: Brutal metrics - Cost tracking (last 7 days)
+  // Stats tab data (lazy loaded)
   const now = new Date().getTime();
   const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
+  const agentSkills = useQuery(
+    api.skills.getByAgent,
+    activeTab === "stats" || activeTab === "profile" ? { agentId } : "skip"
+  );
   const costData = useQuery(
     api.costs.getCostsByDateRange,
-    activeTab === "overview" ? { startTs: sevenDaysAgo, endTs: now, agentName: name.toLowerCase() } : "skip"
+    activeTab === "stats" ? { startTs: sevenDaysAgo, endTs: now, agentName: name.toLowerCase() } : "skip"
   );
-
-  // AGT-245: Brutal metrics - Execution stats (last 24 hours)
   const executionSummary = useQuery(
     api.execution.getExecutionSummary,
-    activeTab === "overview" ? { agentName: name.toLowerCase(), timeRangeMs: 24 * 60 * 60 * 1000 } : "skip"
+    activeTab === "stats" ? { agentName: name.toLowerCase(), timeRangeMs: 24 * 60 * 60 * 1000 } : "skip"
   );
-
-  // AGT-245: Brutal metrics - Alert stats (last 7 days)
   const alertStats = useQuery(
     api.alerts.getAlertStats,
-    activeTab === "overview" ? { since: sevenDaysAgo } : "skip"
+    activeTab === "stats" ? { since: sevenDaysAgo } : "skip"
+  );
+  const notificationsForAgent = useQuery(
+    api.notifications.getByAgent,
+    activeTab === "stats" ? { agent: agentId } : "skip"
   );
 
-  // Lazy load tab-specific data
+  // Memory/Activity tab data (lazy loaded)
   const soulMemory = useQuery(
     api.agentMemory.getMemory,
-    activeTab === "overview" || activeTab === "memory" ? { agentId, type: "soul" } : "skip"
-  );
-  const workingMemory = useQuery(
-    api.agentMemory.getMemory,
-    activeTab === "memory" ? { agentId, type: "working" } : "skip"
+    activeTab === "stats" ? { agentId, type: "soul" } : "skip"
   );
   const dailyNotes = useQuery(
     api.agentMemory.listDailyNotes,
@@ -114,24 +116,18 @@ export function AgentProfile({
     api.activityEvents.getByAgent,
     activeTab === "activity" ? { agentId, limit: 30 } : "skip"
   );
-  // Remove duplicate agents.list - parent already has this data
+
   const agentsList = useQuery(api.agents.list);
   const sendMessage = useMutation(api.agentMessages.sendMessage);
 
   const full = agent as {
-    soul?: string;
-    about?: string;
-    statusReason?: string;
-    statusSince?: number;
-    currentTask?: Id<"tasks">;
-    lastSeen?: number;
-    lastHeartbeat?: number;
+    soul?: string; about?: string; statusReason?: string;
+    statusSince?: number; currentTask?: Id<"tasks">;
   } | null;
   const statusReason = full?.statusReason ?? null;
   const statusSince = full?.statusSince;
   const soulFromAgent = full?.soul ?? full?.about ?? null;
   const soulContent = soulMemory?.content ?? soulFromAgent ?? "—";
-  const workingContent = workingMemory?.content ?? "—";
   const dot = statusDot[status?.toLowerCase() ?? "offline"] ?? statusDot.offline;
 
   const taskStatusesForCount = ["todo", "in_progress", "backlog"];
@@ -183,9 +179,9 @@ export function AgentProfile({
         </div>
       )}
 
-      {/* Identity + Brutal Metrics Header — AGT-245 */}
+      {/* Identity Header — compact */}
       <div className="shrink-0 border-b border-border-default px-4 py-3">
-        <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-3 mb-2">
           <Avatar className="h-10 w-10 border border-border-default">
             <AvatarFallback className="bg-surface-1 text-base text-primary">{avatar}</AvatarFallback>
           </Avatar>
@@ -198,28 +194,8 @@ export function AgentProfile({
           </div>
         </div>
 
-        {/* Brutal Metrics Grid */}
-        <div className="grid grid-cols-4 gap-2 mb-3">
-          <div className="rounded border border-border-default bg-surface-1 px-2 py-1.5">
-            <div className="text-2xl font-bold text-primary">{taskCount}</div>
-            <div className="text-[10px] uppercase tracking-wider text-secondary">Tasks</div>
-          </div>
-          <div className="rounded border border-border-default bg-surface-1 px-2 py-1.5">
-            <div className="text-2xl font-bold text-primary">{agentSkills?.tasksCompleted ?? 0}</div>
-            <div className="text-[10px] uppercase tracking-wider text-secondary">Done</div>
-          </div>
-          <div className="rounded border border-border-default bg-surface-1 px-2 py-1.5">
-            <div className="text-2xl font-bold text-primary">{Array.isArray(messagesForAgent) ? messagesForAgent.length : 0}</div>
-            <div className="text-[10px] uppercase tracking-wider text-secondary">Msgs</div>
-          </div>
-          <div className="rounded border border-border-default bg-surface-1 px-2 py-1.5">
-            <div className="text-2xl font-bold text-primary">{notificationCount}</div>
-            <div className="text-[10px] uppercase tracking-wider text-secondary">Alerts</div>
-          </div>
-        </div>
-
         {/* Status Badges */}
-        <div className="flex flex-wrap gap-1.5 mb-2">
+        <div className="flex flex-wrap gap-1.5">
           <span className={cn(
             "rounded px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
             status?.toLowerCase() === "online" ? "bg-green-500/20 text-green-400 border border-green-500/30" :
@@ -233,22 +209,7 @@ export function AgentProfile({
               {formatDistanceToNow(statusSince, { addSuffix: false })}
             </span>
           )}
-          {agentSkills?.autonomyLevelName && (
-            <span className="rounded bg-surface-1 border border-border-default px-2 py-0.5 text-[10px] text-secondary">
-              {agentSkills.autonomyLevelName}
-            </span>
-          )}
         </div>
-
-        {/* Alerts Section */}
-        {notificationCount > 0 && (
-          <div className="rounded border border-orange-500/30 bg-orange-500/10 px-2 py-1.5 mt-2">
-            <div className="flex items-center gap-1.5">
-              <span className="text-orange-400 text-sm">⚡</span>
-              <span className="text-[11px] font-semibold text-orange-300">{notificationCount} pending notification{notificationCount !== 1 ? 's' : ''}</span>
-            </div>
-          </div>
-        )}
 
         {statusReason && (
           <p className="mt-2 text-xs italic text-secondary border-l-2 border-gray-500 pl-2">{statusReason}</p>
@@ -269,7 +230,7 @@ export function AgentProfile({
         )}
       </div>
 
-      {/* 6 Tabs */}
+      {/* Tabs */}
       <div className="flex shrink-0 border-b border-border-default overflow-x-auto">
         {TABS.map((tab) => (
           <button
@@ -292,9 +253,112 @@ export function AgentProfile({
 
       {/* Tab content */}
       <div className="flex-1 overflow-y-auto p-4 min-h-0">
-        {activeTab === "overview" && (
+
+        {/* ─── PROFILE TAB (default) — Career profile from AGT-342 ─── */}
+        {activeTab === "profile" && (
           <div className="space-y-4">
-            {/* Performance Metrics — AGT-245 */}
+            {!careerProfile ? (
+              <div className="text-xs text-tertiary">Loading career profile...</div>
+            ) : (
+              <>
+                {/* Soul quote */}
+                {careerProfile.soul && (
+                  <div className="text-sm text-secondary italic border-l-2 border-border-default pl-3">
+                    {careerProfile.soul}
+                  </div>
+                )}
+
+                {/* Stats Grid (2x3) */}
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="rounded border border-border-default bg-surface-1 px-2 py-2 text-center">
+                    <div className="text-2xl font-bold text-primary">{careerProfile.tasksCompleted}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-secondary">Done</div>
+                  </div>
+                  <div className="rounded border border-border-default bg-surface-1 px-2 py-2 text-center">
+                    <div className="text-2xl font-bold text-primary">{Math.round(careerProfile.successRate * 100)}%</div>
+                    <div className="text-[10px] uppercase tracking-wider text-secondary">Success</div>
+                  </div>
+                  <div className="rounded border border-border-default bg-surface-1 px-2 py-2 text-center">
+                    <div className="text-2xl font-bold text-primary">{Math.round(careerProfile.loopCompletionRate * 100)}%</div>
+                    <div className="text-[10px] uppercase tracking-wider text-secondary">Loop</div>
+                  </div>
+                  <div className="rounded border border-border-default bg-surface-1 px-2 py-2 text-center">
+                    <div className="text-2xl font-bold text-primary">{careerProfile.avgRating > 0 ? careerProfile.avgRating.toFixed(1) : "—"}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-secondary">Rating</div>
+                  </div>
+                  <div className="rounded border border-border-default bg-surface-1 px-2 py-2 text-center">
+                    <div className="text-2xl font-bold text-primary">${careerProfile.totalCost7d.toFixed(2)}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-secondary">Cost 7d</div>
+                  </div>
+                  <div className="rounded border border-border-default bg-surface-1 px-2 py-2 text-center">
+                    <div className="text-2xl font-bold text-primary">{careerProfile.totalLearnings}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-secondary">Learnings</div>
+                  </div>
+                </div>
+
+                {/* Autonomy + Tenure */}
+                <div className="flex items-center gap-3">
+                  <span className="rounded bg-surface-1 border border-border-default px-2 py-0.5 text-[10px] text-secondary">
+                    {careerProfile.autonomyLevelName}
+                  </span>
+                  {careerProfile.daysSinceFirstTask > 0 && (
+                    <span className="text-[10px] text-tertiary">
+                      {careerProfile.daysSinceFirstTask}d tenure
+                    </span>
+                  )}
+                  <span className="text-[10px] text-tertiary">
+                    {careerProfile.tasksCompleted7d} done this week
+                  </span>
+                </div>
+
+                {/* Skills */}
+                <div>
+                  <h4 className="text-xs font-semibold uppercase tracking-[0.05em] text-secondary">Skills</h4>
+                  <div className="mt-2 space-y-1.5">
+                    {careerProfile.skills.length > 0 ? (
+                      careerProfile.skills.map((s: { name: string; proficiency: number; verified: boolean }) => (
+                        <div key={s.name} className="flex items-center gap-2">
+                          <span className="text-xs text-secondary w-24 truncate">{s.name}</span>
+                          <div className="flex-1 h-1.5 bg-surface-4 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-blue-500 rounded-full"
+                              style={{ width: `${s.proficiency}%` }}
+                            />
+                          </div>
+                          <span className="text-[10px] text-tertiary w-8 text-right">{s.proficiency}%</span>
+                          {s.verified && <span className="text-[10px] text-green-400">✓</span>}
+                        </div>
+                      ))
+                    ) : (
+                      <span className="text-xs text-tertiary">No skills recorded</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Feedback by Category */}
+                {Object.keys(careerProfile.feedbackByCategory).length > 0 && (
+                  <div>
+                    <h4 className="text-xs font-semibold uppercase tracking-[0.05em] text-secondary">
+                      Feedback ({careerProfile.totalFeedbackCount} reviews)
+                    </h4>
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                      {Object.entries(careerProfile.feedbackByCategory).map(([cat, rating]) => (
+                        <div key={cat} className="flex items-center justify-between rounded border border-border-default bg-surface-1 px-2 py-1.5">
+                          <span className="text-[10px] text-secondary capitalize">{cat}</span>
+                          <span className="text-xs font-bold text-primary">{(rating as number).toFixed(1)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* ─── STATS TAB — Performance metrics (old Overview) ─── */}
+        {activeTab === "stats" && (
+          <div className="space-y-4">
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded border border-border-default bg-base p-3">
                 <div className="text-3xl font-bold text-primary">{agentSkills?.tasksCompleted ?? 0}</div>
@@ -306,7 +370,6 @@ export function AgentProfile({
               </div>
             </div>
 
-            {/* Cost Metrics (7d) — AGT-245 */}
             {costData && (
               <div className="rounded border border-border-default bg-base p-3">
                 <div className="text-xs uppercase tracking-wider text-secondary mb-2">Cost (7d)</div>
@@ -327,7 +390,6 @@ export function AgentProfile({
               </div>
             )}
 
-            {/* Execution Stats (24h) — AGT-245 */}
             {executionSummary && (
               <div className="rounded border border-border-default bg-base p-3">
                 <div className="text-xs uppercase tracking-wider text-secondary mb-2">Execution (24h)</div>
@@ -356,7 +418,6 @@ export function AgentProfile({
               </div>
             )}
 
-            {/* Alert Stats (7d) — AGT-245 */}
             {alertStats && alertStats.total > 0 && (
               <div className="rounded border border-orange-500/30 bg-orange-500/10 p-3">
                 <div className="text-xs uppercase tracking-wider text-orange-400 mb-2">Alerts (7d)</div>
@@ -373,6 +434,15 @@ export function AgentProfile({
                     <div className="text-2xl font-bold text-yellow-400">{alertStats.bySeverity.warning ?? 0}</div>
                     <div className="text-[10px] text-orange-600">Warnings</div>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {notificationCount > 0 && (
+              <div className="rounded border border-orange-500/30 bg-orange-500/10 px-2 py-1.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-orange-400 text-sm">⚡</span>
+                  <span className="text-[11px] font-semibold text-orange-300">{notificationCount} pending notification{notificationCount !== 1 ? "s" : ""}</span>
                 </div>
               </div>
             )}
@@ -406,6 +476,7 @@ export function AgentProfile({
           </div>
         )}
 
+        {/* ─── TASKS TAB ─── */}
         {activeTab === "tasks" && (
           <div className="space-y-4">
             {["todo", "in_progress", "backlog", "review", "done"].map((groupStatus) => {
@@ -443,6 +514,7 @@ export function AgentProfile({
           </div>
         )}
 
+        {/* ─── ACTIVITY TAB ─── */}
         {activeTab === "activity" && (
           <ul className="space-y-1">
             {Array.isArray(activityForAgent) && activityForAgent.length > 0 ? (
@@ -461,6 +533,7 @@ export function AgentProfile({
           </ul>
         )}
 
+        {/* ─── MESSAGES TAB ─── */}
         {activeTab === "messages" && (
           <ul className="space-y-2">
             {Array.isArray(messagesForAgent) && messagesForAgent.length > 0 ? (
@@ -480,6 +553,7 @@ export function AgentProfile({
           </ul>
         )}
 
+        {/* ─── MEMORY TAB ─── */}
         {activeTab === "memory" && (
           <MemoryTab agentId={agentId} agentName={name} />
         )}

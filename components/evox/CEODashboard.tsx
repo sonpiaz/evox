@@ -136,10 +136,7 @@ export function CEODashboard({ className, onAgentClick, timeRange: externalTimeR
   return (
     <div className="h-full overflow-y-auto bg-base text-white">
       {/* ─── Header ─── */}
-      <header className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-border-default">
-        <h1 className="text-lg font-bold tracking-tight">
-          EVOX
-        </h1>
+      <header className="flex items-center justify-end px-4 sm:px-6 py-4 border-b border-border-default">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1 bg-surface-1 border border-border-default rounded-lg p-0.5">
             {(["1d", "7d", "30d"] as const).map(r => (

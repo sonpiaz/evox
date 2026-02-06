@@ -20,7 +20,7 @@ type ActivityEvent = {
 };
 
 /** AGT-181: Activity feed with filter tabs */
-const EVENT_FILTERS = ["all", "task", "message", "system"] as const;
+const EVENT_FILTERS = ["all", "task", "message"] as const;
 type EventFilter = (typeof EVENT_FILTERS)[number];
 
 /** Event type icons and colors - Linear style */
@@ -65,7 +65,6 @@ export function ActivityPage() {
     const category = event.category ?? "";
     if (filter === "task") return category === "task";
     if (filter === "message") return category === "message";
-    if (filter === "system") return category === "system" || category === "git" || category === "deploy";
     return true;
   }) ?? [];
 
@@ -86,7 +85,7 @@ export function ActivityPage() {
                   : "border-border-default text-secondary hover:border-gray-500 hover:text-primary"
               )}
             >
-              {f === "all" ? "All" : f === "task" ? "Tasks" : f === "message" ? "Messages" : "System"}
+              {f === "all" ? "All" : f === "task" ? "Tasks" : "Messages"}
             </button>
           ))}
         </div>
