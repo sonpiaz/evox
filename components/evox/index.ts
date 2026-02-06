@@ -83,7 +83,6 @@ export { ShortcutsHelpModal } from "./ShortcutsHelpModal";
 // ============================================
 // LAYOUT & NAVIGATION
 // ============================================
-export { AgentSidebar } from "./AgentSidebar";
 export { ExecutionTerminal } from "./ExecutionTerminal";
 export { DirectMessagesView } from "./DirectMessagesView";
 
