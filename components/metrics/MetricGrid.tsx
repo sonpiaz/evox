@@ -13,8 +13,23 @@ export function MetricGrid() {
   const trends = useQuery(api.agentStats.getCompletionTrends);
   const costData = useQuery(api.costs.getCostsByAgent, {});
 
+  // Loading state
+  const isLoading = !teamSummary || !costData;
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="bg-[var(--bg-secondary)] rounded-2xl p-6 h-48 animate-pulse"
+          />
+        ))}
+      </div>
+    );
+  }
+
   const velocity = teamSummary?.velocity.tasksPerDay ?? 0;
-  const totalCompleted = teamSummary?.team.completedAllTime ?? 0;
   const totalCost = costData?.totalCost ?? 0;
 
   // Calculate quality score from completion stats
