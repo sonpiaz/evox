@@ -39,8 +39,8 @@ export function AgentsPage({ agents }: AgentsPageProps) {
   return (
     <div className="flex h-full">
       {/* Left panel: 200px agent list */}
-      <aside className="w-[200px] shrink-0 flex flex-col border-r border-[#222] bg-[#0a0a0a]">
-        <div className="border-b border-[#222] px-3 py-3">
+      <aside className="w-[200px] shrink-0 flex flex-col border-r border-zinc-800 bg-zinc-950">
+        <div className="border-b border-zinc-800 px-3 py-3">
           <h2 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Agents</h2>
         </div>
         <div className="flex-1 overflow-y-auto">
@@ -52,8 +52,8 @@ export function AgentsPage({ agents }: AgentsPageProps) {
                 type="button"
                 onClick={() => setSelectedId(isSelected ? null : agent._id)}
                 className={cn(
-                  "flex w-full items-center gap-2 border-b border-[#1a1a1a] px-3 py-2.5 text-left transition-colors",
-                  isSelected ? "bg-[#222] text-zinc-50" : "hover:bg-[#1a1a1a] text-zinc-400"
+                  "flex w-full items-center gap-2 border-b border-zinc-900 px-3 py-2.5 text-left transition-colors",
+                  isSelected ? "bg-zinc-800 text-zinc-50" : "hover:bg-zinc-900 text-zinc-400"
                 )}
               >
                 <AgentStatusIndicator status={agent.status} size="sm" />

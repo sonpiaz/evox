@@ -41,8 +41,8 @@ export function NotificationPanel({
   onNotificationClick,
 }: NotificationPanelProps) {
   return (
-    <div className="w-80 rounded-lg border border-[#222] bg-[#111] shadow-xl">
-      <div className="border-b border-[#222] p-3">
+    <div className="w-80 rounded-lg border border-zinc-800 bg-zinc-900 shadow-xl">
+      <div className="border-b border-zinc-800 p-3">
         <h3 className="font-semibold text-zinc-50">Notifications</h3>
       </div>
       <div className="max-h-[480px] overflow-y-auto">

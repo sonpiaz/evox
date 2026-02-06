@@ -49,7 +49,7 @@ export function TaskCard({ task, onClick, onAssigneeClick }: TaskCardProps) {
       type="button"
       onClick={onClick}
       className={cn(
-        "w-full rounded-lg border border-gray-800 bg-[#0a0a0a] p-4 text-left transition-colors hover:border-gray-700 hover:bg-gray-800/50",
+        "w-full rounded-lg border border-gray-800 bg-zinc-950 p-4 text-left transition-colors hover:border-gray-700 hover:bg-gray-800/50",
         "border-l-4",
         barColor
       )}
@@ -63,7 +63,7 @@ export function TaskCard({ task, onClick, onAssigneeClick }: TaskCardProps) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="font-mono text-xs text-[#888] hover:text-zinc-400 whitespace-nowrap"
+              className="font-mono text-xs text-zinc-400 hover:text-zinc-400 whitespace-nowrap"
             >
               {task.linearIdentifier}
             </a>
@@ -75,7 +75,7 @@ export function TaskCard({ task, onClick, onAssigneeClick }: TaskCardProps) {
             onClick={onAssigneeClick && task.assigneeId ? handleAssigneeClick : undefined}
             className={cn(
               "shrink-0",
-              onAssigneeClick && task.assigneeId && "cursor-pointer rounded hover:ring-1 hover:ring-[#333]"
+              onAssigneeClick && task.assigneeId && "cursor-pointer rounded hover:ring-1 hover:ring-zinc-700"
             )}
             title={onAssigneeClick && task.assigneeId ? `Open ${task.assigneeName ?? "agent"}` : undefined}
           >
@@ -95,7 +95,7 @@ export function TaskCard({ task, onClick, onAssigneeClick }: TaskCardProps) {
           </span>
         ))}
         {task.updatedAt != null && (
-          <span className="text-xs text-[#555]">{formatDistanceToNow(task.updatedAt, { addSuffix: true })}</span>
+          <span className="text-xs text-zinc-500">{formatDistanceToNow(task.updatedAt, { addSuffix: true })}</span>
         )}
       </div>
     </button>

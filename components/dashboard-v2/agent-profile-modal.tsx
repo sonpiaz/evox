@@ -51,14 +51,14 @@ export function AgentProfileModal({
       onClick={onClose}
     >
       <div
-        className="max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-xl border border-white/[0.08] bg-[#1a1a2e] shadow-2xl flex flex-col"
+        className="max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-xl border border-white/[0.08] bg-zinc-900 shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header: Agent emoji + name + role + status — AGT-245 Brutal */}
-        <div className="flex shrink-0 items-center justify-between border-b border-white/[0.08] px-4 py-3 bg-[#0a0a0a]">
+        <div className="flex shrink-0 items-center justify-between border-b border-white/[0.08] px-4 py-3 bg-zinc-950">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 border border-white/[0.08]">
-              <AvatarFallback className="bg-[#111] text-base font-bold text-zinc-50">{avatar}</AvatarFallback>
+              <AvatarFallback className="bg-zinc-900 text-base font-bold text-zinc-50">{avatar}</AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">

@@ -33,7 +33,7 @@ export function ViewTabs({ activeTab, onTabChange, className }: ViewTabsProps) {
   return (
     <div
       className={cn(
-        "flex items-center gap-1 border-b border-[#222222] bg-[#0f0f0f] px-2 sm:px-4 py-2 overflow-x-auto scrollbar-hide",
+        "flex items-center gap-1 border-b border-zinc-800 bg-zinc-950 px-2 sm:px-4 py-2 overflow-x-auto scrollbar-hide",
         className
       )}
       role="tablist"

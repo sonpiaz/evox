@@ -39,8 +39,8 @@ export function AgentPanel({ agents, selectedAgentId, onSelectAgent, className =
 
   return (
     <aside className={className}>
-      <div className="flex h-full flex-col border-r border-gray-800 bg-[#0a0a0a]">
-        <div className="border-b border-[#1a1a1a] px-3 py-3">
+      <div className="flex h-full flex-col border-r border-gray-800 bg-zinc-950">
+        <div className="border-b border-zinc-900 px-3 py-3">
           <h2 className="text-sm font-semibold text-zinc-50">Agents</h2>
           <AgentSummary total={agents.length} active={activeCount} />
         </div>

@@ -30,8 +30,8 @@ export function DailyNoteCard({ date, content, updatedAt, className }: DailyNote
   return (
     <div
       className={cn(
-        "rounded-lg border border-[#222] bg-[#111] transition-colors",
-        expanded ? "bg-[#141414]" : "",
+        "rounded-lg border border-zinc-800 bg-zinc-900 transition-colors",
+        expanded ? "bg-zinc-900/80" : "",
         className
       )}
     >
@@ -42,7 +42,7 @@ export function DailyNoteCard({ date, content, updatedAt, className }: DailyNote
         className="flex w-full items-center justify-between px-3 py-2 text-left"
       >
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs text-[#888]">{displayDate}</span>
+          <span className="font-mono text-xs text-zinc-400">{displayDate}</span>
           {isToday && (
             <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-medium text-emerald-400">
               Today
@@ -51,11 +51,11 @@ export function DailyNoteCard({ date, content, updatedAt, className }: DailyNote
         </div>
         <div className="flex items-center gap-2">
           {updatedAt != null && (
-            <span className="text-xs text-[#444]">
+            <span className="text-xs text-zinc-600">
               {formatDistanceToNow(updatedAt, { addSuffix: true })}
             </span>
           )}
-          <span className="text-xs text-[#555]">{expanded ? "▲" : "▼"}</span>
+          <span className="text-xs text-zinc-500">{expanded ? "▲" : "▼"}</span>
         </div>
       </button>
 
@@ -70,7 +70,7 @@ export function DailyNoteCard({ date, content, updatedAt, className }: DailyNote
                 {line}
               </div>
             ))}
-            {hasMore && <span className="text-[#555]">...</span>}
+            {hasMore && <span className="text-zinc-500">...</span>}
           </div>
         )}
       </div>

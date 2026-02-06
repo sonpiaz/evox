@@ -37,7 +37,7 @@ export function MemoryTab({ agentId, agentName, className }: MemoryTabProps) {
   if (isLoading) {
     return (
       <div className={cn("flex items-center justify-center py-12", className)}>
-        <span className="animate-pulse text-sm text-[#555]">Loading memory...</span>
+        <span className="animate-pulse text-sm text-zinc-500">Loading memory...</span>
       </div>
     );
   }

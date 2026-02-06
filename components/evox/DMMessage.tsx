@@ -43,7 +43,7 @@ export function DMMessage({
       )}
     >
       {/* Avatar */}
-      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#222] flex items-center justify-center text-sm">
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-sm">
         {senderAvatar}
       </div>
 
@@ -53,7 +53,7 @@ export function DMMessage({
           "rounded-lg px-3 py-2 max-w-full",
           isOwn
             ? "bg-blue-600 text-white rounded-br-sm"
-            : "bg-[#1a1a1a] text-zinc-300 rounded-bl-sm"
+            : "bg-zinc-900 text-zinc-300 rounded-bl-sm"
         )}
       >
         {/* Type badge */}

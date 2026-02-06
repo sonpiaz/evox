@@ -62,11 +62,11 @@ export function MarkdownEditor({
   return (
     <div className={cn("flex flex-col h-full", className)}>
       {/* Toolbar */}
-      <div className="flex items-center justify-between border-b border-[#222] px-3 py-2 bg-[#0d0d0d]">
+      <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2 bg-zinc-950">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-[#555]">Editing</span>
+          <span className="text-xs text-zinc-500">Editing</span>
           {lastSaved && (
-            <span className="text-xs text-[#444]">
+            <span className="text-xs text-zinc-600">
               Draft saved {lastSaved.toLocaleTimeString()}
             </span>
           )}
@@ -75,7 +75,7 @@ export function MarkdownEditor({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded px-2 py-1 text-xs text-[#888] hover:bg-[#222] hover:text-white"
+            className="rounded px-2 py-1 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-white"
           >
             Cancel (Esc)
           </button>
@@ -99,13 +99,13 @@ export function MarkdownEditor({
         onChange={(e) => setDraft(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className="flex-1 resize-none bg-[#0a0a0a] p-4 text-sm text-zinc-300 font-mono placeholder:text-zinc-600 focus:outline-none"
+        className="flex-1 resize-none bg-zinc-950 p-4 text-sm text-zinc-300 font-mono placeholder:text-zinc-600 focus:outline-none"
         spellCheck={false}
       />
 
       {/* Keyboard hints */}
-      <div className="border-t border-[#222] px-3 py-1.5 bg-[#0d0d0d]">
-        <span className="text-[10px] text-[#444]">
+      <div className="border-t border-zinc-800 px-3 py-1.5 bg-zinc-950">
+        <span className="text-[10px] text-zinc-600">
           ⌘S Save · Esc Cancel · Auto-saves every 30s
         </span>
       </div>

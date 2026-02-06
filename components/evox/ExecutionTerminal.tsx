@@ -131,13 +131,13 @@ export function ExecutionTerminal({ className, defaultAgent = "sam", hideHeader 
   const statusInfo = statusConfig[status];
 
   return (
-    <div className={cn("flex flex-col bg-[#0a0a0f] rounded-lg border border-[#222222] overflow-hidden", className)}>
+    <div className={cn("flex flex-col bg-zinc-950 rounded-lg border border-zinc-800 overflow-hidden", className)}>
       {/* Header — hidden when parent provides its own controls */}
       {!hideHeader && (
-        <div className="flex items-center justify-between border-b border-[#222222] px-3 py-2">
+        <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2">
           <div className="flex items-center gap-3">
             <span className="text-sm">🖥️</span>
-            <span className="text-xs font-medium uppercase tracking-wider text-[#888888]">
+            <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">
               Execution Log
             </span>
 
@@ -145,7 +145,7 @@ export function ExecutionTerminal({ className, defaultAgent = "sam", hideHeader 
             <select
               value={selectedAgent}
               onChange={(e) => setSelectedAgent(e.target.value)}
-              className="rounded border border-[#333333] bg-[#1a1a1a] px-2 py-1 text-xs text-[#fafafa] focus:border-[#3b82f6] focus:outline-none"
+              className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 text-xs text-zinc-50 focus:border-blue-500 focus:outline-none"
             >
               {AGENTS.map((agent) => (
                 <option key={agent} value={agent}>
@@ -165,14 +165,14 @@ export function ExecutionTerminal({ className, defaultAgent = "sam", hideHeader 
                   statusInfo.pulse && "animate-pulse"
                 )}
               />
-              <span className="text-[10px] text-[#888888]">{statusInfo.label}</span>
+              <span className="text-[10px] text-zinc-400">{statusInfo.label}</span>
             </div>
 
             {/* Controls */}
             <button
               type="button"
               onClick={() => setExpandAll(!expandAll)}
-              className="rounded px-2 py-1 text-[10px] text-[#555555] hover:bg-white/5 hover:text-[#888888]"
+              className="rounded px-2 py-1 text-[10px] text-zinc-500 hover:bg-white/5 hover:text-zinc-400"
               title={expandAll ? "Collapse" : "Expand all"}
             >
               {expandAll ? "−" : "+"}
@@ -188,7 +188,7 @@ export function ExecutionTerminal({ className, defaultAgent = "sam", hideHeader 
         className="flex-1 overflow-auto p-3 font-mono text-[13px] leading-relaxed min-h-[200px]"
       >
         {!logs || logs.length === 0 ? (
-          <div className="flex h-full items-center justify-center text-xs text-[#555555]">
+          <div className="flex h-full items-center justify-center text-xs text-zinc-500">
             No execution logs for {selectedAgent.toUpperCase()}
           </div>
         ) : (
@@ -202,13 +202,13 @@ export function ExecutionTerminal({ className, defaultAgent = "sam", hideHeader 
 
       {/* Footer with stats */}
       {summary && (
-        <div className="flex items-center justify-between border-t border-[#222222] px-3 py-2 text-[10px] text-[#555555]">
+        <div className="flex items-center justify-between border-t border-zinc-800 px-3 py-2 text-[10px] text-zinc-500">
           <div className="flex items-center gap-4">
             <span>
-              Logs: <span className="text-[#888888]">{summary.logs.total}</span>
+              Logs: <span className="text-zinc-400">{summary.logs.total}</span>
             </span>
             <span>
-              Files: <span className="text-[#888888]">{summary.files.uniqueFiles}</span>
+              Files: <span className="text-zinc-400">{summary.files.uniqueFiles}</span>
             </span>
             {summary.logs.error > 0 && (
               <span className="text-red-400">
@@ -226,7 +226,7 @@ export function ExecutionTerminal({ className, defaultAgent = "sam", hideHeader 
                     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
                   }
                 }}
-                className="rounded bg-white/5 px-2 py-0.5 text-[10px] text-[#888888] hover:bg-white/10"
+                className="rounded bg-white/5 px-2 py-0.5 text-[10px] text-zinc-400 hover:bg-white/10"
               >
                 ↓ Scroll to bottom
               </button>
@@ -263,7 +263,7 @@ function LogLine({ log, expanded }: { log: ExecutionLog; expanded: boolean }) {
       <span className={cn("mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full", levelStyle.dot)} />
 
       {/* Timestamp */}
-      <span className="shrink-0 text-[10px] text-[#444444]">
+      <span className="shrink-0 text-[10px] text-zinc-600">
         {new Date(log.timestamp).toLocaleTimeString("en-GB", {
           hour: "2-digit",
           minute: "2-digit",
@@ -285,20 +285,20 @@ function LogLine({ log, expanded }: { log: ExecutionLog; expanded: boolean }) {
 
         {/* Metadata */}
         {isExpanded && hasMetadata && (
-          <div className="mt-1 rounded bg-white/[0.02] p-2 text-[11px] text-[#666666]">
+          <div className="mt-1 rounded bg-white/[0.02] p-2 text-[11px] text-zinc-500">
             {log.metadata?.command && (
               <div>
-                <span className="text-[#888888]">Command:</span> {log.metadata.command}
+                <span className="text-zinc-400">Command:</span> {log.metadata.command}
               </div>
             )}
             {log.metadata?.duration !== undefined && (
               <div>
-                <span className="text-[#888888]">Duration:</span> {log.metadata.duration}ms
+                <span className="text-zinc-400">Duration:</span> {log.metadata.duration}ms
               </div>
             )}
             {log.metadata?.exitCode !== undefined && (
               <div>
-                <span className="text-[#888888]">Exit:</span>{" "}
+                <span className="text-zinc-400">Exit:</span>{" "}
                 <span className={log.metadata.exitCode === 0 ? "text-emerald-400" : "text-red-400"}>
                   {log.metadata.exitCode}
                 </span>
@@ -306,12 +306,12 @@ function LogLine({ log, expanded }: { log: ExecutionLog; expanded: boolean }) {
             )}
             {log.metadata?.error && (
               <div className="text-red-400">
-                <span className="text-[#888888]">Error:</span> {log.metadata.error}
+                <span className="text-zinc-400">Error:</span> {log.metadata.error}
               </div>
             )}
             {log.metadata?.filesAffected && log.metadata.filesAffected.length > 0 && (
               <div>
-                <span className="text-[#888888]">Files:</span>{" "}
+                <span className="text-zinc-400">Files:</span>{" "}
                 {log.metadata.filesAffected.join(", ")}
               </div>
             )}
@@ -324,7 +324,7 @@ function LogLine({ log, expanded }: { log: ExecutionLog; expanded: boolean }) {
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="shrink-0 text-[10px] text-[#444444] opacity-0 transition-opacity group-hover:opacity-100 hover:text-[#888888]"
+          className="shrink-0 text-[10px] text-zinc-600 opacity-0 transition-opacity group-hover:opacity-100 hover:text-zinc-400"
         >
           {isExpanded ? "−" : "+"}
         </button>

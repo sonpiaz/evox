@@ -213,7 +213,7 @@ export function AnalyticsPanelV2({ className }: AnalyticsPanelV2Props) {
 
   if (!agents || !metrics) {
     return (
-      <div className={cn("flex items-center justify-center h-full text-[#555555]", className)}>
+      <div className={cn("flex items-center justify-center h-full text-zinc-500", className)}>
         <span className="animate-pulse">Loading analytics...</span>
       </div>
     );
@@ -230,7 +230,7 @@ export function AnalyticsPanelV2({ className }: AnalyticsPanelV2Props) {
         <select
           value={timeFilter}
           onChange={(e) => setTimeFilter(e.target.value as TimeFilter)}
-          className="px-3 py-1.5 text-sm bg-[#111111] border border-[#222222] rounded-lg text-white focus:outline-none focus:border-[#333333]"
+          className="px-3 py-1.5 text-sm bg-zinc-900 border border-zinc-800 rounded-lg text-white focus:outline-none focus:border-zinc-700"
         >
           {timeFilterOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -241,16 +241,16 @@ export function AnalyticsPanelV2({ className }: AnalyticsPanelV2Props) {
       </div>
 
       {/* Velocity Section */}
-      <div className="rounded-xl border border-[#222222] bg-[#111111] p-5">
-        <h3 className="text-xs font-medium uppercase tracking-wider text-[#666666] mb-4">
+      <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
+        <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-500 mb-4">
           VELOCITY
         </h3>
         <VelocityChart data={metrics.velocityData} />
       </div>
 
       {/* Completion Section */}
-      <div className="rounded-xl border border-[#222222] bg-[#111111] p-5">
-        <h3 className="text-xs font-medium uppercase tracking-wider text-[#666666] mb-4">
+      <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
+        <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-500 mb-4">
           COMPLETION
         </h3>
         <CompletionBar
@@ -262,12 +262,12 @@ export function AnalyticsPanelV2({ className }: AnalyticsPanelV2Props) {
       </div>
 
       {/* Agent Breakdown Section */}
-      <div className="rounded-xl border border-[#222222] bg-[#111111] p-5">
+      <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xs font-medium uppercase tracking-wider text-[#666666]">
+          <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-500">
             BY AGENT
           </h3>
-          <span className="text-xs text-[#555555]">
+          <span className="text-xs text-zinc-500">
             Total: ${metrics.totalCost.toFixed(2)}
           </span>
         </div>
@@ -276,8 +276,8 @@ export function AnalyticsPanelV2({ className }: AnalyticsPanelV2Props) {
 
       {/* Predictions Section */}
       {metrics.predictions.length > 0 && (
-        <div className="rounded-xl border border-[#222222] bg-[#111111] p-5">
-          <h3 className="text-xs font-medium uppercase tracking-wider text-[#666666] mb-4">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
+          <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-500 mb-4">
             PREDICTIONS
           </h3>
           <PredictionCard predictions={metrics.predictions} />

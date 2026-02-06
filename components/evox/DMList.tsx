@@ -64,8 +64,8 @@ export function DMList({
             className={cn(
               "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors",
               isSelected
-                ? "bg-[#222] text-white"
-                : "text-zinc-400 hover:bg-[#1a1a1a] hover:text-zinc-200"
+                ? "bg-zinc-800 text-white"
+                : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
             )}
           >
             {/* Avatar */}

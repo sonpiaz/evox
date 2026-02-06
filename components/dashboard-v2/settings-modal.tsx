@@ -93,7 +93,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={onClose}>
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border border-gray-800 bg-[#0a0a0a]" onClick={(e) => e.stopPropagation()}>
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border border-gray-800 bg-zinc-950" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-gray-800 p-4">
           <h2 className="text-lg font-semibold text-zinc-50">Settings</h2>
           <button type="button" onClick={onClose} className="rounded p-2 text-gray-500 hover:bg-gray-800 hover:text-white" aria-label="Close">×</button>

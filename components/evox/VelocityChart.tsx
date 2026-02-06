@@ -47,7 +47,7 @@ export function VelocityChart({ data, className }: VelocityChartProps) {
 
   if (data.length === 0) {
     return (
-      <div className={cn("text-center text-[#555555] py-8", className)}>
+      <div className={cn("text-center text-zinc-500 py-8", className)}>
         No velocity data available
       </div>
     );
@@ -101,7 +101,7 @@ export function VelocityChart({ data, className }: VelocityChartProps) {
 
       {/* Stats row */}
       <div className="flex items-center gap-4 text-sm">
-        <span className="text-[#888888]">
+        <span className="text-zinc-400">
           <span className="text-white font-medium">{stats.avg}</span> tasks/day avg
         </span>
         {stats.trend !== 0 && (

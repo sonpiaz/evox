@@ -43,7 +43,7 @@ export function DMInput({
   if (isViewerMode) return null;
 
   return (
-    <div className={cn("border-t border-[#222] p-3 bg-[#0d0d0d]", className)}>
+    <div className={cn("border-t border-zinc-800 p-3 bg-zinc-950", className)}>
       {/* Type selector */}
       <div className="flex gap-1 mb-2">
         {(["fyi", "update", "request", "handoff"] as const).map((t) => (
@@ -78,7 +78,7 @@ export function DMInput({
           placeholder={placeholder}
           disabled={disabled}
           rows={2}
-          className="flex-1 resize-none rounded-lg border border-[#222] bg-[#111] px-3 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 focus:border-[#333] focus:outline-none disabled:opacity-50"
+          className="flex-1 resize-none rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 focus:border-zinc-700 focus:outline-none disabled:opacity-50"
         />
         <button
           type="button"
