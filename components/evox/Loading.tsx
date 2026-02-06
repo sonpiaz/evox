@@ -22,14 +22,14 @@ export function Loading({ size = "md", text, className }: LoadingProps) {
     <div className={cn("flex items-center justify-center gap-2", className)}>
       <div
         className={cn(
-          "animate-spin rounded-full border-zinc-700 border-t-blue-500",
+          "animate-spin rounded-full border-gray-500 border-t-blue-500",
           sizeMap[size]
         )}
         role="status"
         aria-label="Loading"
       />
       {text && (
-        <span className="text-xs sm:text-sm text-zinc-500 animate-pulse">
+        <span className="text-xs sm:text-sm text-primary0 animate-pulse">
           {text}
         </span>
       )}
@@ -55,7 +55,7 @@ export function Skeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "animate-pulse rounded bg-zinc-800",
+        "animate-pulse rounded bg-surface-4",
         className
       )}
     />
@@ -69,7 +69,7 @@ export function SkeletonCard({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "rounded-lg border border-zinc-800 bg-zinc-900/50 p-4",
+        "rounded-lg border border-border-default bg-surface-1/50 p-4",
         className
       )}
     >

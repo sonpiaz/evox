@@ -15,7 +15,7 @@ interface StatusDotProps {
 const statusColors: Record<Status, string> = {
   online: "bg-green-500",
   busy: "bg-yellow-500",
-  idle: "bg-zinc-500",
+  idle: "bg-gray-500",
   offline: "bg-red-500",
 };
 

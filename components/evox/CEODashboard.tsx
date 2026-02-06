@@ -30,7 +30,7 @@ const AGENT_COLORS: Record<string, string> = {
 };
 
 function agentColor(name: string) {
-  return AGENT_COLORS[name.toLowerCase()] || "text-zinc-400";
+  return AGENT_COLORS[name.toLowerCase()] || "text-secondary";
 }
 
 function timeAgo(ts: number) {
@@ -125,7 +125,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
           EVOX
         </h1>
         <div className="flex items-center gap-3">
-          <Link href="/?view=team" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+          <Link href="/?view=team" className="text-xs text-primary0 hover:text-primary transition-colors">
             Team
           </Link>
           <div className="flex items-center gap-2">
@@ -135,7 +135,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
                 ? "bg-green-500 animate-pulse shadow-[0_0_6px_rgba(34,197,94,0.4)]"
                 : "bg-red-500"
             )} />
-            <span className="text-xs text-zinc-500">Live</span>
+            <span className="text-xs text-primary0">Live</span>
           </div>
         </div>
       </header>
@@ -145,13 +145,13 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {/* Velocity */}
           <div className="bg-surface-1 border border-border-default rounded-xl p-4">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-primary0 mb-1">
               Velocity
             </div>
             <div className="text-2xl font-bold tabular-nums text-white">
               {isLoading ? "—" : velocity}
             </div>
-            <div className="text-[10px] text-zinc-600">tasks/day</div>
+            <div className="text-[10px] text-tertiary">tasks/day</div>
             {sparkline.length > 0 && (
               <div className="flex items-end gap-[2px] h-6 mt-2">
                 {sparkline.map((v, i) => {
@@ -170,56 +170,56 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
 
           {/* Commits */}
           <div className="bg-surface-1 border border-border-default rounded-xl p-4">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-primary0 mb-1">
               Commits
             </div>
             <div className="text-2xl font-bold tabular-nums text-emerald-400">
               {isLoading ? "—" : commitCount}
             </div>
-            <div className="text-[10px] text-zinc-600">recent</div>
+            <div className="text-[10px] text-tertiary">recent</div>
           </div>
 
           {/* Team */}
           <div className="bg-surface-1 border border-border-default rounded-xl p-4">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-primary0 mb-1">
               Team
             </div>
             <div className="text-2xl font-bold tabular-nums text-white">
               {isLoading ? "—" : totalAgents}
             </div>
-            <div className="text-[10px] text-zinc-600">agents</div>
+            <div className="text-[10px] text-tertiary">agents</div>
           </div>
 
           {/* Today */}
           <div className="bg-surface-1 border border-border-default rounded-xl p-4">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-primary0 mb-1">
               Today
             </div>
             {isLoading ? (
-              <div className="text-2xl font-bold text-zinc-700">—</div>
+              <div className="text-2xl font-bold text-tertiary">—</div>
             ) : (
               <div className="flex items-center gap-2 text-sm font-medium">
                 <span className="text-emerald-400">{completed} done</span>
                 <span className="text-blue-400">{inProgress} wip</span>
-                <span className="text-zinc-500">{blocked} blocked</span>
+                <span className="text-primary0">{blocked} blocked</span>
               </div>
             )}
           </div>
 
           {/* Success Rate (merged from Health) */}
           <div className="bg-surface-1 border border-border-default rounded-xl p-4">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-primary0 mb-1">
               Success Rate
             </div>
             <div className={cn(
               "text-2xl font-bold tabular-nums",
-              !healthMetrics ? "text-zinc-700" :
+              !healthMetrics ? "text-tertiary" :
               healthMetrics.successRate >= 95 ? "text-emerald-400" :
               healthMetrics.successRate >= 80 ? "text-yellow-400" : "text-red-400"
             )}>
               {healthMetrics ? `${healthMetrics.successRate}%` : "—"}
             </div>
-            <div className="text-[10px] text-zinc-600">24h</div>
+            <div className="text-[10px] text-tertiary">24h</div>
             {healthMetrics && healthMetrics.successByDay.length > 0 && (
               <svg width={80} height={24} className="mt-2">
                 <polyline
@@ -246,17 +246,17 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
 
           {/* Errors (merged from Health) */}
           <div className="bg-surface-1 border border-border-default rounded-xl p-4">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-primary0 mb-1">
               Errors
             </div>
             <div className={cn(
               "text-2xl font-bold tabular-nums",
-              !healthMetrics ? "text-zinc-700" :
+              !healthMetrics ? "text-tertiary" :
               healthMetrics.errors7d === 0 ? "text-emerald-400" : "text-red-400"
             )}>
               {healthMetrics ? healthMetrics.errors7d : "—"}
             </div>
-            <div className="text-[10px] text-zinc-600">7d</div>
+            <div className="text-[10px] text-tertiary">7d</div>
             {healthMetrics && healthMetrics.errorsByDay.length > 0 && (
               <div className="flex items-end gap-[2px] h-6 mt-2">
                 {healthMetrics.errorsByDay.map((d, i) => {
@@ -290,7 +290,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
 
         {/* ─── Team Strip ─── */}
         <div className="flex items-center gap-1 overflow-x-auto py-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-600 mr-2 shrink-0">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-tertiary mr-2 shrink-0">
             Team
           </span>
           {agentStatus?.agents.map((agent) => (
@@ -299,7 +299,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
               href={`/agents/${agent.name.toLowerCase()}`}
               className="flex items-center gap-1.5 px-2.5 py-1.5 shrink-0 hover:bg-surface-2 rounded-lg transition-colors"
             >
-              <span className="text-xs font-medium text-zinc-300">
+              <span className="text-xs font-medium text-primary">
                 {agent.name}
               </span>
             </Link>
@@ -311,7 +311,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
           {/* Live Activity */}
           <div className="bg-surface-1 border border-border-default rounded-xl overflow-hidden">
             <div className="px-4 py-2.5 border-b border-border-default">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-primary0">
                 Live Activity
               </span>
             </div>
@@ -319,22 +319,22 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
               {liveFeed && liveFeed.length > 0 ? (
                 liveFeed.map((item) => (
                   <div key={item.id} className="px-4 py-2.5 flex items-start gap-2.5">
-                    <span className="text-[10px] text-zinc-600 tabular-nums shrink-0 w-8 pt-0.5 text-right">
+                    <span className="text-[10px] text-tertiary tabular-nums shrink-0 w-8 pt-0.5 text-right">
                       {timeAgo(item.timestamp)}
                     </span>
                     <span className={cn("text-xs font-bold uppercase shrink-0 w-10", agentColor(item.agent))}>
                       {item.agent}
                     </span>
-                    <span className="text-xs text-zinc-400 truncate">
+                    <span className="text-xs text-secondary truncate">
                       {item.action}
                       {item.detail && (
-                        <span className="text-zinc-600 ml-1">{item.detail}</span>
+                        <span className="text-tertiary ml-1">{item.detail}</span>
                       )}
                     </span>
                   </div>
                 ))
               ) : (
-                <div className="px-4 py-6 text-center text-xs text-zinc-700">
+                <div className="px-4 py-6 text-center text-xs text-tertiary">
                   No recent activity
                 </div>
               )}
@@ -344,7 +344,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
           {/* Recent Commits */}
           <div className="bg-surface-1 border border-border-default rounded-xl overflow-hidden">
             <div className="px-4 py-2.5 border-b border-border-default">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-primary0">
                 Recent Commits
               </span>
             </div>
@@ -352,19 +352,19 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
               {commits && commits.length > 0 ? (
                 commits.slice(0, 5).map((commit) => (
                   <div key={commit._id} className="px-4 py-2.5 flex items-start gap-2.5">
-                    <span className="text-[10px] text-zinc-700 font-mono shrink-0 w-12">
+                    <span className="text-[10px] text-tertiary font-mono shrink-0 w-12">
                       {commit.shortHash || commit.commitHash?.slice(0, 7)}
                     </span>
                     <span className={cn("text-xs font-bold uppercase shrink-0 w-10", agentColor(commit.agentName || ""))}>
                       {commit.agentName || "?"}
                     </span>
-                    <span className="text-xs text-zinc-400 truncate">
+                    <span className="text-xs text-secondary truncate">
                       {commit.message.split("\n")[0].slice(0, 60)}
                     </span>
                   </div>
                 ))
               ) : (
-                <div className="px-4 py-6 text-center text-xs text-zinc-700">
+                <div className="px-4 py-6 text-center text-xs text-tertiary">
                   No recent commits
                 </div>
               )}
@@ -375,7 +375,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
         {/* ─── Agent Comms ─── */}
         <div className="bg-surface-1 border border-border-default rounded-xl overflow-hidden">
           <div className="px-4 py-2.5 border-b border-border-default">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-primary0">
               Agent Comms
             </span>
           </div>
@@ -387,16 +387,16 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
                     <span className={cn("text-xs font-bold uppercase", agentColor(msg.from || ""))}>
                       {msg.from || "?"}
                     </span>
-                    <span className="text-[10px] text-zinc-700">&rarr;</span>
-                    <span className="text-[10px] text-zinc-600">
+                    <span className="text-[10px] text-tertiary">&rarr;</span>
+                    <span className="text-[10px] text-tertiary">
                       {msg.to || "team"}
                     </span>
                     <span className="flex-1" />
-                    <span className="text-[10px] text-zinc-700 tabular-nums">
+                    <span className="text-[10px] text-tertiary tabular-nums">
                       {msg.timestamp ? timeAgo(msg.timestamp) : ""}
                     </span>
                   </div>
-                  <div className="text-xs text-zinc-500 truncate">
+                  <div className="text-xs text-primary0 truncate">
                     {msg.content?.slice(0, 80) || msg.summary || ""}
                   </div>
                   {msg.keywords && msg.keywords.length > 0 && (
@@ -412,7 +412,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
                               ? "bg-emerald-500/20 text-emerald-400"
                               : /blocked|failed/i.test(kw)
                               ? "bg-red-500/20 text-red-400"
-                              : "bg-surface-4 text-zinc-500"
+                              : "bg-surface-4 text-primary0"
                           )}
                         >
                           {kw}
@@ -423,7 +423,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
                 </div>
               ))
             ) : (
-              <div className="px-4 py-6 text-center text-xs text-zinc-700">
+              <div className="px-4 py-6 text-center text-xs text-tertiary">
                 No recent comms
               </div>
             )}

@@ -98,15 +98,15 @@ export function AgentSettingsModal({ open, agentId, onClose }: AgentSettingsModa
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <div
-        className="w-full max-w-md rounded-lg border border-zinc-800 bg-zinc-900 p-6"
+        className="w-full max-w-md rounded-lg border border-border-default bg-surface-1 p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-zinc-50">Agent Settings</h2>
+          <h2 className="text-lg font-semibold text-primary">Agent Settings</h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-zinc-400 hover:text-zinc-50"
+            className="text-secondary hover:text-primary"
           >
             ✕
           </button>
@@ -115,18 +115,18 @@ export function AgentSettingsModal({ open, agentId, onClose }: AgentSettingsModa
         <div className="space-y-4">
           {/* Name */}
           <div>
-            <label className="mb-1 block text-xs text-zinc-400">Name</label>
+            <label className="mb-1 block text-xs text-secondary">Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded border border-border-default bg-base px-3 py-2 text-sm text-primary focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           {/* Avatar */}
           <div>
-            <label className="mb-1 block text-xs text-zinc-400">Avatar</label>
+            <label className="mb-1 block text-xs text-secondary">Avatar</label>
             <div className="flex flex-wrap gap-2">
               {EMOJI_OPTIONS.map((emoji) => (
                 <button
@@ -136,7 +136,7 @@ export function AgentSettingsModal({ open, agentId, onClose }: AgentSettingsModa
                   className={`flex h-10 w-10 items-center justify-center rounded border text-xl transition-colors ${
                     avatar === emoji
                       ? "border-blue-500 bg-blue-500/20"
-                      : "border-zinc-800 hover:border-zinc-700"
+                      : "border-border-default hover:border-gray-500"
                   }`}
                 >
                   {emoji}
@@ -147,7 +147,7 @@ export function AgentSettingsModal({ open, agentId, onClose }: AgentSettingsModa
 
           {/* Role */}
           <div>
-            <label className="mb-1 block text-xs text-zinc-400">Role</label>
+            <label className="mb-1 block text-xs text-secondary">Role</label>
             <div className="flex gap-2">
               {(["pm", "backend", "frontend"] as const).map((r) => (
                 <button
@@ -156,8 +156,8 @@ export function AgentSettingsModal({ open, agentId, onClose }: AgentSettingsModa
                   onClick={() => setRole(r)}
                   className={`flex-1 rounded border px-3 py-2 text-sm capitalize transition-colors ${
                     role === r
-                      ? "border-blue-500 bg-blue-500/20 text-zinc-50"
-                      : "border-zinc-800 text-zinc-400 hover:border-zinc-700"
+                      ? "border-blue-500 bg-blue-500/20 text-primary"
+                      : "border-border-default text-secondary hover:border-gray-500"
                   }`}
                 >
                   {r === "pm" ? "PM" : r.charAt(0).toUpperCase() + r.slice(1)}
@@ -168,7 +168,7 @@ export function AgentSettingsModal({ open, agentId, onClose }: AgentSettingsModa
 
           {/* Model */}
           <div>
-            <label className="mb-1 block text-xs text-zinc-400">Model</label>
+            <label className="mb-1 block text-xs text-secondary">Model</label>
             <div className="flex gap-2">
               {MODEL_OPTIONS.map((m) => (
                 <button
@@ -177,8 +177,8 @@ export function AgentSettingsModal({ open, agentId, onClose }: AgentSettingsModa
                   onClick={() => setModel(m)}
                   className={`flex-1 rounded border px-3 py-2 text-sm capitalize transition-colors ${
                     model === m
-                      ? "border-blue-500 bg-blue-500/20 text-zinc-50"
-                      : "border-zinc-800 text-zinc-400 hover:border-zinc-700"
+                      ? "border-blue-500 bg-blue-500/20 text-primary"
+                      : "border-border-default text-secondary hover:border-gray-500"
                   }`}
                 >
                   {m}
@@ -189,11 +189,11 @@ export function AgentSettingsModal({ open, agentId, onClose }: AgentSettingsModa
 
           {/* Status */}
           <div>
-            <label className="mb-1 block text-xs text-zinc-400">Status</label>
+            <label className="mb-1 block text-xs text-secondary">Status</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as "online" | "idle" | "busy" | "offline")}
-              className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded border border-border-default bg-base px-3 py-2 text-sm text-primary focus:border-blue-500 focus:outline-none"
             >
               {STATUS_OPTIONS.map((s) => (
                 <option key={s} value={s}>
@@ -209,7 +209,7 @@ export function AgentSettingsModal({ open, agentId, onClose }: AgentSettingsModa
           <button
             type="button"
             onClick={onClose}
-            className="rounded border border-zinc-800 px-4 py-2 text-sm text-zinc-400 hover:border-zinc-700 hover:text-zinc-50"
+            className="rounded border border-border-default px-4 py-2 text-sm text-secondary hover:border-gray-500 hover:text-primary"
           >
             Cancel
           </button>

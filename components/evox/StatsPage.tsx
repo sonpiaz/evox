@@ -49,7 +49,7 @@ function CountCard({ label, value, color }: { label: string; value: number; colo
   const colorMap: Record<string, string> = {
     blue: "text-blue-400 border-blue-500/20 bg-blue-500/5",
     yellow: "text-yellow-400 border-yellow-500/20 bg-yellow-500/5",
-    zinc: "text-zinc-400 border-zinc-500/20 bg-zinc-500/5",
+    zinc: "text-secondary border-gray-500/20 bg-gray-500/5",
     emerald: "text-emerald-400 border-emerald-500/20 bg-emerald-500/5",
   };
 
@@ -152,7 +152,7 @@ export function StatsPage({ className }: StatsPageProps) {
       </div>
 
       {/* Completion Progress */}
-      <div className="rounded-lg border border-white/10 bg-zinc-900/50 p-5">
+      <div className="rounded-lg border border-white/10 bg-surface-1/50 p-5">
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-medium uppercase tracking-wider text-white/40">Completion</span>
           <span className="text-sm text-white/50">
@@ -189,7 +189,7 @@ export function StatsPage({ className }: StatsPageProps) {
       {/* Velocity + Cost */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Velocity Trend */}
-        <div className="rounded-lg border border-white/10 bg-zinc-900/50 p-4">
+        <div className="rounded-lg border border-white/10 bg-surface-1/50 p-4">
           <div className="text-xs font-medium uppercase tracking-wider text-white/40 mb-3">
             Velocity ({mode === "30days" ? "30 days" : "7 days"})
           </div>
@@ -200,7 +200,7 @@ export function StatsPage({ className }: StatsPageProps) {
         </div>
 
         {/* Cost Summary */}
-        <div className="rounded-lg border border-white/10 bg-zinc-900/50 p-4">
+        <div className="rounded-lg border border-white/10 bg-surface-1/50 p-4">
           <div className="text-xs font-medium uppercase tracking-wider text-white/40 mb-3">Cost</div>
           <div className="space-y-3">
             <div className="flex items-baseline justify-between">

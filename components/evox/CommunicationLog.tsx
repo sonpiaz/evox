@@ -17,7 +17,7 @@ const MESSAGE_TYPE_COLORS: Record<MessageType, string> = {
   handoff: "bg-purple-500/10 text-purple-400 border-purple-500/20",
   update: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   request: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-  fyi: "bg-zinc-500/10 text-zinc-400 border-zinc-500/20",
+  fyi: "bg-gray-500/10 text-secondary border-gray-500/20",
 };
 
 /**
@@ -69,20 +69,20 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
   };
 
   return (
-    <div className={cn("flex flex-col h-full bg-zinc-950", className)}>
+    <div className={cn("flex flex-col h-full bg-base", className)}>
       {/* Header */}
-      <div className="border-b border-zinc-800 px-3 sm:px-6 py-3 sm:py-4">
+      <div className="border-b border-border-default px-3 sm:px-6 py-3 sm:py-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
           <div>
             <h2 className="text-lg sm:text-xl font-bold text-white">Communication Log</h2>
-            <p className="text-xs sm:text-sm text-zinc-500 mt-0.5 sm:mt-1">
+            <p className="text-xs sm:text-sm text-primary0 mt-0.5 sm:mt-1">
               Real-time agent messages
             </p>
           </div>
           <button
             type="button"
             onClick={() => setShowAnalytics(!showAnalytics)}
-            className="px-3 py-1.5 rounded-lg text-sm border border-zinc-800 hover:bg-zinc-800 transition-colors text-zinc-400 hover:text-white"
+            className="px-3 py-1.5 rounded-lg text-sm border border-border-default hover:bg-surface-4 transition-colors text-secondary hover:text-white"
           >
             {showAnalytics ? "Hide" : "Show"} Analytics
           </button>
@@ -92,7 +92,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
         <div className="mt-4 space-y-3">
           {/* Agent Filter */}
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2 block">
+            <label className="text-xs font-semibold uppercase tracking-wider text-primary0 mb-2 block">
               Filter by Agent
             </label>
             <div className="flex gap-2 flex-wrap">
@@ -105,7 +105,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                     "px-3 py-1 rounded-full text-xs font-medium uppercase transition-colors border",
                     selectedAgent === agent
                       ? "bg-blue-500/20 text-blue-400 border-blue-500/40"
-                      : "bg-zinc-800 text-zinc-400 border-zinc-800 hover:bg-zinc-800 hover:text-white"
+                      : "bg-surface-4 text-secondary border-border-default hover:bg-surface-4 hover:text-white"
                   )}
                 >
                   {agent}
@@ -116,7 +116,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
 
           {/* Type Filter */}
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2 block">
+            <label className="text-xs font-semibold uppercase tracking-wider text-primary0 mb-2 block">
               Filter by Type
             </label>
             <div className="flex gap-2 flex-wrap">
@@ -129,7 +129,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                     "px-3 py-1 rounded-full text-xs font-medium uppercase transition-colors border",
                     selectedType === type
                       ? MESSAGE_TYPE_COLORS[type]
-                      : "bg-zinc-800 text-zinc-400 border-zinc-800 hover:bg-zinc-800 hover:text-white"
+                      : "bg-surface-4 text-secondary border-border-default hover:bg-surface-4 hover:text-white"
                   )}
                 >
                   {type}
@@ -145,12 +145,12 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
         <div
           className={cn(
             "overflow-y-auto",
-            showAnalytics ? "flex-1 md:border-r border-zinc-800" : "w-full"
+            showAnalytics ? "flex-1 md:border-r border-border-default" : "w-full"
           )}
         >
           {messages === undefined ? (
             <div className="flex items-center justify-center h-full">
-              <span className="animate-pulse text-sm text-zinc-500">
+              <span className="animate-pulse text-sm text-primary0">
                 Loading messages...
               </span>
             </div>
@@ -158,8 +158,8 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
                 <span className="text-4xl mb-3 block">📡</span>
-                <p className="text-sm text-zinc-500">No messages found</p>
-                <p className="text-xs text-zinc-600 mt-1">
+                <p className="text-sm text-primary0">No messages found</p>
+                <p className="text-xs text-tertiary mt-1">
                   Try adjusting your filters
                 </p>
               </div>
@@ -169,7 +169,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
               {messages.map((msg: any) => (
                 <div
                   key={msg._id}
-                  className="bg-zinc-900 border border-zinc-800 rounded-lg p-3 sm:p-4 hover:border-zinc-700 transition-colors"
+                  className="bg-surface-1 border border-border-default rounded-lg p-3 sm:p-4 hover:border-gray-500 transition-colors"
                 >
                   {/* Header - Stack on mobile */}
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 sm:gap-2 mb-2">
@@ -180,7 +180,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                       <span className="text-xs sm:text-sm font-medium text-white uppercase">
                         {msg.fromAgent?.name ?? "Unknown"}
                       </span>
-                      <span className="text-zinc-600">→</span>
+                      <span className="text-tertiary">→</span>
                       <span className="text-base sm:text-lg">
                         {msg.toAgent?.avatar ?? "?"}
                       </span>
@@ -197,14 +197,14 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                       >
                         {msg.type}
                       </span>
-                      <span className="text-[10px] sm:text-xs text-zinc-500">
+                      <span className="text-[10px] sm:text-xs text-primary0">
                         {formatTime(msg.timestamp)}
                       </span>
                     </div>
                   </div>
 
                   {/* Content */}
-                  <p className="text-sm text-zinc-300 leading-relaxed">
+                  <p className="text-sm text-primary leading-relaxed">
                     {msg.content}
                   </p>
 
@@ -234,8 +234,8 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                       <span className="font-mono">
                         {msg.taskRefDisplay.linearIdentifier}
                       </span>
-                      <span className="text-zinc-600">·</span>
-                      <span className="text-zinc-400">
+                      <span className="text-tertiary">·</span>
+                      <span className="text-secondary">
                         {msg.taskRefDisplay.title}
                       </span>
                     </div>
@@ -248,22 +248,22 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
 
         {/* Analytics Panel - Full width on mobile, fixed on desktop */}
         {showAnalytics && (
-          <div className="w-full md:w-72 lg:w-80 overflow-y-auto bg-zinc-950 p-4 sm:p-6 border-t md:border-t-0 border-zinc-800">
+          <div className="w-full md:w-72 lg:w-80 overflow-y-auto bg-base p-4 sm:p-6 border-t md:border-t-0 border-border-default">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4">
               Analytics
             </h3>
 
             {analytics === undefined ? (
               <div className="flex items-center justify-center py-8">
-                <span className="animate-pulse text-sm text-zinc-500">
+                <span className="animate-pulse text-sm text-primary0">
                   Loading analytics...
                 </span>
               </div>
             ) : (
               <div className="space-y-6">
                 {/* Total Messages */}
-                <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-                  <div className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+                <div className="bg-surface-1 border border-border-default rounded-lg p-4">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-primary0 mb-1">
                     Total Messages
                   </div>
                   <div className="text-2xl font-bold text-white">
@@ -272,8 +272,8 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                 </div>
 
                 {/* Average Response Time */}
-                <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-                  <div className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-1">
+                <div className="bg-surface-1 border border-border-default rounded-lg p-4">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-primary0 mb-1">
                     Avg Response Time
                   </div>
                   <div className="text-2xl font-bold text-white">
@@ -285,14 +285,14 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
 
                 {/* Message Volume by Agent */}
                 <div>
-                  <div className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-3">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-primary0 mb-3">
                     Message Volume
                   </div>
                   <div className="space-y-2">
                     {analytics.volumeByAgent.map((item: any) => (
                       <div
                         key={item.agent}
-                        className="bg-zinc-900 border border-zinc-800 rounded-lg p-3"
+                        className="bg-surface-1 border border-border-default rounded-lg p-3"
                       >
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-xs font-medium text-white uppercase">
@@ -302,7 +302,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                             {item.count}
                           </span>
                         </div>
-                        <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-surface-4 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-blue-500 rounded-full"
                             style={{
@@ -317,21 +317,21 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
 
                 {/* Most Active Pairs */}
                 <div>
-                  <div className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-3">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-primary0 mb-3">
                     Most Active Pairs
                   </div>
                   <div className="space-y-2">
                     {analytics.topPairs.map((item: any, index: number) => (
                       <div
                         key={item.pair}
-                        className="bg-zinc-900 border border-zinc-800 rounded-lg p-3"
+                        className="bg-surface-1 border border-border-default rounded-lg p-3"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold text-zinc-600">
+                            <span className="text-xs font-bold text-tertiary">
                               #{index + 1}
                             </span>
-                            <span className="text-xs text-zinc-300">
+                            <span className="text-xs text-primary">
                               {item.pair}
                             </span>
                           </div>
@@ -342,7 +342,7 @@ export function CommunicationLog({ className }: CommunicationLogProps) {
                       </div>
                     ))}
                     {analytics.topPairs.length === 0 && (
-                      <p className="text-xs text-zinc-600 text-center py-4">
+                      <p className="text-xs text-tertiary text-center py-4">
                         No conversation pairs yet
                       </p>
                     )}

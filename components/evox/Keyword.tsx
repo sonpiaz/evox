@@ -12,7 +12,7 @@ interface KeywordProps {
 }
 
 const variantStyles: Record<KeywordVariant, string> = {
-  default: "bg-zinc-500/10 text-zinc-400 border-zinc-500/20",
+  default: "bg-gray-500/10 text-secondary border-gray-500/20",
   blue: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   green: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
   yellow: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",

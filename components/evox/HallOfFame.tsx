@@ -22,15 +22,15 @@ const AGENT_COLORS: Record<string, string> = {
 
 const PODIUM_STYLES: Record<number, { border: string; bg: string; label: string; size: string }> = {
   1: { border: "border-yellow-500/40", bg: "bg-yellow-500/10", label: "1st", size: "text-3xl" },
-  2: { border: "border-zinc-400/40", bg: "bg-zinc-400/10", label: "2nd", size: "text-2xl" },
+  2: { border: "border-gray-400/40", bg: "bg-gray-400/10", label: "2nd", size: "text-2xl" },
   3: { border: "border-amber-700/40", bg: "bg-amber-700/10", label: "3rd", size: "text-2xl" },
 };
 
 const STATUS_DOT: Record<string, string> = {
   online: "bg-green-500",
   busy: "bg-yellow-500",
-  idle: "bg-zinc-500",
-  offline: "bg-zinc-700",
+  idle: "bg-gray-500",
+  offline: "bg-gray-500",
 };
 
 const BADGE_COLORS: Record<string, string> = {
@@ -52,7 +52,7 @@ export function HallOfFame({ className }: HallOfFameProps) {
   if (!data) {
     return (
       <div className={cn("flex items-center justify-center py-20", className)}>
-        <div className="text-zinc-600 text-sm">Loading Hall of Fame...</div>
+        <div className="text-tertiary text-sm">Loading Hall of Fame...</div>
       </div>
     );
   }
@@ -83,20 +83,20 @@ export function HallOfFame({ className }: HallOfFameProps) {
                     agent.rank === 1 && "sm:order-first"
                   )}
                 >
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-2">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-primary0 mb-2">
                     {style.label}
                   </div>
                   <div className="flex items-center justify-center gap-2 mb-1">
                     <span className={cn("h-2 w-2 rounded-full shrink-0", STATUS_DOT[agent.status?.toLowerCase()] ?? STATUS_DOT.offline)} />
-                    <span className={cn("font-bold uppercase", style.size, AGENT_COLORS[agent.name.toLowerCase()] ?? "text-zinc-300")}>
+                    <span className={cn("font-bold uppercase", style.size, AGENT_COLORS[agent.name.toLowerCase()] ?? "text-primary")}>
                       {agent.name}
                     </span>
                   </div>
-                  <div className="text-[10px] text-zinc-500 uppercase mb-3">{agent.role}</div>
-                  <div className="text-lg font-bold tabular-nums text-zinc-200">
+                  <div className="text-[10px] text-primary0 uppercase mb-3">{agent.role}</div>
+                  <div className="text-lg font-bold tabular-nums text-primary">
                     {Math.round(agent.compositeScore * 100)}
                   </div>
-                  <div className="text-[10px] text-zinc-600">score</div>
+                  <div className="text-[10px] text-tertiary">score</div>
                   {agent.badges.length > 0 && (
                     <div className="flex flex-wrap justify-center gap-1 mt-3">
                       {agent.badges.map((b) => (
@@ -115,15 +115,15 @@ export function HallOfFame({ className }: HallOfFameProps) {
         {/* Category Winners */}
         {categoryWinners.length > 0 && (
           <div className="flex items-center gap-3 overflow-x-auto py-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-600 shrink-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-tertiary shrink-0">
               Winners
             </span>
             {categoryWinners.map((cat) => (
               <div key={cat.label} className="flex items-center gap-1.5 shrink-0">
-                <span className="text-[10px] text-zinc-500">{cat.label}:</span>
+                <span className="text-[10px] text-primary0">{cat.label}:</span>
                 <Link
                   href={`/agents/${cat.agent!.toLowerCase()}`}
-                  className={cn("text-xs font-bold uppercase hover:underline", AGENT_COLORS[cat.agent!.toLowerCase()] ?? "text-zinc-300")}
+                  className={cn("text-xs font-bold uppercase hover:underline", AGENT_COLORS[cat.agent!.toLowerCase()] ?? "text-primary")}
                 >
                   {cat.agent}
                 </Link>
@@ -135,14 +135,14 @@ export function HallOfFame({ className }: HallOfFameProps) {
         {/* Leaderboard Table */}
         <div className="bg-surface-1 border border-border-default rounded-xl overflow-hidden">
           <div className="px-4 py-2.5 border-b border-border-default">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-primary0">
               Leaderboard
             </span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="text-[10px] uppercase text-zinc-600 border-b border-border-default">
+                <tr className="text-[10px] uppercase text-tertiary border-b border-border-default">
                   <th className="text-left px-4 py-2 font-medium w-8">#</th>
                   <th className="text-left px-3 py-2 font-medium">Agent</th>
                   <th className="text-right px-3 py-2 font-medium">Tasks</th>
@@ -155,22 +155,22 @@ export function HallOfFame({ className }: HallOfFameProps) {
               <tbody className="divide-y divide-border-default">
                 {leaderboard.map((agent) => (
                   <tr key={agent.name} className="hover:bg-surface-2 transition-colors">
-                    <td className="px-4 py-2.5 tabular-nums text-zinc-500">{agent.rank}</td>
+                    <td className="px-4 py-2.5 tabular-nums text-primary0">{agent.rank}</td>
                     <td className="px-3 py-2.5">
                       <Link
                         href={`/agents/${agent.name.toLowerCase()}`}
                         className="flex items-center gap-2 hover:underline"
                       >
                         <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", STATUS_DOT[agent.status?.toLowerCase()] ?? STATUS_DOT.offline)} />
-                        <span className={cn("font-bold uppercase", AGENT_COLORS[agent.name.toLowerCase()] ?? "text-zinc-300")}>
+                        <span className={cn("font-bold uppercase", AGENT_COLORS[agent.name.toLowerCase()] ?? "text-primary")}>
                           {agent.name}
                         </span>
                       </Link>
                     </td>
-                    <td className="text-right px-3 py-2.5 tabular-nums text-zinc-400">{agent.tasksCompleted}</td>
-                    <td className="text-right px-3 py-2.5 tabular-nums text-zinc-400">{Math.round(agent.successRate * 100)}%</td>
-                    <td className="text-right px-3 py-2.5 tabular-nums text-zinc-400">{Math.round(agent.loopCompletionRate * 100)}%</td>
-                    <td className="text-right px-3 py-2.5 tabular-nums text-zinc-400">{agent.avgRating.toFixed(1)}</td>
+                    <td className="text-right px-3 py-2.5 tabular-nums text-secondary">{agent.tasksCompleted}</td>
+                    <td className="text-right px-3 py-2.5 tabular-nums text-secondary">{Math.round(agent.successRate * 100)}%</td>
+                    <td className="text-right px-3 py-2.5 tabular-nums text-secondary">{Math.round(agent.loopCompletionRate * 100)}%</td>
+                    <td className="text-right px-3 py-2.5 tabular-nums text-secondary">{agent.avgRating.toFixed(1)}</td>
                     <td className="px-4 py-2.5">
                       <div className="flex gap-1 flex-wrap">
                         {agent.badges.map((b) => (

@@ -45,7 +45,7 @@ export function UnresolvedAlerts({ className, limit = 10 }: UnresolvedAlertsProp
       <div className={className}>
         <div className="animate-pulse space-y-2">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-16 bg-zinc-800 rounded-lg" />
+            <div key={i} className="h-16 bg-surface-4 rounded-lg" />
           ))}
         </div>
       </div>
@@ -84,7 +84,7 @@ export function UnresolvedAlerts({ className, limit = 10 }: UnresolvedAlertsProp
                   <span className={cn("text-[10px] font-bold uppercase px-1.5 py-0.5 rounded", style.badge)}>
                     {ALERT_TYPE_LABELS[alert.alertType] ?? alert.alertType}
                   </span>
-                  <span className="text-xs text-zinc-400">
+                  <span className="text-xs text-secondary">
                     {alert.fromAgent} → <span className="text-white font-medium">{alert.toAgent}</span>
                   </span>
                   {alert.escalatedTo && (
@@ -92,18 +92,18 @@ export function UnresolvedAlerts({ className, limit = 10 }: UnresolvedAlertsProp
                       esc → {alert.escalatedTo}
                     </span>
                   )}
-                  <span className="text-[10px] text-zinc-600 ml-auto">
+                  <span className="text-[10px] text-tertiary ml-auto">
                     {formatDistanceToNow(alert.sentAt, { addSuffix: true })}
                   </span>
                 </div>
 
                 {/* Row 2: Message content */}
-                <div className="text-xs text-zinc-300 truncate">
+                <div className="text-xs text-primary truncate">
                   {alert.content}
                 </div>
 
                 {/* Row 3: Status + broken reason */}
-                <div className="flex items-center gap-2 mt-1 text-[10px] text-zinc-500">
+                <div className="flex items-center gap-2 mt-1 text-[10px] text-primary0">
                   <span>Status: {alert.messageStatusLabel}</span>
                   {alert.loopBroken && alert.loopBrokenReason && (
                     <span className="text-red-400 truncate">

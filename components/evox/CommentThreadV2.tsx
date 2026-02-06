@@ -64,7 +64,7 @@ function MentionAutocomplete({ query, onSelect, position }: MentionAutocompleteP
 
   return (
     <div
-      className="absolute z-50 w-48 rounded-lg border border-zinc-700 bg-zinc-900 shadow-xl"
+      className="absolute z-50 w-48 rounded-lg border border-gray-500 bg-surface-1 shadow-xl"
       style={{ top: position.top, left: position.left }}
     >
       {filtered.map((agent: any) => (
@@ -72,7 +72,7 @@ function MentionAutocomplete({ query, onSelect, position }: MentionAutocompleteP
           key={agent._id}
           type="button"
           onClick={() => onSelect(agent.name)}
-          className="flex w-full items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors first:rounded-t-lg last:rounded-b-lg"
+          className="flex w-full items-center gap-2 px-3 py-2 text-sm text-primary hover:bg-surface-4 transition-colors first:rounded-t-lg last:rounded-b-lg"
         >
           <span className="text-lg">{agent.avatar || "🤖"}</span>
           <span className="font-medium uppercase">{agent.name}</span>
@@ -95,12 +95,12 @@ interface CommentItemProps {
 function CommentItem({ comment, onReply, isReply, replyCount, isExpanded, onToggleReplies }: CommentItemProps) {
   return (
     <div className={cn(
-      "flex gap-3 rounded-lg border border-zinc-800 bg-zinc-900 p-4 hover:border-zinc-700 transition-colors",
+      "flex gap-3 rounded-lg border border-border-default bg-surface-1 p-4 hover:border-gray-500 transition-colors",
       isReply && "ml-8 border-l-2 border-l-blue-500/30"
     )}>
       {/* Avatar */}
       <div className="shrink-0">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900 text-lg">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-500 bg-surface-1 text-lg">
           {comment.agentAvatar || "🤖"}
         </div>
       </div>
@@ -113,7 +113,7 @@ function CommentItem({ comment, onReply, isReply, replyCount, isExpanded, onTogg
             <span className="text-sm font-bold text-white uppercase">
               {comment.agentName || "Unknown"}
             </span>
-            <span className="text-xs text-zinc-500">
+            <span className="text-xs text-tertiary">
               {comment.createdAt ? formatDistanceToNow(comment.createdAt, { addSuffix: true }) : ""}
             </span>
           </div>
@@ -131,7 +131,7 @@ function CommentItem({ comment, onReply, isReply, replyCount, isExpanded, onTogg
             <button
               type="button"
               onClick={() => onReply(comment._id, comment.agentName || "Unknown")}
-              className="text-xs text-zinc-500 hover:text-blue-400 transition-colors"
+              className="text-xs text-tertiary hover:text-blue-400 transition-colors"
             >
               Reply
             </button>
@@ -139,7 +139,7 @@ function CommentItem({ comment, onReply, isReply, replyCount, isExpanded, onTogg
         </div>
 
         {/* Comment text */}
-        <div className="prose prose-invert prose-sm max-w-none text-zinc-300">
+        <div className="prose prose-invert prose-sm max-w-none text-primary">
           <ReactMarkdown
             components={{
               p: ({ children }) => <p className="m-0 leading-relaxed">{children}</p>,
@@ -290,7 +290,7 @@ export function CommentThreadV2({ taskId }: CommentThreadV2Props) {
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-tertiary">
           💬 Comments ({comments?.length || 0})
         </h3>
       </div>
@@ -298,8 +298,8 @@ export function CommentThreadV2({ taskId }: CommentThreadV2Props) {
       {/* Comments list */}
       <div className="flex-1 min-h-0 overflow-y-auto space-y-3 mb-3">
         {!comments || comments.length === 0 ? (
-          <div className="flex items-center justify-center h-32 rounded-lg border border-zinc-800 bg-zinc-950">
-            <p className="text-sm text-zinc-600">No comments yet. Start the conversation!</p>
+          <div className="flex items-center justify-center h-32 rounded-lg border border-border-default bg-base">
+            <p className="text-sm text-tertiary">No comments yet. Start the conversation!</p>
           </div>
         ) : (
           topLevel.map((comment) => {
@@ -344,7 +344,7 @@ export function CommentThreadV2({ taskId }: CommentThreadV2Props) {
               <button
                 type="button"
                 onClick={cancelReply}
-                className="text-xs text-zinc-500 hover:text-zinc-300"
+                className="text-xs text-tertiary hover:text-primary"
               >
                 Cancel
               </button>
@@ -356,7 +356,7 @@ export function CommentThreadV2({ taskId }: CommentThreadV2Props) {
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               placeholder={replyingTo ? `Reply to ${replyingTo.agentName}...` : "Write a comment... (@mention to notify)"}
-              className="w-full min-h-[100px] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 pr-20 text-sm text-zinc-50 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-blue-500/50 resize-none"
+              className="w-full min-h-[100px] rounded-lg border border-border-default bg-surface-1 px-3 py-2 pr-20 text-sm text-primary placeholder:text-tertiary focus:outline-none focus:ring-1 focus:ring-blue-500/50 resize-none"
               rows={3}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -383,7 +383,7 @@ export function CommentThreadV2({ taskId }: CommentThreadV2Props) {
                 "absolute bottom-2 right-2 rounded-lg px-4 py-1.5 text-xs font-medium transition-colors",
                 draft.trim()
                   ? "bg-blue-600 text-white hover:bg-blue-500"
-                  : "bg-zinc-800 text-zinc-600 cursor-not-allowed"
+                  : "bg-surface-4 text-tertiary cursor-not-allowed"
               )}
             >
               Send
@@ -391,7 +391,7 @@ export function CommentThreadV2({ taskId }: CommentThreadV2Props) {
           </div>
 
           {/* Helper text */}
-          <p className="mt-1 text-[10px] text-zinc-600">
+          <p className="mt-1 text-[10px] text-tertiary">
             ⌘ + Enter to send · @ to mention agents · Markdown supported
           </p>
         </form>

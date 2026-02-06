@@ -21,19 +21,19 @@ export function SoulPreview({ content, className, linearDocUrl }: SoulPreviewPro
   const hasMore = lines.length > 3;
 
   return (
-    <div className={cn("rounded-lg border border-zinc-800 bg-zinc-900", className)}>
+    <div className={cn("rounded-lg border border-border-default bg-surface-1", className)}>
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2">
+      <div className="flex items-center justify-between border-b border-border-default px-3 py-2">
         <div className="flex items-center gap-2">
           <span className="text-base">🧬</span>
-          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">SOUL</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-primary0">SOUL</span>
         </div>
         {linearDocUrl && (
           <a
             href={linearDocUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-zinc-500 hover:text-zinc-400"
+            className="text-xs text-primary0 hover:text-secondary"
           >
             Edit in Linear ↗
           </a>
@@ -42,10 +42,10 @@ export function SoulPreview({ content, className, linearDocUrl }: SoulPreviewPro
 
       {/* Content */}
       <div className="p-3">
-        <div className="whitespace-pre-wrap text-sm text-zinc-400">
+        <div className="whitespace-pre-wrap text-sm text-secondary">
           {expanded ? content : previewLines}
           {!expanded && hasMore && (
-            <span className="text-zinc-500">...</span>
+            <span className="text-primary0">...</span>
           )}
         </div>
 
@@ -53,7 +53,7 @@ export function SoulPreview({ content, className, linearDocUrl }: SoulPreviewPro
           <button
             type="button"
             onClick={() => setExpanded(!expanded)}
-            className="mt-2 text-xs text-zinc-500 hover:text-zinc-400"
+            className="mt-2 text-xs text-primary0 hover:text-secondary"
           >
             {expanded ? "Show less" : `Show more (${lines.length - 3} more lines)`}
           </button>

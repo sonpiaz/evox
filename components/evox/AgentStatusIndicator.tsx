@@ -23,14 +23,14 @@ interface AgentStatusIndicatorProps {
 const statusColors: Record<AgentStatus, string> = {
   online: "bg-green-500",
   busy: "bg-yellow-500",
-  idle: "bg-zinc-500",
+  idle: "bg-gray-500",
   offline: "bg-red-500",
 };
 
 const statusRingColors: Record<AgentStatus, string> = {
   online: "ring-green-500/30",
   busy: "ring-yellow-500/30",
-  idle: "ring-zinc-500/30",
+  idle: "ring-gray-500/30",
   offline: "ring-red-500/30",
 };
 
@@ -71,7 +71,7 @@ export function AgentStatusIndicator({
         "relative inline-block shrink-0 rounded-full",
         colorClass,
         sizeClass,
-        shouldPulse && "ring-2 ring-offset-1 ring-offset-zinc-950",
+        shouldPulse && "ring-2 ring-offset-1 ring-offset-base",
         shouldPulse && ringClass,
         shouldPulse && "animate-pulse",
         className

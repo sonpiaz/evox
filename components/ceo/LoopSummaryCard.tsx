@@ -31,7 +31,7 @@ export function LoopSummaryCard({ className }: LoopSummaryCardProps) {
       <div className={className}>
         <div className="grid grid-cols-4 gap-2">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-16 bg-zinc-800 animate-pulse rounded-lg" />
+            <div key={i} className="h-16 bg-surface-4 animate-pulse rounded-lg" />
           ))}
         </div>
       </div>
@@ -54,10 +54,10 @@ export function LoopSummaryCard({ className }: LoopSummaryCardProps) {
     {
       label: "Broken",
       value: summary.brokenToday,
-      color: summary.brokenToday > 0 ? "text-red-400" : "text-zinc-500",
+      color: summary.brokenToday > 0 ? "text-red-400" : "text-primary0",
       bg: summary.brokenToday > 0
         ? "bg-red-500/10 border-red-500/20"
-        : "bg-zinc-800/50 border-zinc-700/30",
+        : "bg-surface-4/50 border-gray-500/30",
     },
     {
       label: "Avg Time",
@@ -69,7 +69,7 @@ export function LoopSummaryCard({ className }: LoopSummaryCardProps) {
 
   return (
     <div className={className}>
-      <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
+      <h2 className="text-xs font-bold uppercase tracking-wider text-primary0 mb-2">
         The Loop
       </h2>
       <div className="grid grid-cols-4 gap-2">
@@ -81,7 +81,7 @@ export function LoopSummaryCard({ className }: LoopSummaryCardProps) {
             <div className={`text-lg font-bold tabular-nums ${m.color}`}>
               {m.value}
             </div>
-            <div className="text-[10px] text-zinc-500 uppercase tracking-wide">
+            <div className="text-[10px] text-primary0 uppercase tracking-wide">
               {m.label}
             </div>
           </div>

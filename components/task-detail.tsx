@@ -57,10 +57,10 @@ export function TaskDetail({
         {/* Header */}
         <div className="space-y-4">
           <div className="flex items-start gap-3">
-            <span className="text-sm text-zinc-500">{id.toUpperCase()}</span>
+            <span className="text-sm text-primary0">{id.toUpperCase()}</span>
           </div>
 
-          <h1 className="text-3xl font-bold text-zinc-50">{title}</h1>
+          <h1 className="text-3xl font-bold text-primary">{title}</h1>
 
           {/* Meta row */}
           <div className="flex items-center gap-4">
@@ -68,7 +68,7 @@ export function TaskDetail({
             <PriorityBadge priority={priority} />
 
             {assignee && (
-              <div className="flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-1.5">
+              <div className="flex items-center gap-2 rounded-lg border border-border-default bg-surface-1/50 px-3 py-1.5">
                 <Avatar className={`h-5 w-5 border ${colorClasses[assignee.color]}`}>
                   <AvatarFallback
                     className={`text-xs text-white ${colorClasses[assignee.color]}`}
@@ -76,7 +76,7 @@ export function TaskDetail({
                     {assignee.avatar}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-sm text-zinc-400">{assignee.name}</span>
+                <span className="text-sm text-secondary">{assignee.name}</span>
               </div>
             )}
           </div>
@@ -88,7 +88,7 @@ export function TaskDetail({
                 <Badge
                   key={label}
                   variant="outline"
-                  className="border-zinc-700 bg-zinc-800/50 text-zinc-400"
+                  className="border-gray-500 bg-surface-4/50 text-secondary"
                 >
                   {label}
                 </Badge>
@@ -99,25 +99,25 @@ export function TaskDetail({
 
         {/* Description */}
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-zinc-400">Description</h2>
+          <h2 className="text-sm font-semibold text-secondary">Description</h2>
           {description ? (
-            <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4">
-              <p className="text-sm text-zinc-300 whitespace-pre-wrap">{description}</p>
+            <div className="rounded-lg border border-border-default bg-surface-1/50 p-4">
+              <p className="text-sm text-primary whitespace-pre-wrap">{description}</p>
             </div>
           ) : (
-            <div className="rounded-lg border border-dashed border-zinc-800 p-8 text-center">
-              <p className="text-sm text-zinc-600">No description provided</p>
+            <div className="rounded-lg border border-dashed border-border-default p-8 text-center">
+              <p className="text-sm text-tertiary">No description provided</p>
             </div>
           )}
         </div>
 
         {/* Timestamps */}
-        <div className="flex gap-6 border-t border-zinc-800 pt-4 text-xs text-zinc-600">
+        <div className="flex gap-6 border-t border-border-default pt-4 text-xs text-tertiary">
           <div>
-            <span>Created:</span> <span className="text-zinc-500">{formatDate(createdAt)}</span>
+            <span>Created:</span> <span className="text-primary0">{formatDate(createdAt)}</span>
           </div>
           <div>
-            <span>Updated:</span> <span className="text-zinc-500">{formatDate(updatedAt)}</span>
+            <span>Updated:</span> <span className="text-primary0">{formatDate(updatedAt)}</span>
           </div>
         </div>
       </div>

@@ -168,14 +168,14 @@ export function AgentProfile({
   const currentTaskDoc = currentTask as { title?: string; linearIdentifier?: string; linearUrl?: string } | null;
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-zinc-950">
+    <div className="flex h-full flex-col overflow-hidden bg-base">
       {!embedded && (
-        <div className="flex shrink-0 items-center justify-between border-b border-zinc-800 px-4 py-3">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Agent Profile</h3>
+        <div className="flex shrink-0 items-center justify-between border-b border-border-default px-4 py-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-primary0">Agent Profile</h3>
           <button
             type="button"
             onClick={onClose}
-            className="rounded p-1 text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-zinc-50"
+            className="rounded p-1 text-primary0 transition-colors hover:bg-surface-4 hover:text-primary"
             aria-label="Close"
           >
             ×
@@ -184,37 +184,37 @@ export function AgentProfile({
       )}
 
       {/* Identity + Brutal Metrics Header — AGT-245 */}
-      <div className="shrink-0 border-b border-zinc-800 px-4 py-3">
+      <div className="shrink-0 border-b border-border-default px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <Avatar className="h-10 w-10 border border-zinc-800">
-            <AvatarFallback className="bg-zinc-900 text-base text-zinc-50">{avatar}</AvatarFallback>
+          <Avatar className="h-10 w-10 border border-border-default">
+            <AvatarFallback className="bg-surface-1 text-base text-primary">{avatar}</AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <p className="text-xl font-bold text-zinc-50">{name}</p>
-              <span className={cn("h-2.5 w-2.5 shrink-0 rounded-full border border-zinc-950 shadow-lg", dot)} />
+              <p className="text-xl font-bold text-primary">{name}</p>
+              <span className={cn("h-2.5 w-2.5 shrink-0 rounded-full border border-base shadow-lg", dot)} />
             </div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">{roleLabels[role] ?? role}</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary0">{roleLabels[role] ?? role}</p>
           </div>
         </div>
 
         {/* Brutal Metrics Grid */}
         <div className="grid grid-cols-4 gap-2 mb-3">
-          <div className="rounded border border-zinc-800 bg-zinc-900 px-2 py-1.5">
-            <div className="text-2xl font-bold text-zinc-50">{taskCount}</div>
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500">Tasks</div>
+          <div className="rounded border border-border-default bg-surface-1 px-2 py-1.5">
+            <div className="text-2xl font-bold text-primary">{taskCount}</div>
+            <div className="text-[10px] uppercase tracking-wider text-primary0">Tasks</div>
           </div>
-          <div className="rounded border border-zinc-800 bg-zinc-900 px-2 py-1.5">
-            <div className="text-2xl font-bold text-zinc-50">{agentSkills?.tasksCompleted ?? 0}</div>
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500">Done</div>
+          <div className="rounded border border-border-default bg-surface-1 px-2 py-1.5">
+            <div className="text-2xl font-bold text-primary">{agentSkills?.tasksCompleted ?? 0}</div>
+            <div className="text-[10px] uppercase tracking-wider text-primary0">Done</div>
           </div>
-          <div className="rounded border border-zinc-800 bg-zinc-900 px-2 py-1.5">
-            <div className="text-2xl font-bold text-zinc-50">{Array.isArray(messagesForAgent) ? messagesForAgent.length : 0}</div>
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500">Msgs</div>
+          <div className="rounded border border-border-default bg-surface-1 px-2 py-1.5">
+            <div className="text-2xl font-bold text-primary">{Array.isArray(messagesForAgent) ? messagesForAgent.length : 0}</div>
+            <div className="text-[10px] uppercase tracking-wider text-primary0">Msgs</div>
           </div>
-          <div className="rounded border border-zinc-800 bg-zinc-900 px-2 py-1.5">
-            <div className="text-2xl font-bold text-zinc-50">{notificationCount}</div>
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500">Alerts</div>
+          <div className="rounded border border-border-default bg-surface-1 px-2 py-1.5">
+            <div className="text-2xl font-bold text-primary">{notificationCount}</div>
+            <div className="text-[10px] uppercase tracking-wider text-primary0">Alerts</div>
           </div>
         </div>
 
@@ -229,12 +229,12 @@ export function AgentProfile({
             {status}
           </span>
           {statusSince != null && (
-            <span className="rounded bg-zinc-900 border border-zinc-800 px-2 py-0.5 text-[10px] text-zinc-500">
+            <span className="rounded bg-surface-1 border border-border-default px-2 py-0.5 text-[10px] text-primary0">
               {formatDistanceToNow(statusSince, { addSuffix: false })}
             </span>
           )}
           {agentSkills?.autonomyLevelName && (
-            <span className="rounded bg-zinc-900 border border-zinc-800 px-2 py-0.5 text-[10px] text-zinc-500">
+            <span className="rounded bg-surface-1 border border-border-default px-2 py-0.5 text-[10px] text-primary0">
               {agentSkills.autonomyLevelName}
             </span>
           )}
@@ -251,7 +251,7 @@ export function AgentProfile({
         )}
 
         {statusReason && (
-          <p className="mt-2 text-xs italic text-zinc-500 border-l-2 border-zinc-700 pl-2">{statusReason}</p>
+          <p className="mt-2 text-xs italic text-primary0 border-l-2 border-gray-500 pl-2">{statusReason}</p>
         )}
 
         {currentTaskDoc && (
@@ -270,7 +270,7 @@ export function AgentProfile({
       </div>
 
       {/* 6 Tabs */}
-      <div className="flex shrink-0 border-b border-zinc-800 overflow-x-auto">
+      <div className="flex shrink-0 border-b border-border-default overflow-x-auto">
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -279,8 +279,8 @@ export function AgentProfile({
             className={cn(
               "shrink-0 px-3 py-2 text-xs font-semibold uppercase tracking-wider",
               activeTab === tab.id
-                ? "border-b-2 border-zinc-50 text-zinc-50"
-                : "text-zinc-500 hover:text-zinc-400"
+                ? "border-b-2 border-white text-primary"
+                : "text-primary0 hover:text-secondary"
             )}
           >
             {tab.id === "tasks" && taskCount > 0 ? `Tasks (${taskCount})` : tab.label}
@@ -296,32 +296,32 @@ export function AgentProfile({
           <div className="space-y-4">
             {/* Performance Metrics — AGT-245 */}
             <div className="grid grid-cols-2 gap-2">
-              <div className="rounded border border-zinc-800 bg-zinc-950 p-3">
-                <div className="text-3xl font-bold text-zinc-50">{agentSkills?.tasksCompleted ?? 0}</div>
-                <div className="text-xs uppercase tracking-wider text-zinc-500 mt-1">Tasks Completed</div>
+              <div className="rounded border border-border-default bg-base p-3">
+                <div className="text-3xl font-bold text-primary">{agentSkills?.tasksCompleted ?? 0}</div>
+                <div className="text-xs uppercase tracking-wider text-primary0 mt-1">Tasks Completed</div>
               </div>
-              <div className="rounded border border-zinc-800 bg-zinc-950 p-3">
-                <div className="text-3xl font-bold text-zinc-50">{taskCount}</div>
-                <div className="text-xs uppercase tracking-wider text-zinc-500 mt-1">Active Tasks</div>
+              <div className="rounded border border-border-default bg-base p-3">
+                <div className="text-3xl font-bold text-primary">{taskCount}</div>
+                <div className="text-xs uppercase tracking-wider text-primary0 mt-1">Active Tasks</div>
               </div>
             </div>
 
             {/* Cost Metrics (7d) — AGT-245 */}
             {costData && (
-              <div className="rounded border border-zinc-800 bg-zinc-950 p-3">
-                <div className="text-xs uppercase tracking-wider text-zinc-500 mb-2">Cost (7d)</div>
+              <div className="rounded border border-border-default bg-base p-3">
+                <div className="text-xs uppercase tracking-wider text-primary0 mb-2">Cost (7d)</div>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <div className="text-2xl font-bold text-zinc-50">${costData.totals.cost.toFixed(2)}</div>
-                    <div className="text-[10px] text-zinc-600">Total</div>
+                    <div className="text-2xl font-bold text-primary">${costData.totals.cost.toFixed(2)}</div>
+                    <div className="text-[10px] text-tertiary">Total</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-zinc-50">{Math.round(costData.totals.inputTokens / 1000)}k</div>
-                    <div className="text-[10px] text-zinc-600">Input Tokens</div>
+                    <div className="text-2xl font-bold text-primary">{Math.round(costData.totals.inputTokens / 1000)}k</div>
+                    <div className="text-[10px] text-tertiary">Input Tokens</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-zinc-50">{Math.round(costData.totals.outputTokens / 1000)}k</div>
-                    <div className="text-[10px] text-zinc-600">Output Tokens</div>
+                    <div className="text-2xl font-bold text-primary">{Math.round(costData.totals.outputTokens / 1000)}k</div>
+                    <div className="text-[10px] text-tertiary">Output Tokens</div>
                   </div>
                 </div>
               </div>
@@ -329,20 +329,20 @@ export function AgentProfile({
 
             {/* Execution Stats (24h) — AGT-245 */}
             {executionSummary && (
-              <div className="rounded border border-zinc-800 bg-zinc-950 p-3">
-                <div className="text-xs uppercase tracking-wider text-zinc-500 mb-2">Execution (24h)</div>
+              <div className="rounded border border-border-default bg-base p-3">
+                <div className="text-xs uppercase tracking-wider text-primary0 mb-2">Execution (24h)</div>
                 <div className="grid grid-cols-3 gap-3 mb-3">
                   <div>
-                    <div className="text-2xl font-bold text-zinc-50">{executionSummary.files.totalActions}</div>
-                    <div className="text-[10px] text-zinc-600">File Actions</div>
+                    <div className="text-2xl font-bold text-primary">{executionSummary.files.totalActions}</div>
+                    <div className="text-[10px] text-tertiary">File Actions</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-zinc-50">{executionSummary.files.uniqueFiles}</div>
-                    <div className="text-[10px] text-zinc-600">Unique Files</div>
+                    <div className="text-2xl font-bold text-primary">{executionSummary.files.uniqueFiles}</div>
+                    <div className="text-[10px] text-tertiary">Unique Files</div>
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-red-400">{executionSummary.logs.error}</div>
-                    <div className="text-[10px] text-zinc-600">Errors</div>
+                    <div className="text-[10px] text-tertiary">Errors</div>
                   </div>
                 </div>
                 {executionSummary.recentErrors.length > 0 && (
@@ -378,13 +378,13 @@ export function AgentProfile({
             )}
 
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-[0.05em] text-zinc-500">Skills</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-[0.05em] text-primary0">Skills</h4>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {agentSkills?.skills?.length ? (
                   agentSkills.skills.map((s: { name: string; proficiency?: number; verified?: boolean }) => (
                     <span
                       key={s.name}
-                      className="rounded-[10px] border border-zinc-800 bg-zinc-900 px-2 py-0.5 text-[10px] text-zinc-400"
+                      className="rounded-[10px] border border-border-default bg-surface-1 px-2 py-0.5 text-[10px] text-secondary"
                     >
                       {s.name}
                       {s.proficiency != null ? ` ${s.proficiency}%` : ""}
@@ -392,14 +392,14 @@ export function AgentProfile({
                     </span>
                   ))
                 ) : (
-                  <span className="text-xs text-zinc-500">—</span>
+                  <span className="text-xs text-primary0">—</span>
                 )}
               </div>
             </div>
 
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-[0.05em] text-zinc-500">SOUL</h4>
-              <div className="mt-2 text-sm text-zinc-500 whitespace-pre-wrap border-l-2 border-zinc-800 pl-3">
+              <h4 className="text-xs font-semibold uppercase tracking-[0.05em] text-primary0">SOUL</h4>
+              <div className="mt-2 text-sm text-primary0 whitespace-pre-wrap border-l-2 border-border-default pl-3">
                 {soulContent}
               </div>
             </div>
@@ -415,12 +415,12 @@ export function AgentProfile({
               const label = groupStatus === "backlog" ? "Blocked" : groupStatus.replace("_", " ");
               return (
                 <div key={groupStatus}>
-                  <h4 className="text-xs font-semibold uppercase tracking-[0.05em] text-zinc-500">
+                  <h4 className="text-xs font-semibold uppercase tracking-[0.05em] text-primary0">
                     {label} ({group.length})
                   </h4>
                   <ul className="mt-1.5 space-y-1">
                     {group.length === 0 ? (
-                      <li className="text-xs text-zinc-600">—</li>
+                      <li className="text-xs text-tertiary">—</li>
                     ) : (
                       group.map((t: { _id: Id<"tasks">; title?: string; linearIdentifier?: string; linearUrl?: string }) => (
                         <li key={t._id}>
@@ -428,9 +428,9 @@ export function AgentProfile({
                             href={t.linearUrl ?? "#"}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block text-sm text-zinc-400 hover:text-zinc-50"
+                            className="block text-sm text-secondary hover:text-primary"
                           >
-                            <span className="font-mono text-xs text-zinc-400">{t.linearIdentifier ?? "—"}</span>{" "}
+                            <span className="font-mono text-xs text-secondary">{t.linearIdentifier ?? "—"}</span>{" "}
                             {t.title ?? "—"}
                           </a>
                         </li>
@@ -447,16 +447,16 @@ export function AgentProfile({
           <ul className="space-y-1">
             {Array.isArray(activityForAgent) && activityForAgent.length > 0 ? (
               activityForAgent.slice(0, 25).map((e: { _id: string; title?: string; linearIdentifier?: string; timestamp?: number }) => (
-                <li key={e._id} className="flex items-center gap-2 border-b border-zinc-900 py-1.5 text-sm text-zinc-500">
-                  {e.linearIdentifier && <span className="font-mono text-xs text-zinc-400">{e.linearIdentifier}</span>}
+                <li key={e._id} className="flex items-center gap-2 border-b border-border-default py-1.5 text-sm text-primary0">
+                  {e.linearIdentifier && <span className="font-mono text-xs text-secondary">{e.linearIdentifier}</span>}
                   <span className="truncate flex-1">{e.title ?? "—"}</span>
                   {e.timestamp != null && (
-                    <span className="shrink-0 text-xs text-zinc-500">{formatDistanceToNow(e.timestamp, { addSuffix: true })}</span>
+                    <span className="shrink-0 text-xs text-primary0">{formatDistanceToNow(e.timestamp, { addSuffix: true })}</span>
                   )}
                 </li>
               ))
             ) : (
-              <p className="text-sm text-zinc-500">No activity</p>
+              <p className="text-sm text-primary0">No activity</p>
             )}
           </ul>
         )}
@@ -465,8 +465,8 @@ export function AgentProfile({
           <ul className="space-y-2">
             {Array.isArray(messagesForAgent) && messagesForAgent.length > 0 ? (
               messagesForAgent.slice(0, 20).map((m: { _id: Id<"agentMessages">; content?: string; fromAgent?: { name: string } | null; toAgent?: { name: string } | null; type?: string; timestamp?: number }) => (
-                <li key={m._id} className="rounded border border-zinc-800 bg-zinc-900 px-2 py-1.5 text-sm text-zinc-400">
-                  <span className="text-xs text-zinc-500">
+                <li key={m._id} className="rounded border border-border-default bg-surface-1 px-2 py-1.5 text-sm text-secondary">
+                  <span className="text-xs text-primary0">
                     {m.fromAgent?.name ?? "?"} → {m.toAgent?.name ?? "?"}
                     {m.type && ` · ${m.type}`}
                     {m.timestamp != null && ` · ${formatDistanceToNow(m.timestamp, { addSuffix: true })}`}
@@ -475,7 +475,7 @@ export function AgentProfile({
                 </li>
               ))
             ) : (
-              <p className="text-sm text-zinc-500">No messages</p>
+              <p className="text-sm text-primary0">No messages</p>
             )}
           </ul>
         )}
@@ -488,15 +488,15 @@ export function AgentProfile({
 
       {/* Send message — fixed at bottom, hidden in demo mode (AGT-230) */}
       {!isViewerMode && (
-        <div className="shrink-0 border-t border-zinc-800 p-4">
-          <h4 className="text-xs font-semibold uppercase tracking-[0.05em] text-zinc-500">Send message</h4>
+        <div className="shrink-0 border-t border-border-default p-4">
+          <h4 className="text-xs font-semibold uppercase tracking-[0.05em] text-primary0">Send message</h4>
           {Array.isArray(otherAgents) && otherAgents.length > 0 && (
             <div className="mt-1 flex items-center gap-2">
-              <label className="text-xs text-zinc-500">Send as:</label>
+              <label className="text-xs text-primary0">Send as:</label>
               <select
                 value={sendAsName}
                 onChange={(e) => setSendAsName(e.target.value)}
-                className="rounded-md border border-zinc-800 bg-zinc-900 px-2 py-1 text-xs text-zinc-50"
+                className="rounded-md border border-border-default bg-surface-1 px-2 py-1 text-xs text-primary"
               >
                 {otherAgents.map((n) => (
                   <option key={n} value={n}>{n}</option>
@@ -508,14 +508,14 @@ export function AgentProfile({
             placeholder="Type a message..."
             value={messageDraft}
             onChange={(e) => setMessageDraft(e.target.value)}
-            className="mt-2 w-full rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 placeholder:text-zinc-500 focus:border-zinc-500 focus:outline-none"
+            className="mt-2 w-full rounded-md border border-border-default bg-surface-1 px-3 py-2 text-sm text-primary placeholder:text-primary0 focus:border-gray-500 focus:outline-none"
             rows={2}
           />
           <Button
             type="button"
             onClick={handleSendMessage}
             disabled={!messageDraft.trim()}
-            className="mt-2 bg-zinc-50 text-zinc-950 hover:bg-zinc-200"
+            className="mt-2 bg-white text-black hover:bg-gray-200"
           >
             Send
           </Button>

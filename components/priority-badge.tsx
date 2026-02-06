@@ -23,7 +23,7 @@ const priorityConfig = {
   },
   p4: {
     label: "P4",
-    className: "border-zinc-600/20 bg-zinc-600/10 text-zinc-500",
+    className: "border-gray-600/20 bg-gray-600/10 text-primary0",
   },
 };
 

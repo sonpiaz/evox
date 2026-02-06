@@ -80,10 +80,10 @@ function TaskCard({ task, agents }: { task: Task; agents?: Agent[] }) {
 
   return (
     <Link href={`/tasks/${task.id}`}>
-      <Card className="border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 transition-colors cursor-pointer relative">
+      <Card className="border-border-default bg-surface-1/50 hover:bg-surface-1 transition-colors cursor-pointer relative">
         <CardContent className="p-4 space-y-3">
           <div className="space-y-2">
-            <h4 className="text-sm font-medium text-zinc-50 line-clamp-2">{task.title}</h4>
+            <h4 className="text-sm font-medium text-primary line-clamp-2">{task.title}</h4>
 
             {/* Labels */}
             {task.labels && task.labels.length > 0 && (
@@ -92,7 +92,7 @@ function TaskCard({ task, agents }: { task: Task; agents?: Agent[] }) {
                   <Badge
                     key={label}
                     variant="outline"
-                    className="text-xs border-zinc-700 bg-zinc-800/50 text-zinc-400"
+                    className="text-xs border-gray-500 bg-surface-4/50 text-secondary"
                   >
                     {label}
                   </Badge>
@@ -112,8 +112,8 @@ function TaskCard({ task, agents }: { task: Task; agents?: Agent[] }) {
 
             <div className="flex items-center gap-2">
               {task.assigneeAvatar && (
-                <Avatar className="h-6 w-6 border border-zinc-800">
-                  <AvatarFallback className="bg-zinc-800 text-zinc-400 text-xs">
+                <Avatar className="h-6 w-6 border border-border-default">
+                  <AvatarFallback className="bg-surface-4 text-secondary text-xs">
                     {task.assigneeAvatar}
                   </AvatarFallback>
                 </Avatar>
@@ -125,7 +125,7 @@ function TaskCard({ task, agents }: { task: Task; agents?: Agent[] }) {
                     size="sm"
                     variant="ghost"
                     onClick={handleAssignClick}
-                    className="h-6 px-2 text-xs text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800"
+                    className="h-6 px-2 text-xs text-secondary hover:text-primary hover:bg-surface-4"
                   >
                     <UserPlus className="h-3 w-3" />
                   </Button>
@@ -140,13 +140,13 @@ function TaskCard({ task, agents }: { task: Task; agents?: Agent[] }) {
                           setShowAssignMenu(false);
                         }}
                       />
-                      <div className="absolute right-0 top-full z-20 mt-1 w-40 rounded-md border border-zinc-800 bg-zinc-900 shadow-lg">
+                      <div className="absolute right-0 top-full z-20 mt-1 w-40 rounded-md border border-border-default bg-surface-1 shadow-lg">
                         <div className="max-h-48 overflow-y-auto py-1">
                           {agents?.map((agent) => (
                             <button
                               key={agent._id}
                               onClick={(e) => handleAssign(agent._id, e)}
-                              className="flex w-full items-center justify-between px-3 py-2 text-xs hover:bg-zinc-800 transition-colors text-zinc-300"
+                              className="flex w-full items-center justify-between px-3 py-2 text-xs hover:bg-surface-4 transition-colors text-primary"
                             >
                               <span>{agent.name}</span>
                               {task.assigneeId === agent._id && (
@@ -181,12 +181,12 @@ export function TaskBoard({ tasks, agents }: TaskBoardProps) {
           <div key={column.status} className="space-y-4">
             {/* Column Header */}
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-secondary uppercase tracking-wide">
                 {column.title}
               </h3>
               <Badge
                 variant="outline"
-                className="text-xs border-zinc-700 bg-zinc-800/50 text-zinc-500"
+                className="text-xs border-gray-500 bg-surface-4/50 text-primary0"
               >
                 {columnTasks.length}
               </Badge>
@@ -197,8 +197,8 @@ export function TaskBoard({ tasks, agents }: TaskBoardProps) {
               {columnTasks.length > 0 ? (
                 columnTasks.map((task) => <TaskCard key={task.id} task={task} agents={agentsList} />)
               ) : (
-                <div className="rounded-lg border border-dashed border-zinc-800 bg-zinc-900/20 p-8 text-center">
-                  <p className="text-xs text-zinc-600">No tasks in this column</p>
+                <div className="rounded-lg border border-dashed border-border-default bg-surface-1/20 p-8 text-center">
+                  <p className="text-xs text-tertiary">No tasks in this column</p>
                 </div>
               )}
             </div>

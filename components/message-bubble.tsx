@@ -37,7 +37,7 @@ export function MessageBubble({
 
   return (
     <div className="flex gap-3">
-      <Avatar className={cn("h-8 w-8 border-2 border-zinc-900", colorClasses[agentColor])}>
+      <Avatar className={cn("h-8 w-8 border-2 border-border-default", colorClasses[agentColor])}>
         <AvatarFallback className={cn("text-xs text-white", colorClasses[agentColor])}>
           {agentAvatar}
         </AvatarFallback>
@@ -45,10 +45,10 @@ export function MessageBubble({
 
       <div className="flex-1 space-y-1">
         <div className="flex items-baseline gap-2">
-          <span className="text-sm font-medium text-zinc-50">{agentName}</span>
-          <span className="text-xs text-zinc-600">{formatTime(timestamp)}</span>
+          <span className="text-sm font-medium text-primary">{agentName}</span>
+          <span className="text-xs text-tertiary">{formatTime(timestamp)}</span>
         </div>
-        <p className="text-sm text-zinc-300 whitespace-pre-wrap">{content}</p>
+        <p className="text-sm text-primary whitespace-pre-wrap">{content}</p>
       </div>
     </div>
   );

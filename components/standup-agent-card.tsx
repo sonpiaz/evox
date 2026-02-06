@@ -36,7 +36,7 @@ export function StandupAgentCard({
   blocked,
 }: StandupAgentCardProps) {
   return (
-    <div className="space-y-4 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+    <div className="space-y-4 rounded-lg border border-border-default bg-surface-1 p-4">
       {/* Agent Header */}
       <div className="flex items-center gap-3">
         <Avatar className={cn("h-10 w-10 border-2", colorClasses[color])}>
@@ -44,7 +44,7 @@ export function StandupAgentCard({
             {avatar}
           </AvatarFallback>
         </Avatar>
-        <h3 className="font-semibold text-zinc-50">{name}</h3>
+        <h3 className="font-semibold text-primary">{name}</h3>
       </div>
 
       {/* AGT-133 Leo: order In Progress → Backlog → Done */}
@@ -61,13 +61,13 @@ export function StandupAgentCard({
             ))}
           </div>
         ) : (
-          <p className="px-3 py-2 text-xs text-zinc-600">No tasks in progress</p>
+          <p className="px-3 py-2 text-xs text-tertiary">No tasks in progress</p>
         )}
       </div>
 
       {/* Backlog (status backlog or todo) */}
       <div className="space-y-2">
-        <h4 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+        <h4 className="text-xs font-semibold uppercase tracking-wide text-primary0">
           Backlog ({backlog.length})
         </h4>
         {backlog.length > 0 ? (
@@ -77,7 +77,7 @@ export function StandupAgentCard({
             ))}
           </div>
         ) : (
-          <p className="px-3 py-2 text-xs text-zinc-600">No backlog tasks</p>
+          <p className="px-3 py-2 text-xs text-tertiary">No backlog tasks</p>
         )}
       </div>
 
@@ -93,7 +93,7 @@ export function StandupAgentCard({
             ))}
           </div>
         ) : (
-          <p className="px-3 py-2 text-xs text-zinc-600">No completed tasks</p>
+          <p className="px-3 py-2 text-xs text-tertiary">No completed tasks</p>
         )}
       </div>
 

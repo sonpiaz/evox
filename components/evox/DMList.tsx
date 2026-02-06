@@ -21,8 +21,8 @@ interface DMListProps {
 const statusDot: Record<string, string> = {
   online: "bg-green-500",
   busy: "bg-yellow-500",
-  idle: "bg-zinc-500",
-  offline: "bg-zinc-700",
+  idle: "bg-gray-500",
+  offline: "bg-gray-500",
 };
 
 /**
@@ -46,7 +46,7 @@ export function DMList({
   return (
     <div className={cn("space-y-1", className)}>
       <div className="flex items-center justify-between px-2 py-1.5">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-primary0">
           Direct Messages
         </span>
       </div>
@@ -64,8 +64,8 @@ export function DMList({
             className={cn(
               "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors",
               isSelected
-                ? "bg-zinc-800 text-white"
-                : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
+                ? "bg-surface-4 text-white"
+                : "text-secondary hover:bg-surface-1 hover:text-primary"
             )}
           >
             {/* Avatar */}
@@ -93,7 +93,7 @@ export function DMList({
       })}
 
       {otherAgents.length === 0 && (
-        <p className="px-2 text-xs text-zinc-600">No other agents available</p>
+        <p className="px-2 text-xs text-tertiary">No other agents available</p>
       )}
     </div>
   );

@@ -27,7 +27,7 @@ const colorMap: Record<MetricColor, string> = {
 const trendColors = {
   up: "text-emerald-400",
   down: "text-red-400",
-  flat: "text-zinc-500",
+  flat: "text-primary0",
 };
 
 const trendIcons = {
@@ -54,7 +54,7 @@ export function MetricCard({
   return (
     <div
       className={cn(
-        "rounded-lg border border-white/10 bg-zinc-900/50 p-3 sm:p-4",
+        "rounded-lg border border-white/10 bg-surface-1/50 p-3 sm:p-4",
         className
       )}
     >

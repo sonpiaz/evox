@@ -17,7 +17,7 @@ export function TrendBadge({ value, label, className }: TrendBadgeProps) {
 
   const icon = isNeutral ? "→" : isPositive ? "↑" : "↓";
   const colorClass = isNeutral
-    ? "text-zinc-500"
+    ? "text-primary0"
     : isPositive
       ? "text-emerald-400"
       : "text-red-400";
@@ -32,7 +32,7 @@ export function TrendBadge({ value, label, className }: TrendBadgeProps) {
     >
       <span>{icon}</span>
       <span>{Math.abs(value)}%</span>
-      {label && <span className="text-zinc-500 ml-1">{label}</span>}
+      {label && <span className="text-primary0 ml-1">{label}</span>}
     </span>
   );
 }

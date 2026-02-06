@@ -39,9 +39,9 @@ export function AgentsPage({ agents }: AgentsPageProps) {
   return (
     <div className="flex h-full">
       {/* Left panel: 200px agent list */}
-      <aside className="w-[200px] shrink-0 flex flex-col border-r border-zinc-800 bg-zinc-950">
-        <div className="border-b border-zinc-800 px-3 py-3">
-          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Agents</h2>
+      <aside className="w-[200px] shrink-0 flex flex-col border-r border-border-default bg-base">
+        <div className="border-b border-border-default px-3 py-3">
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-primary0">Agents</h2>
         </div>
         <div className="flex-1 overflow-y-auto">
           {agents.map((agent) => {
@@ -52,14 +52,14 @@ export function AgentsPage({ agents }: AgentsPageProps) {
                 type="button"
                 onClick={() => setSelectedId(isSelected ? null : agent._id)}
                 className={cn(
-                  "flex w-full items-center gap-2 border-b border-zinc-900 px-3 py-2.5 text-left transition-colors",
-                  isSelected ? "bg-zinc-800 text-zinc-50" : "hover:bg-zinc-900 text-zinc-400"
+                  "flex w-full items-center gap-2 border-b border-border-default px-3 py-2.5 text-left transition-colors",
+                  isSelected ? "bg-surface-4 text-primary" : "hover:bg-surface-1 text-secondary"
                 )}
               >
                 <AgentStatusIndicator status={agent.status} size="sm" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{agent.name}</p>
-                  <p className="text-[11px] text-zinc-500">{roleLabels[agent.role] ?? agent.role}</p>
+                  <p className="text-[11px] text-primary0">{roleLabels[agent.role] ?? agent.role}</p>
                 </div>
               </button>
             );
@@ -79,7 +79,7 @@ export function AgentsPage({ agents }: AgentsPageProps) {
             onClose={() => setSelectedId(null)}
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-zinc-500 text-sm">
+          <div className="flex h-full items-center justify-center text-primary0 text-sm">
             Select an agent
           </div>
         )}

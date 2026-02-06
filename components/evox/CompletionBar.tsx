@@ -24,7 +24,7 @@ export function CompletionBar({
     <div className={cn("space-y-2", className)}>
       {/* Progress bar */}
       <div className="flex items-center gap-3">
-        <div className="flex-1 h-3 rounded-full bg-zinc-900 overflow-hidden">
+        <div className="flex-1 h-3 rounded-full bg-surface-1 overflow-hidden">
           <div
             className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-[width] duration-500"
             style={{ width: `${Math.min(100, percentage)}%` }}
@@ -36,7 +36,7 @@ export function CompletionBar({
       </div>
 
       {/* Breakdown */}
-      <div className="flex items-center gap-4 text-xs text-zinc-400">
+      <div className="flex items-center gap-4 text-xs text-secondary">
         <span className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-emerald-400" />
           <span>{done} Done</span>
@@ -46,7 +46,7 @@ export function CompletionBar({
           <span>{inProgress} In Progress</span>
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-zinc-700" />
+          <span className="h-2 w-2 rounded-full bg-gray-500" />
           <span>{backlog} Backlog</span>
         </span>
       </div>

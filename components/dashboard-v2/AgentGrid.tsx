@@ -26,7 +26,7 @@ interface AgentGridProps {
 const statusColors: Record<string, string> = {
   online: "bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.4)]",
   busy: "bg-yellow-500 shadow-[0_0_6px_rgba(234,179,8,0.4)]",
-  idle: "bg-zinc-500",
+  idle: "bg-gray-500",
   offline: "bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.4)]",
 };
 
@@ -101,14 +101,14 @@ export function AgentGrid({ agents }: AgentGridProps) {
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-medium text-zinc-400">Team Status</h2>
-        <span className="text-xs text-zinc-500 bg-zinc-900 px-2 py-1 rounded">
+        <h2 className="text-sm font-medium text-secondary">Team Status</h2>
+        <span className="text-xs text-primary0 bg-surface-1 px-2 py-1 rounded">
           {onlineCount}/{agents.length} online
         </span>
       </div>
 
       {/* Agent rows */}
-      <div className="bg-zinc-900/50 rounded-xl border border-zinc-800 divide-y divide-zinc-800/50">
+      <div className="bg-surface-1/50 rounded-xl border border-border-default divide-y divide-border-default/50">
         {agents.map((agent, i) => {
           const nameUpper = (agent.name || "?").toUpperCase();
           const stats = statsMap.get(nameUpper);
@@ -121,7 +121,7 @@ export function AgentGrid({ agents }: AgentGridProps) {
           return (
             <div
               key={agent.name || i}
-              className="flex items-center gap-2 sm:gap-3 px-3 py-2.5 active:bg-zinc-800/50 transition-colors"
+              className="flex items-center gap-2 sm:gap-3 px-3 py-2.5 active:bg-surface-4/50 transition-colors"
             >
               {/* Status dot */}
               <div
@@ -130,10 +130,10 @@ export function AgentGrid({ agents }: AgentGridProps) {
 
               {/* Name + Role */}
               <div className="w-16 sm:w-20 shrink-0">
-                <span className="text-xs font-semibold text-zinc-200 block leading-tight">
+                <span className="text-xs font-semibold text-primary block leading-tight">
                   {nameUpper}
                 </span>
-                <span className="text-[10px] text-zinc-600 leading-tight">
+                <span className="text-[10px] text-tertiary leading-tight">
                   {roleLabels[role] || role}
                 </span>
               </div>
@@ -143,7 +143,7 @@ export function AgentGrid({ agents }: AgentGridProps) {
                 className={`text-[10px] px-1.5 py-0.5 rounded shrink-0 ${
                   tasksToday > 0
                     ? "bg-green-900/40 text-green-400"
-                    : "bg-zinc-800 text-zinc-600"
+                    : "bg-surface-4 text-tertiary"
                 }`}
               >
                 {isLoading ? (
@@ -157,7 +157,7 @@ export function AgentGrid({ agents }: AgentGridProps) {
               <span
                 className={`text-[10px] shrink-0 hidden sm:inline ${
                   successRate >= 90
-                    ? "text-zinc-500"
+                    ? "text-primary0"
                     : successRate >= 70
                       ? "text-yellow-500"
                       : "text-red-400"
@@ -171,20 +171,20 @@ export function AgentGrid({ agents }: AgentGridProps) {
               </span>
 
               {/* Current task or status */}
-              <span className="text-[10px] text-zinc-400 truncate flex-1 min-w-0">
+              <span className="text-[10px] text-secondary truncate flex-1 min-w-0">
                 {agent.currentTask ? (
                   agent.currentTask
                 ) : agent.computedStatus === "offline" ? (
                   <span className="text-red-400/60">Offline</span>
                 ) : agent.computedStatus === "idle" ? (
-                  <span className="text-zinc-600">Idle</span>
+                  <span className="text-tertiary">Idle</span>
                 ) : (
-                  <span className="text-zinc-600">—</span>
+                  <span className="text-tertiary">—</span>
                 )}
               </span>
 
               {/* Velocity */}
-              <span className="text-[10px] text-zinc-600 shrink-0 hidden sm:inline w-8 text-right">
+              <span className="text-[10px] text-tertiary shrink-0 hidden sm:inline w-8 text-right">
                 {isLoading ? (
                   <Skeleton className="h-3 w-6 inline-block" />
                 ) : velocity > 0 ? (
@@ -195,7 +195,7 @@ export function AgentGrid({ agents }: AgentGridProps) {
               </span>
 
               {/* Last active */}
-              <span className="text-[10px] text-zinc-700 shrink-0 w-8 text-right">
+              <span className="text-[10px] text-tertiary shrink-0 w-8 text-right">
                 {formatLastSeen(agent.lastSeen)}
               </span>
             </div>

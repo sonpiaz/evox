@@ -48,7 +48,7 @@ export function DispatchList({ dispatches, limit = 5 }: DispatchListProps) {
 
   if (displayDispatches.length === 0) {
     return (
-      <div className="py-6 text-center text-sm text-zinc-500">
+      <div className="py-6 text-center text-sm text-primary0">
         No dispatches in queue
       </div>
     );
@@ -58,8 +58,8 @@ export function DispatchList({ dispatches, limit = 5 }: DispatchListProps) {
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-medium text-zinc-400">Dispatch Queue</h2>
-        <span className="text-[10px] text-zinc-600">{dispatches.length} total</span>
+        <h2 className="text-sm font-medium text-secondary">Dispatch Queue</h2>
+        <span className="text-[10px] text-tertiary">{dispatches.length} total</span>
       </div>
 
       {/* List */}
@@ -67,20 +67,20 @@ export function DispatchList({ dispatches, limit = 5 }: DispatchListProps) {
         {displayDispatches.map((dispatch, i) => (
           <div
             key={dispatch.id || i}
-            className="bg-zinc-900/50 rounded-lg p-3 flex items-center gap-3 min-h-[48px]"
+            className="bg-surface-1/50 rounded-lg p-3 flex items-center gap-3 min-h-[48px]"
           >
             {/* Status dot */}
             <div
-              className={`w-2 h-2 rounded-full shrink-0 ${statusColors[dispatch.status] || "bg-zinc-600"}`}
+              className={`w-2 h-2 rounded-full shrink-0 ${statusColors[dispatch.status] || "bg-gray-600"}`}
             />
 
             {/* Agent */}
-            <span className="text-xs font-semibold text-zinc-300 w-12 shrink-0">
+            <span className="text-xs font-semibold text-primary w-12 shrink-0">
               {dispatch.agentName || "?"}
             </span>
 
             {/* Command */}
-            <span className="flex-1 text-xs text-zinc-400 truncate">
+            <span className="flex-1 text-xs text-secondary truncate">
               {dispatch.command || "No command"}
             </span>
 
@@ -101,7 +101,7 @@ export function DispatchList({ dispatches, limit = 5 }: DispatchListProps) {
 
             {/* Time */}
             {dispatch.createdAt && (
-              <span className="text-[10px] text-zinc-600 shrink-0">
+              <span className="text-[10px] text-tertiary shrink-0">
                 {formatTime(dispatch.createdAt)}
               </span>
             )}

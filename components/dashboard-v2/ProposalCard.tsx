@@ -50,7 +50,7 @@ const statusStyles: Record<string, string> = {
   open: "bg-blue-900/40 text-blue-400",
   resolved: "bg-green-900/40 text-green-400",
   escalated: "bg-yellow-900/40 text-yellow-400",
-  closed: "bg-zinc-800 text-zinc-500",
+  closed: "bg-surface-4 text-primary0",
 };
 
 function formatTime(timestamp: number): string {
@@ -88,11 +88,11 @@ export function ProposalCard({ proposal, expanded = false, onToggle }: ProposalC
   const winnerIdx = voteCounts.indexOf(maxVotes);
 
   return (
-    <div className="bg-zinc-900/60 rounded-lg border border-zinc-800/60 overflow-hidden">
+    <div className="bg-surface-1/60 rounded-lg border border-border-default/60 overflow-hidden">
       {/* Header — always visible */}
       <button
         onClick={onToggle}
-        className="w-full text-left px-3 py-2.5 flex items-start gap-2 active:bg-zinc-800/40 transition-colors"
+        className="w-full text-left px-3 py-2.5 flex items-start gap-2 active:bg-surface-4/40 transition-colors"
       >
         {/* Topic + meta */}
         <div className="flex-1 min-w-0">
@@ -108,14 +108,14 @@ export function ProposalCard({ proposal, expanded = false, onToggle }: ProposalC
               </span>
             )}
           </div>
-          <p className="text-xs font-medium text-zinc-200 leading-snug">
+          <p className="text-xs font-medium text-primary leading-snug">
             {proposal.topic}
           </p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-[10px] text-zinc-600">
+            <span className="text-[10px] text-tertiary">
               by {proposal.initiatedBy.toUpperCase()}
             </span>
-            <span className="text-[10px] text-zinc-700">
+            <span className="text-[10px] text-tertiary">
               {formatTime(proposal.createdAt)}
             </span>
           </div>
@@ -123,8 +123,8 @@ export function ProposalCard({ proposal, expanded = false, onToggle }: ProposalC
 
         {/* Vote summary */}
         <div className="shrink-0 text-right">
-          <span className="text-sm font-semibold text-zinc-300">{totalVotes}</span>
-          <span className="text-[10px] text-zinc-600 block">
+          <span className="text-sm font-semibold text-primary">{totalVotes}</span>
+          <span className="text-[10px] text-tertiary block">
             {totalVotes === 1 ? "vote" : "votes"}
           </span>
         </div>
@@ -133,7 +133,7 @@ export function ProposalCard({ proposal, expanded = false, onToggle }: ProposalC
       {/* Vote bar — compact visualization */}
       {totalVotes > 0 && (
         <div className="px-3 pb-2">
-          <div className="flex h-1.5 rounded-full overflow-hidden bg-zinc-800">
+          <div className="flex h-1.5 rounded-full overflow-hidden bg-surface-4">
             {proposal.positions.map((_, idx) => {
               const pct = totalVotes > 0 ? (voteCounts[idx] / totalVotes) * 100 : 0;
               if (pct === 0) return null;
@@ -152,10 +152,10 @@ export function ProposalCard({ proposal, expanded = false, onToggle }: ProposalC
 
       {/* Expanded: positions + votes detail */}
       {expanded && (
-        <div className="px-3 pb-3 pt-1 border-t border-zinc-800/50 space-y-2">
+        <div className="px-3 pb-3 pt-1 border-t border-border-default/50 space-y-2">
           {/* Context */}
           {proposal.context && (
-            <p className="text-[11px] text-zinc-500 leading-relaxed">
+            <p className="text-[11px] text-primary0 leading-relaxed">
               {proposal.context}
             </p>
           )}
@@ -175,8 +175,8 @@ export function ProposalCard({ proposal, expanded = false, onToggle }: ProposalC
                 key={idx}
                 className={`rounded-md p-2 border ${
                   isWinner
-                    ? `${color.bg} border-zinc-700`
-                    : "bg-zinc-900/40 border-zinc-800/40"
+                    ? `${color.bg} border-gray-500`
+                    : "bg-surface-1/40 border-border-default/40"
                 }`}
               >
                 {/* Stance header */}
@@ -185,7 +185,7 @@ export function ProposalCard({ proposal, expanded = false, onToggle }: ProposalC
                   <span className={`text-[11px] font-semibold ${color.text}`}>
                     {pos.stance}
                   </span>
-                  <span className="text-[10px] text-zinc-600 ml-auto">
+                  <span className="text-[10px] text-tertiary ml-auto">
                     {pos.agent.toUpperCase()}
                   </span>
                 </div>
@@ -193,7 +193,7 @@ export function ProposalCard({ proposal, expanded = false, onToggle }: ProposalC
                 {/* Arguments */}
                 <ul className="space-y-0.5 ml-4">
                   {pos.arguments.slice(0, 3).map((arg, j) => (
-                    <li key={j} className="text-[10px] text-zinc-400 leading-snug">
+                    <li key={j} className="text-[10px] text-secondary leading-snug">
                       {arg}
                     </li>
                   ))}
@@ -201,12 +201,12 @@ export function ProposalCard({ proposal, expanded = false, onToggle }: ProposalC
 
                 {/* Vote count + voters */}
                 <div className="flex items-center gap-2 mt-1.5">
-                  <span className="text-[10px] text-zinc-500">
+                  <span className="text-[10px] text-primary0">
                     {voteCount} {voteCount === 1 ? "vote" : "votes"}
                     {totalVotes > 0 && ` (${pct}%)`}
                   </span>
                   {voters.length > 0 && (
-                    <span className="text-[10px] text-zinc-600">
+                    <span className="text-[10px] text-tertiary">
                       {voters.join(", ")}
                     </span>
                   )}

@@ -43,7 +43,7 @@ export function AccountabilityGrid({ className }: AccountabilityGridProps) {
       <div className={className}>
         <div className="space-y-2">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-20 bg-zinc-800 animate-pulse rounded-lg" />
+            <div key={i} className="h-20 bg-surface-4 animate-pulse rounded-lg" />
           ))}
         </div>
       </div>
@@ -53,10 +53,10 @@ export function AccountabilityGrid({ className }: AccountabilityGridProps) {
   if (agents.length === 0) {
     return (
       <div className={className}>
-        <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-primary0 mb-2">
           Accountability
         </h2>
-        <div className="text-center py-4 text-zinc-600 text-sm">
+        <div className="text-center py-4 text-tertiary text-sm">
           No loop data yet
         </div>
       </div>
@@ -65,7 +65,7 @@ export function AccountabilityGrid({ className }: AccountabilityGridProps) {
 
   return (
     <div className={className}>
-      <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
+      <h2 className="text-xs font-bold uppercase tracking-wider text-primary0 mb-2">
         Accountability
       </h2>
       <div className="space-y-2">
@@ -73,8 +73,8 @@ export function AccountabilityGrid({ className }: AccountabilityGridProps) {
           <div
             key={agent.agentName}
             className={cn(
-              "bg-zinc-900 border rounded-lg p-3",
-              AGENT_COLORS[agent.agentName] ?? "border-zinc-700/30"
+              "bg-surface-1 border rounded-lg p-3",
+              AGENT_COLORS[agent.agentName] ?? "border-gray-500/30"
             )}
           >
             {/* Row 1: Name + completion rate */}
@@ -88,9 +88,9 @@ export function AccountabilityGrid({ className }: AccountabilityGridProps) {
             </div>
 
             {/* Row 2: Stats */}
-            <div className="flex items-center gap-3 text-xs text-zinc-400">
+            <div className="flex items-center gap-3 text-xs text-secondary">
               <span>
-                <span className="text-zinc-300 font-medium">{agent.closed}</span>/{agent.total} closed
+                <span className="text-primary font-medium">{agent.closed}</span>/{agent.total} closed
               </span>
               {agent.broken > 0 && (
                 <span className="text-red-400">
@@ -102,13 +102,13 @@ export function AccountabilityGrid({ className }: AccountabilityGridProps) {
                   {agent.slaBreaches} SLA
                 </span>
               )}
-              <span className="ml-auto text-zinc-500">
+              <span className="ml-auto text-primary0">
                 reply {formatMs(agent.avgReplyTimeMs)} / act {formatMs(agent.avgActionTimeMs)}
               </span>
             </div>
 
             {/* Progress bar */}
-            <div className="mt-2 h-1 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="mt-2 h-1 bg-surface-4 rounded-full overflow-hidden">
               <div
                 className={cn(
                   "h-full rounded-full transition-all duration-500",

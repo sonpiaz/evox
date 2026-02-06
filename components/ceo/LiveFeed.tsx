@@ -32,7 +32,7 @@ const ACTION_ICONS: Record<string, string> = {
 const IMPACT_COLORS: Record<string, string> = {
   high: "text-emerald-400",
   medium: "text-blue-400",
-  low: "text-zinc-400",
+  low: "text-secondary",
 };
 
 export function LiveFeed({ limit = 8, className }: LiveFeedProps) {
@@ -43,7 +43,7 @@ export function LiveFeed({ limit = 8, className }: LiveFeedProps) {
       <div className={className}>
         <div className="animate-pulse space-y-2">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-12 bg-zinc-800 rounded" />
+            <div key={i} className="h-12 bg-surface-4 rounded" />
           ))}
         </div>
       </div>
@@ -53,7 +53,7 @@ export function LiveFeed({ limit = 8, className }: LiveFeedProps) {
   if (feed.length === 0) {
     return (
       <div className={className}>
-        <div className="text-center py-6 text-zinc-500 text-sm">
+        <div className="text-center py-6 text-primary0 text-sm">
           No recent activity
         </div>
       </div>
@@ -72,8 +72,8 @@ export function LiveFeed({ limit = 8, className }: LiveFeedProps) {
               key={item.id}
               className={cn(
                 "flex items-start gap-2 py-2 px-2 rounded transition-colors",
-                item.impact === "high" && "bg-zinc-800/30 hover:bg-zinc-800/50",
-                item.impact !== "high" && "hover:bg-zinc-800/30"
+                item.impact === "high" && "bg-surface-4/30 hover:bg-surface-4/50",
+                item.impact !== "high" && "hover:bg-surface-4/30"
               )}
             >
               {/* Avatar */}
@@ -98,21 +98,21 @@ export function LiveFeed({ limit = 8, className }: LiveFeedProps) {
                   </span>
 
                   {/* Detail */}
-                  <span className="text-zinc-300 text-sm truncate flex-1">
+                  <span className="text-primary text-sm truncate flex-1">
                     {item.detail}
                   </span>
                 </div>
 
                 {/* Meta info (files, lines) - only for commits */}
                 {item.meta && (
-                  <div className="text-[10px] text-zinc-500 mt-0.5 font-mono">
+                  <div className="text-[10px] text-primary0 mt-0.5 font-mono">
                     {item.meta}
                   </div>
                 )}
               </div>
 
               {/* Timestamp */}
-              <span className="text-[10px] text-zinc-600 shrink-0">
+              <span className="text-[10px] text-tertiary shrink-0">
                 {formatDistanceToNow(item.timestamp, { addSuffix: false })}
               </span>
             </div>

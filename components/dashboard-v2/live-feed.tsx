@@ -11,7 +11,7 @@ export function LiveFeed() {
 
   return (
     <div className="h-full overflow-y-auto p-4">
-      <h3 className="mb-3 text-sm font-semibold text-zinc-50">Live Feed</h3>
+      <h3 className="mb-3 text-sm font-semibold text-primary">Live Feed</h3>
       <ActivityFeed activities={activities} />
     </div>
   );

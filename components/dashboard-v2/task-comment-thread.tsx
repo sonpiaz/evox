@@ -75,25 +75,25 @@ export function TaskCommentThread({ taskId }: TaskCommentThreadProps) {
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
-      <h4 className="text-xs font-semibold uppercase tracking-[0.05em] text-zinc-500 mb-2">Comments</h4>
-      <div className="flex-1 overflow-y-auto space-y-3 min-h-0 border border-zinc-800 rounded-lg bg-zinc-950 p-3">
+      <h4 className="text-xs font-semibold uppercase tracking-[0.05em] text-primary0 mb-2">Comments</h4>
+      <div className="flex-1 overflow-y-auto space-y-3 min-h-0 border border-border-default rounded-lg bg-base p-3">
         {!comments || comments.length === 0 ? (
-          <p className="text-sm text-zinc-500 py-4">No comments yet. Agents will post updates here.</p>
+          <p className="text-sm text-primary0 py-4">No comments yet. Agents will post updates here.</p>
         ) : (
           (comments as TaskComment[]).map((c) => (
             <div key={c._id} className="flex gap-2">
-              <Avatar className="h-7 w-7 shrink-0 border border-zinc-800">
-                <AvatarFallback className="bg-zinc-900 text-[10px] text-zinc-400">
+              <Avatar className="h-7 w-7 shrink-0 border border-border-default">
+                <AvatarFallback className="bg-surface-1 text-[10px] text-secondary">
                   {c.agentName?.slice(0, 2).toUpperCase() ?? "?"}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-semibold text-zinc-50">
+                  <span className="text-xs font-semibold text-primary">
                     {c.agentName ?? "Unknown"}
                   </span>
                   <span
-                    className="text-xs text-zinc-500"
+                    className="text-xs text-primary0"
                     title={c.createdAt != null ? new Date(c.createdAt).toLocaleString() : undefined}
                   >
                     {c.createdAt != null ? formatDistanceToNow(c.createdAt, { addSuffix: true }) : ""}
@@ -101,8 +101,8 @@ export function TaskCommentThread({ taskId }: TaskCommentThreadProps) {
                 </div>
                 <div
                   className={cn(
-                    "mt-0.5 text-sm text-zinc-400 prose prose-invert prose-sm max-w-none",
-                    "break-words [&_a]:text-blue-400 [&_code]:bg-zinc-800 [&_code]:px-1 [&_pre]:bg-zinc-900 [&_pre]:p-2 [&_pre]:rounded"
+                    "mt-0.5 text-sm text-secondary prose prose-invert prose-sm max-w-none",
+                    "break-words [&_a]:text-blue-400 [&_code]:bg-surface-4 [&_code]:px-1 [&_pre]:bg-surface-1 [&_pre]:p-2 [&_pre]:rounded"
                   )}
                 >
                   <ReactMarkdown
@@ -127,13 +127,13 @@ export function TaskCommentThread({ taskId }: TaskCommentThreadProps) {
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder="Add a comment..."
-            className="flex-1 min-h-[80px] rounded border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+            className="flex-1 min-h-[80px] rounded border border-border-default bg-surface-1 px-3 py-2 text-sm text-primary placeholder:text-primary0 focus:outline-none focus:ring-1 focus:ring-gray-500"
             rows={2}
           />
           <button
             type="submit"
             disabled={!draft.trim()}
-            className="shrink-0 self-end rounded border border-zinc-800 bg-zinc-800 px-3 py-2 text-xs font-medium text-zinc-50 hover:bg-zinc-700 disabled:opacity-50 disabled:pointer-events-none"
+            className="shrink-0 self-end rounded border border-border-default bg-surface-4 px-3 py-2 text-xs font-medium text-primary hover:bg-gray-500 disabled:opacity-50 disabled:pointer-events-none"
           >
             Add comment
           </button>

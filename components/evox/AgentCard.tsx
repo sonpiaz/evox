@@ -22,7 +22,7 @@ interface AgentCardProps {
 const statusColors: Record<string, string> = {
   online: "bg-green-500",
   busy: "bg-yellow-500",
-  idle: "bg-zinc-500",
+  idle: "bg-gray-500",
   offline: "bg-red-500",
 };
 
@@ -50,8 +50,8 @@ export function AgentCard({
   return (
     <div
       className={cn(
-        "rounded-lg border bg-zinc-900/50 p-3 sm:p-4 transition-all",
-        isActive ? "border-green-500/30" : "border-zinc-800",
+        "rounded-lg border bg-surface-1/50 p-3 sm:p-4 transition-all",
+        isActive ? "border-green-500/30" : "border-border-default",
         className
       )}
     >
@@ -73,7 +73,7 @@ export function AgentCard({
               </span>
             </div>
             {role && (
-              <span className="text-[10px] sm:text-xs text-zinc-500 uppercase">
+              <span className="text-[10px] sm:text-xs text-primary0 uppercase">
                 {role}
               </span>
             )}
@@ -84,7 +84,7 @@ export function AgentCard({
 
       {/* Status Summary */}
       {statusSummary && (
-        <div className="mt-2 text-xs sm:text-sm text-zinc-300 line-clamp-1">
+        <div className="mt-2 text-xs sm:text-sm text-primary line-clamp-1">
           {statusSummary}
         </div>
       )}
@@ -105,8 +105,8 @@ export function AgentCard({
 
       {/* Last Message Preview */}
       {lastMessage && (
-        <div className="mt-2 pt-2 border-t border-zinc-800">
-          <p className="text-[10px] sm:text-xs text-zinc-500 line-clamp-1">
+        <div className="mt-2 pt-2 border-t border-border-default">
+          <p className="text-[10px] sm:text-xs text-primary0 line-clamp-1">
             &ldquo;{lastMessage}&rdquo;
           </p>
         </div>

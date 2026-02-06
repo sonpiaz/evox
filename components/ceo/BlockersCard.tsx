@@ -40,13 +40,13 @@ export function BlockersCard({ className }: BlockersCardProps) {
               <div className="flex-1 min-w-0">
                 <span className="text-white">{blocker.title}</span>
                 {blocker.linearId && (
-                  <span className="text-zinc-500 ml-1">({blocker.linearId})</span>
+                  <span className="text-primary0 ml-1">({blocker.linearId})</span>
                 )}
                 {blocker.stale && (
                   <span className="text-yellow-500 ml-1 text-xs">[stale 24h+]</span>
                 )}
               </div>
-              <span className="text-zinc-500 text-xs shrink-0">
+              <span className="text-primary0 text-xs shrink-0">
                 {blocker.owner}
               </span>
             </div>

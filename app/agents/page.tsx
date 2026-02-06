@@ -15,7 +15,7 @@ export default function HallOfFamePage() {
   return (
     <div className="min-h-screen bg-base text-white">
       <header className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-border-default">
-        <Link href="/?view=team" className="text-zinc-600 hover:text-zinc-400 text-sm transition-colors">
+        <Link href="/?view=team" className="text-tertiary hover:text-secondary text-sm transition-colors">
           &larr; Dashboard
         </Link>
         <h1 className="text-lg font-bold tracking-tight">Hall of Fame</h1>

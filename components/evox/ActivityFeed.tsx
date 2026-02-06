@@ -70,7 +70,7 @@ const IMPACT_EVENTS = ["completed", "push", "pr_merged", "deploy_success", "crea
 const DM_ICONS: Record<string, { icon: string; label: string; color: string }> = {
   dm_sent: { icon: "\u{1F4E8}", label: "sent", color: "text-purple-400" },
   dm_received: { icon: "\u{1F4EC}", label: "received", color: "text-blue-400" },
-  dm_read: { icon: "\u{1F441}\uFE0F", label: "read", color: "text-zinc-400" },
+  dm_read: { icon: "\u{1F441}\uFE0F", label: "read", color: "text-secondary" },
   dm_replied: { icon: "\u{21A9}\uFE0F", label: "replied", color: "text-cyan-400" },
 };
 
@@ -123,7 +123,7 @@ export function ActivityFeed({ limit = 20, className }: ActivityFeedProps) {
 
         let icon = "-";
         let action = eventType;
-        let color = "text-zinc-400";
+        let color = "text-secondary";
         let feedType: FeedItem["type"] = "task";
 
         // DM communication events
@@ -178,7 +178,7 @@ export function ActivityFeed({ limit = 20, className }: ActivityFeedProps) {
 
   if (feed.length === 0) {
     return (
-      <div className={cn("py-8 text-center text-sm text-zinc-500", className)}>
+      <div className={cn("py-8 text-center text-sm text-primary0", className)}>
         <span className="text-2xl mb-2 block">!</span>
         No recent activity
       </div>
@@ -191,9 +191,9 @@ export function ActivityFeed({ limit = 20, className }: ActivityFeedProps) {
         <div
           key={item.id}
           className={cn(
-            "flex items-start gap-2 border-b border-zinc-800 px-3 py-2.5 min-h-[44px]",
-            "transition-colors hover:bg-zinc-900",
-            item.type === "commit" && "bg-zinc-900/50"
+            "flex items-start gap-2 border-b border-border-default px-3 py-2.5 min-h-[44px]",
+            "transition-colors hover:bg-surface-1",
+            item.type === "commit" && "bg-surface-1/50"
           )}
         >
           {/* Impact indicator */}
@@ -202,7 +202,7 @@ export function ActivityFeed({ limit = 20, className }: ActivityFeedProps) {
           </span>
 
           {/* Agent */}
-          <span className="w-12 shrink-0 text-xs font-semibold text-zinc-50 truncate">
+          <span className="w-12 shrink-0 text-xs font-semibold text-primary truncate">
             {item.agent}
           </span>
 
@@ -212,19 +212,19 @@ export function ActivityFeed({ limit = 20, className }: ActivityFeedProps) {
           </span>
 
           {/* Detail */}
-          <span className="flex-1 text-xs text-zinc-300 truncate">
+          <span className="flex-1 text-xs text-primary truncate">
             {item.detail}
           </span>
 
           {/* Meta (files/lines for commits) */}
           {item.meta && (
-            <span className="shrink-0 text-[10px] font-mono text-zinc-500">
+            <span className="shrink-0 text-[10px] font-mono text-primary0">
               {item.meta}
             </span>
           )}
 
           {/* Timestamp */}
-          <span className="shrink-0 text-[10px] text-zinc-600 tabular-nums">
+          <span className="shrink-0 text-[10px] text-tertiary tabular-nums">
             {formatDistanceToNow(item.timestamp, { addSuffix: false })}
           </span>
         </div>

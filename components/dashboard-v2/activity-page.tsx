@@ -72,7 +72,7 @@ export function ActivityPage() {
   return (
     <div className="flex h-full flex-col">
       {/* Filter tabs */}
-      <div className="flex shrink-0 items-center gap-2 border-b border-zinc-800 px-4 py-3">
+      <div className="flex shrink-0 items-center gap-2 border-b border-border-default px-4 py-3">
         <div className="flex gap-1">
           {EVENT_FILTERS.map((f) => (
             <button
@@ -83,7 +83,7 @@ export function ActivityPage() {
                 "rounded border px-2 py-1 text-[11px] font-medium uppercase tracking-wide transition-colors",
                 filter === f
                   ? "border-white/20 bg-white/[0.05] text-white/90"
-                  : "border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300"
+                  : "border-border-default text-secondary hover:border-gray-500 hover:text-primary"
               )}
             >
               {f === "all" ? "All" : f === "task" ? "Tasks" : f === "message" ? "Messages" : "System"}
@@ -95,13 +95,13 @@ export function ActivityPage() {
       {/* Activity list - Linear style */}
       <div className="flex-1 overflow-y-auto">
         {filteredEvents.length === 0 ? (
-          <div className="py-8 text-center text-xs text-zinc-500">
+          <div className="py-8 text-center text-xs text-primary0">
             No activity found
           </div>
         ) : (
           filteredEvents.map((event) => {
             const eventType = event.eventType ?? "updated";
-            const config = eventConfig[eventType] ?? { icon: "•", color: "text-zinc-400" };
+            const config = eventConfig[eventType] ?? { icon: "•", color: "text-secondary" };
             const verb = eventVerbs[eventType] ?? eventType;
             const agentName = (event.agentName ?? "unknown").toUpperCase();
             const ticketId = event.linearIdentifier ?? "";
@@ -122,7 +122,7 @@ export function ActivityPage() {
             return (
               <div
                 key={event._id}
-                className="flex flex-col gap-1 border-b border-zinc-800 px-4 py-2.5 transition-colors hover:bg-zinc-900"
+                className="flex flex-col gap-1 border-b border-border-default px-4 py-2.5 transition-colors hover:bg-surface-1"
               >
                 {/* Main row */}
                 <div className="flex items-center gap-2">
@@ -130,7 +130,7 @@ export function ActivityPage() {
                   <span className="shrink-0 text-sm">{config.icon}</span>
 
                   {/* Agent name */}
-                  <span className="w-10 shrink-0 truncate text-xs font-medium text-zinc-50">
+                  <span className="w-10 shrink-0 truncate text-xs font-medium text-primary">
                     {agentName}
                   </span>
 
@@ -141,14 +141,14 @@ export function ActivityPage() {
 
                   {/* Ticket ID */}
                   {ticketId && (
-                    <span className="shrink-0 font-mono text-xs text-zinc-50">
+                    <span className="shrink-0 font-mono text-xs text-primary">
                       {ticketId}
                     </span>
                   )}
 
                   {/* Action detail */}
                   {actionDetail && (
-                    <span className="shrink-0 text-xs text-zinc-400">
+                    <span className="shrink-0 text-xs text-secondary">
                       {actionDetail}
                     </span>
                   )}
@@ -157,14 +157,14 @@ export function ActivityPage() {
                   <span className="flex-1" />
 
                   {/* Timestamp */}
-                  <span className="shrink-0 text-[10px] text-zinc-500">
+                  <span className="shrink-0 text-[10px] text-primary0">
                     {formatDistanceToNow(event.timestamp ?? new Date().getTime(), { addSuffix: false })}
                   </span>
                 </div>
 
                 {/* Title/Description row - if available */}
                 {(title || description) && (
-                  <div className="ml-6 text-xs text-zinc-400 truncate max-w-[90%]">
+                  <div className="ml-6 text-xs text-secondary truncate max-w-[90%]">
                     {title || description}
                   </div>
                 )}

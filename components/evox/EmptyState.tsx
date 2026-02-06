@@ -31,7 +31,7 @@ export function EmptyState({
       <span className="text-3xl sm:text-4xl mb-3">{icon}</span>
       <h3 className="text-sm sm:text-base font-medium text-white">{title}</h3>
       {description && (
-        <p className="mt-1 text-xs sm:text-sm text-zinc-500 max-w-xs">
+        <p className="mt-1 text-xs sm:text-sm text-primary0 max-w-xs">
           {description}
         </p>
       )}
@@ -53,7 +53,7 @@ export function EmptyStateInline({
   return (
     <div
       className={cn(
-        "py-4 text-center text-xs sm:text-sm text-zinc-500",
+        "py-4 text-center text-xs sm:text-sm text-primary0",
         className
       )}
     >

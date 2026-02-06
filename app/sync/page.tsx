@@ -8,8 +8,8 @@ export default function SyncDashboard() {
 
   if (!overview) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-zinc-950">
-        <div className="text-zinc-400">Loading sync status...</div>
+      <div className="flex items-center justify-center min-h-screen bg-base">
+        <div className="text-secondary">Loading sync status...</div>
       </div>
     );
   }
@@ -17,14 +17,14 @@ export default function SyncDashboard() {
   const { devices, stats, timestamp } = overview;
 
   return (
-    <div className="min-h-screen bg-zinc-950 p-8">
+    <div className="min-h-screen bg-base p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">
             Device Sync Dashboard
           </h1>
-          <p className="text-zinc-400">
+          <p className="text-secondary">
             Cross-device agent synchronization status
           </p>
         </div>
@@ -56,7 +56,7 @@ export default function SyncDashboard() {
         </div>
 
         {/* Timestamp */}
-        <div className="mt-8 text-center text-sm text-zinc-500">
+        <div className="mt-8 text-center text-sm text-primary0">
           Last updated: {new Date(timestamp).toLocaleString()}
         </div>
       </div>
@@ -106,20 +106,20 @@ function DeviceCard({
   };
 }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+    <div className="bg-surface-1 border border-border-default rounded-lg p-6">
       {/* Device Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-xl font-bold text-white">
             {device.device === "mac-mini" ? "🖥️ Mac Mini" : "💻 MacBook"}
           </h2>
-          <p className="text-sm text-zinc-400">{device.device}</p>
+          <p className="text-sm text-secondary">{device.device}</p>
         </div>
         <div className="text-right">
           <div className="text-lg font-bold text-white">
             {device.activeCount}/{device.totalCount}
           </div>
-          <div className="text-sm text-zinc-400">Active</div>
+          <div className="text-sm text-secondary">Active</div>
         </div>
       </div>
 
@@ -151,10 +151,10 @@ function AgentRow({
   };
 
   const statusColor =
-    statusColors[agent.status as keyof typeof statusColors] || "bg-zinc-500";
+    statusColors[agent.status as keyof typeof statusColors] || "bg-gray-500";
 
   return (
-    <div className="flex items-center justify-between p-3 rounded-lg border bg-zinc-800 border-zinc-700">
+    <div className="flex items-center justify-between p-3 rounded-lg border bg-surface-4 border-gray-500">
       <div className="flex items-center gap-3">
         {/* Status Dot */}
         <div className={`w-3 h-3 rounded-full ${statusColor}`} />
@@ -164,14 +164,14 @@ function AgentRow({
           <div className="font-medium text-white">
             {agent.agent.toUpperCase()}
           </div>
-          <div className="text-sm text-zinc-400">
+          <div className="text-sm text-secondary">
             {agent.currentTask || "Idle"}
           </div>
         </div>
       </div>
 
       {/* Status */}
-      <div className="text-sm text-zinc-500 capitalize">{agent.status}</div>
+      <div className="text-sm text-primary0 capitalize">{agent.status}</div>
     </div>
   );
 }

@@ -19,7 +19,7 @@ export default function GlobalError({
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-black p-4 sm:p-8">
-      <Card className="border-red-500/30 bg-zinc-900/80 max-w-md w-full mx-4" role="alert" aria-live="assertive">
+      <Card className="border-red-500/30 bg-surface-1/80 max-w-md w-full mx-4" role="alert" aria-live="assertive">
         <CardHeader className="pb-2 px-4 sm:px-6">
           <CardTitle className="flex items-center gap-2 text-red-400 text-base sm:text-lg">
             <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" aria-hidden="true" />
@@ -27,12 +27,12 @@ export default function GlobalError({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 px-4 sm:px-6">
-          <p className="text-xs sm:text-sm text-zinc-400">
+          <p className="text-xs sm:text-sm text-secondary">
             A client-side error occurred. This can happen after a schema or
             backend change. Try again or go back to the home page.
           </p>
           {error.digest && (
-            <p className="text-[10px] font-mono text-zinc-600">
+            <p className="text-[10px] font-mono text-tertiary">
               Error ID: {error.digest}
             </p>
           )}

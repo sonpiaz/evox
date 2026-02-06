@@ -18,7 +18,7 @@ const typeColors: Record<string, string> = {
   handoff: "bg-purple-500/20 text-purple-400",
   update: "bg-blue-500/20 text-blue-400",
   request: "bg-amber-500/20 text-amber-400",
-  fyi: "bg-zinc-500/20 text-zinc-400",
+  fyi: "bg-gray-500/20 text-secondary",
 };
 
 /**
@@ -43,7 +43,7 @@ export function DMMessage({
       )}
     >
       {/* Avatar */}
-      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-sm">
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-surface-4 flex items-center justify-center text-sm">
         {senderAvatar}
       </div>
 
@@ -53,7 +53,7 @@ export function DMMessage({
           "rounded-lg px-3 py-2 max-w-full",
           isOwn
             ? "bg-blue-600 text-white rounded-br-sm"
-            : "bg-zinc-900 text-zinc-300 rounded-bl-sm"
+            : "bg-surface-1 text-primary rounded-bl-sm"
         )}
       >
         {/* Type badge */}
@@ -70,7 +70,7 @@ export function DMMessage({
 
         {/* Task reference */}
         {taskRef?.linearIdentifier && (
-          <span className="block text-xs text-zinc-400 mb-1 font-mono">
+          <span className="block text-xs text-secondary mb-1 font-mono">
             Re: {taskRef.linearIdentifier}
           </span>
         )}
@@ -82,7 +82,7 @@ export function DMMessage({
         <span
           className={cn(
             "block text-[10px] mt-1",
-            isOwn ? "text-blue-200" : "text-zinc-500"
+            isOwn ? "text-blue-200" : "text-primary0"
           )}
         >
           {formatDistanceToNow(timestamp, { addSuffix: true })}

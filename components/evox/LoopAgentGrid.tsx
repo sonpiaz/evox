@@ -57,8 +57,8 @@ export function LoopAgentGrid({ className }: LoopAgentGridProps) {
 
   if (!metrics) {
     return (
-      <div className={cn("bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-6", className)}>
-        <div className="text-xs text-zinc-700 text-center">Loading agent grid...</div>
+      <div className={cn("bg-surface-1/40 border border-border-default/60 rounded-xl p-6", className)}>
+        <div className="text-xs text-tertiary text-center">Loading agent grid...</div>
       </div>
     );
   }
@@ -95,9 +95,9 @@ export function LoopAgentGrid({ className }: LoopAgentGridProps) {
   const hasData = rows.some((r) => r.totalMessages > 0);
 
   return (
-    <div className={cn("bg-zinc-900/40 border border-zinc-800/60 rounded-xl overflow-hidden", className)}>
-      <div className="px-4 py-2.5 border-b border-zinc-800/40">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+    <div className={cn("bg-surface-1/40 border border-border-default/60 rounded-xl overflow-hidden", className)}>
+      <div className="px-4 py-2.5 border-b border-border-default/40">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-tertiary">
           Agent Loop Accountability
         </span>
       </div>
@@ -105,7 +105,7 @@ export function LoopAgentGrid({ className }: LoopAgentGridProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="text-[10px] uppercase text-zinc-600 border-b border-zinc-800/30">
+              <tr className="text-[10px] uppercase text-tertiary border-b border-border-default/30">
                 <th className="text-left px-4 py-2 font-medium">Agent</th>
                 <th className="text-right px-3 py-2 font-medium">Messages</th>
                 <th className="text-right px-3 py-2 font-medium">Avg Reply</th>
@@ -113,24 +113,24 @@ export function LoopAgentGrid({ className }: LoopAgentGridProps) {
                 <th className="text-right px-4 py-2 font-medium">Compliance</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800/20">
+            <tbody className="divide-y divide-border-default/20">
               {rows.map((row) => {
                 const level = complianceLevel(row.completionRate);
                 return (
                   <tr key={row.name} className={cn(ROW_BG[level])}>
                     <td className="px-4 py-2.5">
-                      <span className={cn("font-bold uppercase", AGENT_COLORS[row.name] ?? "text-zinc-400")}>
+                      <span className={cn("font-bold uppercase", AGENT_COLORS[row.name] ?? "text-secondary")}>
                         {row.name}
                       </span>
                     </td>
-                    <td className="text-right px-3 py-2.5 tabular-nums text-zinc-400">
+                    <td className="text-right px-3 py-2.5 tabular-nums text-secondary">
                       {row.totalMessages}
                     </td>
-                    <td className="text-right px-3 py-2.5 tabular-nums text-zinc-400">
+                    <td className="text-right px-3 py-2.5 tabular-nums text-secondary">
                       {formatDuration(row.avgReplyTime)}
                     </td>
                     <td className="text-right px-3 py-2.5 tabular-nums">
-                      <span className={cn(row.slaBreaches > 0 ? "text-red-400" : "text-zinc-600")}>
+                      <span className={cn(row.slaBreaches > 0 ? "text-red-400" : "text-tertiary")}>
                         {row.slaBreaches}
                       </span>
                     </td>
@@ -146,7 +146,7 @@ export function LoopAgentGrid({ className }: LoopAgentGridProps) {
           </table>
         </div>
       ) : (
-        <div className="px-4 py-6 text-center text-xs text-zinc-700">
+        <div className="px-4 py-6 text-center text-xs text-tertiary">
           No loop data yet
         </div>
       )}

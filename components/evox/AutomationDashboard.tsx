@@ -188,14 +188,14 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
 
   if (!cronStatus || !stats) {
     return (
-      <div className={cn("flex items-center justify-center h-full text-zinc-500", className)}>
+      <div className={cn("flex items-center justify-center h-full text-tertiary", className)}>
         <span className="animate-pulse">Loading automation data...</span>
       </div>
     );
   }
 
   const chipBase =
-    "rounded-lg border border-zinc-800 bg-zinc-900 p-4 transition-colors";
+    "rounded-lg border border-border-default bg-surface-1 p-4 transition-colors";
 
   return (
     <div className={cn("p-6 space-y-6 overflow-auto", className)}>
@@ -204,7 +204,7 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
         <h2 className="text-lg font-semibold text-white flex items-center gap-2">
           <span>Automation</span>
         </h2>
-        <div className="flex items-center gap-1 rounded-lg bg-zinc-900 border border-zinc-800 p-1">
+        <div className="flex items-center gap-1 rounded-lg bg-surface-1 border border-border-default p-1">
           {(["1h", "24h", "7d"] as TimeRange[]).map((range) => (
             <button
               key={range}
@@ -214,7 +214,7 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
                 "px-3 py-1 rounded text-xs font-medium transition-colors",
                 timeRange === range
                   ? "bg-white/10 text-white"
-                  : "text-zinc-500 hover:text-zinc-400"
+                  : "text-tertiary hover:text-secondary"
               )}
             >
               {range}
@@ -229,37 +229,37 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
         <div className={chipBase}>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-emerald-400">✓</span>
-            <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">Success</span>
+            <span className="text-xs font-medium uppercase tracking-wider text-tertiary">Success</span>
           </div>
           <div className="text-3xl font-bold text-emerald-400">{stats.success}</div>
-          <div className="text-sm text-zinc-500">{stats.successPercent}%</div>
+          <div className="text-sm text-tertiary">{stats.successPercent}%</div>
         </div>
 
         {/* Retries */}
         <div className={chipBase}>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-yellow-400">↻</span>
-            <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">Retries</span>
+            <span className="text-xs font-medium uppercase tracking-wider text-tertiary">Retries</span>
           </div>
           <div className="text-3xl font-bold text-yellow-400">{stats.retries}</div>
-          <div className="text-sm text-zinc-500">{stats.retriesPercent}%</div>
+          <div className="text-sm text-tertiary">{stats.retriesPercent}%</div>
         </div>
 
         {/* Blocked */}
         <div className={chipBase}>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-red-400">⊘</span>
-            <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">Blocked</span>
+            <span className="text-xs font-medium uppercase tracking-wider text-tertiary">Blocked</span>
           </div>
           <div className="text-3xl font-bold text-red-400">{stats.blocked}</div>
-          <div className="text-sm text-zinc-500">{stats.blockedPercent}%</div>
+          <div className="text-sm text-tertiary">{stats.blockedPercent}%</div>
         </div>
       </div>
 
       {/* Pending Approvals */}
       <div className={cn(chipBase, "space-y-3")}>
         <div className="flex items-center justify-between">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+          <span className="text-xs font-medium uppercase tracking-wider text-tertiary">
             Pending Approvals ({pendingApprovals?.length ?? 0})
           </span>
         </div>
@@ -268,7 +268,7 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
             {pendingApprovals.map((task) => (
               <div
                 key={task._id}
-                className="flex items-center justify-between rounded-md bg-zinc-950 px-3 py-2"
+                className="flex items-center justify-between rounded-md bg-base px-3 py-2"
               >
                 <div className="flex items-center gap-3">
                   <span className="text-amber-400">⏳</span>
@@ -276,13 +276,13 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
                     <span className="text-sm text-white">
                       {task.linearIdentifier ?? task.title.slice(0, 30)}
                     </span>
-                    <span className="ml-2 text-xs text-zinc-500">
+                    <span className="ml-2 text-xs text-tertiary">
                       {getAgentName(task.assignee, task.agentName)}
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-zinc-500">
+                  <span className="text-xs text-tertiary">
                     {formatDistanceToNow(task.updatedAt, { addSuffix: true })}
                   </span>
                   {/* AGT-230: Hide approve/reject in demo mode */}
@@ -309,13 +309,13 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
             ))}
           </div>
         ) : (
-          <div className="text-sm text-zinc-500 py-2">No pending approvals</div>
+          <div className="text-sm text-tertiary py-2">No pending approvals</div>
         )}
       </div>
 
       {/* Scheduled Runs */}
       <div className={cn(chipBase, "space-y-3")}>
-        <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+        <span className="text-xs font-medium uppercase tracking-wider text-tertiary">
           Scheduled Runs
         </span>
         <div className="space-y-2">
@@ -325,7 +325,7 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
             return (
               <div
                 key={i}
-                className="flex items-center justify-between rounded-md bg-zinc-950 px-3 py-2"
+                className="flex items-center justify-between rounded-md bg-base px-3 py-2"
               >
                 <div className="flex items-center gap-3">
                   <span
@@ -335,18 +335,18 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
                         ? isImminent
                           ? "bg-emerald-400 animate-pulse"
                           : "bg-emerald-400/50"
-                        : "bg-zinc-700"
+                        : "bg-gray-500"
                     )}
                   />
                   <span className="text-sm text-white">{cron.name}</span>
-                  <span className="text-xs text-zinc-500">
+                  <span className="text-xs text-tertiary">
                     {cron.interval ?? cron.schedule}
                   </span>
                 </div>
                 <span
                   className={cn(
                     "text-xs",
-                    isImminent ? "text-emerald-400" : "text-zinc-500"
+                    isImminent ? "text-emerald-400" : "text-tertiary"
                   )}
                 >
                   Next in {nextRun}
@@ -359,7 +359,7 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
 
       {/* Recent Failures */}
       <div className={cn(chipBase, "space-y-3")}>
-        <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+        <span className="text-xs font-medium uppercase tracking-wider text-tertiary">
           Recent Failures
         </span>
         {recentFailures.length > 0 ? (
@@ -367,7 +367,7 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
             {recentFailures.map((task) => (
               <div
                 key={task._id}
-                className="flex items-center justify-between rounded-md bg-zinc-950 px-3 py-2"
+                className="flex items-center justify-between rounded-md bg-base px-3 py-2"
               >
                 <div className="flex items-center gap-3">
                   <span className="text-red-400">✕</span>
@@ -376,14 +376,14 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
                       {task.linearIdentifier ?? task.title.slice(0, 25)}
                     </span>
                     {task.retryCount !== undefined && task.retryCount > 0 && (
-                      <span className="ml-2 text-xs text-zinc-500">
+                      <span className="ml-2 text-xs text-tertiary">
                         (attempt {task.retryCount}/3)
                       </span>
                     )}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-zinc-500">
+                  <span className="text-xs text-tertiary">
                     {getAgentName(task.assignee, task.agentName)}
                   </span>
                   {task.lastError && (
@@ -396,7 +396,7 @@ export function AutomationDashboard({ className }: AutomationDashboardProps) {
             ))}
           </div>
         ) : (
-          <div className="text-sm text-zinc-500 py-2">No recent failures</div>
+          <div className="text-sm text-tertiary py-2">No recent failures</div>
         )}
       </div>
 

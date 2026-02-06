@@ -52,11 +52,11 @@ export function KanbanBoard({ tasks, onTaskClick, onAssigneeClick, className = "
         return (
           <div
             key={col.status}
-            className="flex w-64 shrink-0 flex-col rounded-lg border border-gray-800 bg-zinc-950"
+            className="flex w-64 shrink-0 flex-col rounded-lg border border-gray-800 bg-base"
           >
             <div className="flex items-center justify-between border-b border-gray-800 px-3 py-2">
-              <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-300">{col.title}</h3>
-              <span className="rounded-full bg-zinc-800 px-2 py-0.5 text-xs text-zinc-300 tabular-nums">{columnTasks.length}</span>
+              <h3 className="text-xs font-medium uppercase tracking-wider text-primary">{col.title}</h3>
+              <span className="rounded-full bg-surface-4 px-2 py-0.5 text-xs text-primary tabular-nums">{columnTasks.length}</span>
             </div>
             <div className="flex-1 space-y-2 overflow-y-auto p-2 min-h-0">
               {isEmpty && isDone ? (
@@ -77,7 +77,7 @@ export function KanbanBoard({ tasks, onTaskClick, onAssigneeClick, className = "
       })}
 
       {/* AGT-184: Analytics panel — right side, shows all status counts */}
-      <div className="flex w-48 shrink-0 flex-col rounded-lg border border-gray-800 bg-zinc-950">
+      <div className="flex w-48 shrink-0 flex-col rounded-lg border border-gray-800 bg-base">
         <div className="border-b border-gray-800 px-3 py-2">
           <h3 className="text-xs font-medium uppercase tracking-wider text-gray-400">Analytics</h3>
         </div>

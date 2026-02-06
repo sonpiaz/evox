@@ -22,17 +22,17 @@ export function ProjectSelector({ selectedProjectId, onSelectProject }: ProjectS
     <div className="relative px-3 py-2">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-2 text-sm text-zinc-100 hover:bg-zinc-800 transition-colors"
+        className="flex w-full items-center justify-between rounded-lg border border-border-default bg-surface-1/50 px-3 py-2 text-sm text-primary hover:bg-surface-4 transition-colors"
       >
         <div className="flex items-center gap-2">
-          <Folder className="h-4 w-4 text-zinc-400" />
+          <Folder className="h-4 w-4 text-secondary" />
           <span className="font-medium">
             {selectedProject ? selectedProject.name : "All Projects"}
           </span>
         </div>
         <ChevronDown
           className={cn(
-            "h-4 w-4 text-zinc-400 transition-transform",
+            "h-4 w-4 text-secondary transition-transform",
             isOpen && "rotate-180"
           )}
         />
@@ -47,7 +47,7 @@ export function ProjectSelector({ selectedProjectId, onSelectProject }: ProjectS
           />
 
           {/* Dropdown */}
-          <div className="absolute left-3 right-3 top-full z-20 mt-1 rounded-lg border border-zinc-800 bg-zinc-900 shadow-lg">
+          <div className="absolute left-3 right-3 top-full z-20 mt-1 rounded-lg border border-border-default bg-surface-1 shadow-lg">
             <div className="max-h-64 overflow-y-auto py-1">
               {/* All Projects option */}
               <button
@@ -56,8 +56,8 @@ export function ProjectSelector({ selectedProjectId, onSelectProject }: ProjectS
                   setIsOpen(false);
                 }}
                 className={cn(
-                  "flex w-full items-center justify-between px-3 py-2 text-sm hover:bg-zinc-800 transition-colors",
-                  selectedProjectId === null ? "text-purple-400" : "text-zinc-300"
+                  "flex w-full items-center justify-between px-3 py-2 text-sm hover:bg-surface-4 transition-colors",
+                  selectedProjectId === null ? "text-purple-400" : "text-primary"
                 )}
               >
                 <span>All Projects</span>
@@ -75,8 +75,8 @@ export function ProjectSelector({ selectedProjectId, onSelectProject }: ProjectS
                     setIsOpen(false);
                   }}
                   className={cn(
-                    "flex w-full items-center justify-between px-3 py-2 text-sm hover:bg-zinc-800 transition-colors",
-                    selectedProjectId === project._id ? "text-purple-400" : "text-zinc-300"
+                    "flex w-full items-center justify-between px-3 py-2 text-sm hover:bg-surface-4 transition-colors",
+                    selectedProjectId === project._id ? "text-purple-400" : "text-primary"
                   )}
                 >
                   <span>{project.name}</span>

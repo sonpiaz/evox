@@ -51,8 +51,8 @@ export function HeartbeatPanel({ className, compact = false }: HeartbeatPanelPro
 
   if (!agents) {
     return (
-      <div className={cn("rounded-lg border border-zinc-800 bg-zinc-900 p-3", className)}>
-        <div className="flex items-center gap-2 text-xs text-zinc-500">
+      <div className={cn("rounded-lg border border-border-default bg-surface-1 p-3", className)}>
+        <div className="flex items-center gap-2 text-xs text-tertiary">
           <span className="animate-pulse">Loading health status...</span>
         </div>
       </div>
@@ -75,12 +75,12 @@ export function HeartbeatPanel({ className, compact = false }: HeartbeatPanelPro
         type="button"
         onClick={() => setExpanded(!expanded)}
         className={cn(
-          "flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 transition-colors hover:bg-zinc-900",
+          "flex items-center gap-2 rounded-lg border border-border-default bg-surface-1 px-3 py-2 transition-colors hover:bg-surface-1",
           className
         )}
       >
         <span className={cn("h-2 w-2 rounded-full", overallColors.dot, overallHealth === "healthy" && "animate-pulse")} />
-        <span className="text-xs text-zinc-400">
+        <span className="text-xs text-secondary">
           {healthyCount}/{agents.length} healthy
         </span>
       </button>
@@ -88,12 +88,12 @@ export function HeartbeatPanel({ className, compact = false }: HeartbeatPanelPro
   }
 
   return (
-    <div className={cn("rounded-lg border border-zinc-800 bg-zinc-900", className)}>
+    <div className={cn("rounded-lg border border-border-default bg-surface-1", className)}>
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2">
+      <div className="flex items-center justify-between border-b border-border-default px-3 py-2">
         <div className="flex items-center gap-2">
           <span className={cn("h-2.5 w-2.5 rounded-full", overallColors.dot, overallHealth === "healthy" && "animate-pulse")} />
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">
+          <span className="text-xs font-medium uppercase tracking-wider text-secondary">
             System Health
           </span>
         </div>
@@ -111,7 +111,7 @@ export function HeartbeatPanel({ className, compact = false }: HeartbeatPanelPro
       </div>
 
       {/* Agent list */}
-      <div className="divide-y divide-zinc-800">
+      <div className="divide-y divide-border-default">
         {agents.map((agent) => {
           const health = getHealthStatus(agent.lastHeartbeat);
           const colors = healthColors[health];
@@ -140,7 +140,7 @@ export function HeartbeatPanel({ className, compact = false }: HeartbeatPanelPro
               <span className="text-lg">{agent.avatar}</span>
 
               {/* Name */}
-              <span className="flex-1 text-sm font-medium text-zinc-50">
+              <span className="flex-1 text-sm font-medium text-primary">
                 {agent.name}
               </span>
 
@@ -167,8 +167,8 @@ export function HeartbeatPanel({ className, compact = false }: HeartbeatPanelPro
       </div>
 
       {/* Footer */}
-      <div className="border-t border-zinc-800 px-3 py-2">
-        <div className="flex items-center justify-between text-[10px] text-zinc-500">
+      <div className="border-t border-border-default px-3 py-2">
+        <div className="flex items-center justify-between text-[10px] text-tertiary">
           <span>Heartbeat interval: 15 min</span>
           <span>Stale threshold: 15 min</span>
         </div>

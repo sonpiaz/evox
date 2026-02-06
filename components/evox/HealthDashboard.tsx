@@ -108,11 +108,11 @@ function ErrorBars({ data, className }: { data: { label: string; value: number }
           <div
             className={cn(
               "w-full rounded-t transition-all",
-              d.value > 0 ? "bg-red-500/60" : "bg-zinc-800"
+              d.value > 0 ? "bg-red-500/60" : "bg-surface-4"
             )}
             style={{ height: `${(d.value / max) * 100}%`, minHeight: d.value > 0 ? "4px" : "2px" }}
           />
-          <span className="text-[8px] text-zinc-500">{d.label}</span>
+          <span className="text-[8px] text-tertiary">{d.label}</span>
         </div>
       ))}
     </div>
@@ -246,7 +246,7 @@ export function HealthDashboard({ className }: HealthDashboardProps) {
 
   if (!agents || !metrics) {
     return (
-      <div className={cn("flex items-center justify-center h-full text-zinc-500", className)}>
+      <div className={cn("flex items-center justify-center h-full text-tertiary", className)}>
         <span className="animate-pulse">Loading health metrics...</span>
       </div>
     );
@@ -257,7 +257,7 @@ export function HealthDashboard({ className }: HealthDashboardProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-white">System Health</h2>
-        <span className="text-xs text-zinc-500">
+        <span className="text-xs text-tertiary">
           Last updated {formatDistanceToNow(new Date().getTime(), { addSuffix: true })}
         </span>
       </div>
@@ -265,8 +265,8 @@ export function HealthDashboard({ className }: HealthDashboardProps) {
       {/* Overview Cards */}
       <div className="grid grid-cols-4 gap-4">
         {/* Success Rate */}
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
-          <div className="text-xs text-zinc-500 mb-1">Success Rate (24h)</div>
+        <div className="rounded-lg border border-border-default bg-surface-1 p-4">
+          <div className="text-xs text-tertiary mb-1">Success Rate (24h)</div>
           <div className={cn(
             "text-2xl font-bold",
             metrics.successRate24h >= 95 ? "text-emerald-400" :
@@ -283,20 +283,20 @@ export function HealthDashboard({ className }: HealthDashboardProps) {
         </div>
 
         {/* Tasks Completed */}
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
-          <div className="text-xs text-zinc-500 mb-1">Completed (7d)</div>
+        <div className="rounded-lg border border-border-default bg-surface-1 p-4">
+          <div className="text-xs text-tertiary mb-1">Completed (7d)</div>
           <div className="text-2xl font-bold text-white">{metrics.completed7d}</div>
           <div className="mt-2 flex items-center gap-2">
-            <span className="text-xs text-zinc-500">24h:</span>
-            <span className="text-xs text-zinc-400">{metrics.completed24h}</span>
-            <span className="text-xs text-zinc-500">30d:</span>
-            <span className="text-xs text-zinc-400">{metrics.completed30d}</span>
+            <span className="text-xs text-tertiary">24h:</span>
+            <span className="text-xs text-secondary">{metrics.completed24h}</span>
+            <span className="text-xs text-tertiary">30d:</span>
+            <span className="text-xs text-secondary">{metrics.completed30d}</span>
           </div>
         </div>
 
         {/* Errors */}
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
-          <div className="text-xs text-zinc-500 mb-1">Errors (7d)</div>
+        <div className="rounded-lg border border-border-default bg-surface-1 p-4">
+          <div className="text-xs text-tertiary mb-1">Errors (7d)</div>
           <div className={cn(
             "text-2xl font-bold",
             metrics.errors7d === 0 ? "text-emerald-400" : "text-red-400"
@@ -304,54 +304,54 @@ export function HealthDashboard({ className }: HealthDashboardProps) {
             {metrics.errors7d}
           </div>
           <div className="mt-2 flex items-center gap-2">
-            <span className="text-xs text-zinc-500">24h:</span>
-            <span className={cn("text-xs", metrics.errors24h > 0 ? "text-red-400" : "text-zinc-400")}>
+            <span className="text-xs text-tertiary">24h:</span>
+            <span className={cn("text-xs", metrics.errors24h > 0 ? "text-red-400" : "text-secondary")}>
               {metrics.errors24h}
             </span>
           </div>
         </div>
 
         {/* MTTR */}
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
-          <div className="text-xs text-zinc-500 mb-1">MTTR</div>
+        <div className="rounded-lg border border-border-default bg-surface-1 p-4">
+          <div className="text-xs text-tertiary mb-1">MTTR</div>
           <div className="text-2xl font-bold text-white">
             {metrics.mttrMinutes > 0 ? `${metrics.mttrMinutes}m` : "—"}
           </div>
-          <div className="mt-2 text-xs text-zinc-500">
+          <div className="mt-2 text-xs text-tertiary">
             Mean time to recovery
           </div>
         </div>
       </div>
 
       {/* Error Trend Chart */}
-      <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
-        <div className="text-xs text-zinc-500 mb-3">Error Trend (7 days)</div>
+      <div className="rounded-lg border border-border-default bg-surface-1 p-4">
+        <div className="text-xs text-tertiary mb-3">Error Trend (7 days)</div>
         <ErrorBars data={metrics.errorsByDay} />
       </div>
 
       {/* Agent Health Grid */}
       <div>
-        <div className="text-xs text-zinc-500 mb-3 uppercase tracking-wider">Agent Health</div>
+        <div className="text-xs text-tertiary mb-3 uppercase tracking-wider">Agent Health</div>
         <div className="grid grid-cols-3 gap-4">
           {metrics.agentMetrics.map((agent) => {
             const uptimeColors = getUptimeColor(agent.uptime24h);
             return (
               <div
                 key={agent._id}
-                className="rounded-lg border border-zinc-800 bg-zinc-900 p-4"
+                className="rounded-lg border border-border-default bg-surface-1 p-4"
               >
                 {/* Agent Header */}
                 <div className="flex items-center gap-3 mb-4">
                   <span className="text-2xl">{agent.avatar}</span>
                   <div>
                     <div className="font-medium text-white">{agent.name}</div>
-                    <div className="text-xs text-zinc-500 capitalize">{agent.status}</div>
+                    <div className="text-xs text-tertiary capitalize">{agent.status}</div>
                   </div>
                 </div>
 
                 {/* Uptime Badges */}
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs text-zinc-500">Uptime:</span>
+                  <span className="text-xs text-tertiary">Uptime:</span>
                   <span
                     className={cn(
                       "rounded px-1.5 py-0.5 text-xs font-medium border",
@@ -367,11 +367,11 @@ export function HealthDashboard({ className }: HealthDashboardProps) {
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <div className="text-zinc-500">Completed</div>
+                    <div className="text-tertiary">Completed</div>
                     <div className="text-white font-medium">{agent.tasksCompleted}</div>
                   </div>
                   <div>
-                    <div className="text-zinc-500">Success Rate</div>
+                    <div className="text-tertiary">Success Rate</div>
                     <div className={cn(
                       "font-medium",
                       agent.successRate >= 95 ? "text-emerald-400" :
@@ -383,9 +383,9 @@ export function HealthDashboard({ className }: HealthDashboardProps) {
                 </div>
 
                 {/* Success Sparkline */}
-                <div className="mt-3 pt-3 border-t border-zinc-800">
+                <div className="mt-3 pt-3 border-t border-border-default">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-zinc-500">7-day trend</span>
+                    <span className="text-[10px] text-tertiary">7-day trend</span>
                     <Sparkline
                       data={agent.successTrend}
                       color={agent.successRate >= 95 ? "#22c55e" : agent.successRate >= 80 ? "#eab308" : "#ef4444"}

@@ -154,7 +154,7 @@ export function MentionInput({ onSend, placeholder = "Type a message..." }: Ment
   };
 
   return (
-    <div className="relative flex gap-2 border-t border-zinc-800 bg-zinc-950 p-4">
+    <div className="relative flex gap-2 border-t border-border-default bg-base p-4">
       <div className="relative flex-1">
         <textarea
           ref={textareaRef}
@@ -163,14 +163,14 @@ export function MentionInput({ onSend, placeholder = "Type a message..." }: Ment
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           rows={1}
-          className="w-full resize-none rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 placeholder:text-zinc-600 focus:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+          className="w-full resize-none rounded-lg border border-border-default bg-surface-1 px-3 py-2 text-sm text-primary placeholder:text-tertiary focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
         />
 
         {/* Mention Dropdown */}
         {showMentions && filteredAgents.length > 0 && (
           <div
             ref={dropdownRef}
-            className="absolute bottom-full left-0 mb-2 w-64 rounded-lg border border-zinc-700 bg-zinc-800 shadow-lg"
+            className="absolute bottom-full left-0 mb-2 w-64 rounded-lg border border-gray-500 bg-surface-4 shadow-lg"
           >
             {filteredAgents.map((agent, index) => (
               <button
@@ -179,8 +179,8 @@ export function MentionInput({ onSend, placeholder = "Type a message..." }: Ment
                 className={cn(
                   "flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors",
                   index === selectedIndex
-                    ? "bg-zinc-700 text-zinc-50"
-                    : "text-zinc-300 hover:bg-zinc-700/50"
+                    ? "bg-gray-500 text-primary"
+                    : "text-primary hover:bg-gray-500/50"
                 )}
               >
                 <Avatar className={cn("h-6 w-6 border", colorClasses[agent.color])}>

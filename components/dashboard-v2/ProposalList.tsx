@@ -25,11 +25,11 @@ export function ProposalList({ limit = 5 }: ProposalListProps) {
   // Loading state
   if (openDebates === undefined) {
     return (
-      <div className="bg-zinc-900/80 rounded-xl p-4 border border-zinc-800">
-        <h3 className="text-sm font-medium text-zinc-400 mb-3">Proposals</h3>
+      <div className="bg-surface-1/80 rounded-xl p-4 border border-border-default">
+        <h3 className="text-sm font-medium text-secondary mb-3">Proposals</h3>
         <div className="space-y-2">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="space-y-1.5 p-3 bg-zinc-900/60 rounded-lg">
+            <div key={i} className="space-y-1.5 p-3 bg-surface-1/60 rounded-lg">
               <Skeleton className="h-3 w-16" />
               <Skeleton className="h-4 w-48" />
               <Skeleton className="h-1.5 w-full rounded-full" />
@@ -45,11 +45,11 @@ export function ProposalList({ limit = 5 }: ProposalListProps) {
   // Empty state
   if (proposals.length === 0) {
     return (
-      <div className="bg-zinc-900/80 rounded-xl p-4 border border-zinc-800">
-        <h3 className="text-sm font-medium text-zinc-400 mb-3">Proposals</h3>
+      <div className="bg-surface-1/80 rounded-xl p-4 border border-border-default">
+        <h3 className="text-sm font-medium text-secondary mb-3">Proposals</h3>
         <div className="text-center py-6">
-          <p className="text-zinc-500 text-sm">No active proposals</p>
-          <p className="text-zinc-600 text-[11px] mt-1">
+          <p className="text-primary0 text-sm">No active proposals</p>
+          <p className="text-tertiary text-[11px] mt-1">
             Agents can start debates to propose features
           </p>
         </div>
@@ -68,12 +68,12 @@ export function ProposalList({ limit = 5 }: ProposalListProps) {
   );
 
   return (
-    <div className="bg-zinc-900/80 rounded-xl p-4 border border-zinc-800">
+    <div className="bg-surface-1/80 rounded-xl p-4 border border-border-default">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-zinc-400">Proposals</h3>
+        <h3 className="text-sm font-medium text-secondary">Proposals</h3>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-zinc-600">
+          <span className="text-[10px] text-tertiary">
             {totalVotes} votes
           </span>
           <span className="text-[10px] text-blue-400 bg-blue-900/30 px-1.5 py-0.5 rounded">

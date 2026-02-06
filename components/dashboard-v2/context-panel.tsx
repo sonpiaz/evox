@@ -12,7 +12,7 @@ export function ContextPanel({ children, className = "" }: ContextPanelProps) {
   return (
     <aside
       className={cn(
-        "flex w-[400px] shrink-0 flex-col border-l border-white/[0.06] bg-zinc-950",
+        "flex w-[400px] shrink-0 flex-col border-l border-white/[0.06] bg-base",
         className
       )}
     >

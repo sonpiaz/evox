@@ -101,20 +101,20 @@ export function AgentCard({
   const normalizedStatus = (status?.toLowerCase?.() ?? "offline") as AgentStatus;
   const statusDotColor = statusDotColors[normalizedStatus] ?? statusDotColors.offline;
   return (
-    <Card className="border-zinc-800 bg-zinc-900/50">
+    <Card className="border-border-default bg-surface-1/50">
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           {/* Avatar with status dot (AGT-101: Online=green, Busy=yellow, Idle=gray, Offline=red) */}
           <div className="relative group">
-            <Avatar className="h-12 w-12 border-2 border-zinc-800">
-              <AvatarFallback className="bg-zinc-800 text-zinc-50">
+            <Avatar className="h-12 w-12 border-2 border-border-default">
+              <AvatarFallback className="bg-surface-4 text-primary">
                 {avatar}
               </AvatarFallback>
             </Avatar>
             <div className="relative">
               <div
                 className={cn(
-                  "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-zinc-900",
+                  "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-border-default",
                   statusDotColor
                 )}
               />
@@ -130,7 +130,7 @@ export function AgentCard({
             </div>
             {/* Tooltip */}
             <div className="absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 group-hover:block">
-              <div className="rounded-lg bg-zinc-800 px-3 py-2 text-xs text-zinc-50 shadow-lg whitespace-nowrap">
+              <div className="rounded-lg bg-surface-4 px-3 py-2 text-xs text-primary shadow-lg whitespace-nowrap">
                 {liveStatus.label} — last active {getRelativeTime(lastActive)}
               </div>
             </div>
@@ -139,7 +139,7 @@ export function AgentCard({
           {/* Agent info */}
           <div className="flex-1 space-y-2">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-zinc-50">{name}</h3>
+              <h3 className="font-semibold text-primary">{name}</h3>
               <div className="flex items-center gap-2">
                 {unreadCount > 0 && (
                   <Badge
@@ -172,15 +172,15 @@ export function AgentCard({
               >
                 {statusLabels[normalizedStatus] ?? statusLabels.offline}
               </Badge>
-              <span className="text-xs text-zinc-600">•</span>
-              <span className="text-xs text-zinc-500">
+              <span className="text-xs text-tertiary">•</span>
+              <span className="text-xs text-primary0">
                 {sessionBased ? "Session-based" : getRelativeTime(lastActive)}
               </span>
             </div>
 
             {/* AGT-147: Task count badge */}
             {taskCounts && (
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-primary0">
                 {taskCounts.backlog} backlog · {taskCounts.inProgress} in progress · {taskCounts.done} done
               </p>
             )}
@@ -188,11 +188,11 @@ export function AgentCard({
             {/* Current task */}
             {currentTask ? (
               <div className="space-y-1">
-                <p className="text-xs text-zinc-600">Working on:</p>
-                <p className="text-sm text-zinc-400 line-clamp-2">{currentTask}</p>
+                <p className="text-xs text-tertiary">Working on:</p>
+                <p className="text-sm text-secondary line-clamp-2">{currentTask}</p>
               </div>
             ) : (
-              <p className="text-sm text-zinc-600 italic">No active task</p>
+              <p className="text-sm text-tertiary italic">No active task</p>
             )}
           </div>
         </div>

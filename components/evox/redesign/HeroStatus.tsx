@@ -83,7 +83,7 @@ export function HeroStatus({
 
       {/* Subtext - Supporting details */}
       {subtext && (
-        <p className="mt-2 text-sm sm:text-base text-zinc-400">
+        <p className="mt-2 text-sm sm:text-base text-secondary">
           {subtext}
         </p>
       )}

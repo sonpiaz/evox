@@ -69,7 +69,7 @@ export function AlertList({
   if (sortedAlerts.length === 0) {
     if (!emptyMessage) return null; // Hide when no alerts
     return (
-      <div className={cn("py-4 text-center text-sm text-zinc-500", className)}>
+      <div className={cn("py-4 text-center text-sm text-primary0", className)}>
         {emptyMessage}
       </div>
     );
@@ -104,7 +104,7 @@ export function AlertList({
                 {alert.message}
               </p>
               {alert.detail && (
-                <p className="text-xs text-zinc-500 truncate">{alert.detail}</p>
+                <p className="text-xs text-primary0 truncate">{alert.detail}</p>
               )}
             </div>
 

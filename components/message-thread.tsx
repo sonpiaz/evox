@@ -17,7 +17,7 @@ export function MessageThread({ messages }: MessageThreadProps) {
   if (messages.length === 0) {
     return (
       <div className="flex flex-1 items-center justify-center p-8">
-        <p className="text-sm text-zinc-600">No messages yet</p>
+        <p className="text-sm text-tertiary">No messages yet</p>
       </div>
     );
   }

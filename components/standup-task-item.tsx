@@ -13,13 +13,13 @@ export function StandupTaskItem({ id, title, identifier, className }: StandupTas
     <Link
       href={`/tasks/${id}`}
       className={cn(
-        "block rounded px-3 py-2 text-sm transition-colors hover:bg-zinc-800",
+        "block rounded px-3 py-2 text-sm transition-colors hover:bg-surface-4",
         className
       )}
     >
       <div className="flex items-start gap-2">
-        <span className="flex-shrink-0 font-mono text-xs text-zinc-500">{identifier}</span>
-        <span className="text-zinc-300">{title}</span>
+        <span className="flex-shrink-0 font-mono text-xs text-primary0">{identifier}</span>
+        <span className="text-primary">{title}</span>
       </div>
     </Link>
   );

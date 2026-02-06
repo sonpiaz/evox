@@ -27,7 +27,7 @@ export function DashboardV2() {
   if (!status) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="animate-pulse text-zinc-500">Loading...</div>
+        <div className="animate-pulse text-primary0">Loading...</div>
       </div>
     );
   }
@@ -74,14 +74,14 @@ export function DashboardV2() {
   return (
     <div className="min-h-screen bg-black text-white p-4 pb-safe-area-inset-bottom max-w-4xl mx-auto">
       {/* Header */}
-      <header className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-800 sticky top-0 bg-black/95 backdrop-blur-sm -mx-4 px-4 pt-4 -mt-4 z-10">
+      <header className="flex items-center justify-between mb-6 pb-4 border-b border-border-default sticky top-0 bg-black/95 backdrop-blur-sm -mx-4 px-4 pt-4 -mt-4 z-10">
         <div>
           <h1 className="text-2xl sm:text-xl font-bold tracking-tight">EVOX</h1>
-          <span className="text-zinc-600 text-xs">v0.2 Mission Control</span>
+          <span className="text-tertiary text-xs">v0.2 Mission Control</span>
         </div>
-        <div className="flex items-center gap-2 bg-zinc-900/80 px-3 py-1.5 rounded-full">
+        <div className="flex items-center gap-2 bg-surface-1/80 px-3 py-1.5 rounded-full">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-zinc-400 text-xs font-medium">Live</span>
+          <span className="text-secondary text-xs font-medium">Live</span>
         </div>
       </header>
 
@@ -132,8 +132,8 @@ export function DashboardV2() {
       </div>
 
       {/* Footer */}
-      <footer className="mt-8 pt-4 pb-6 border-t border-zinc-800/50 text-center">
-        <span className="text-zinc-700 text-xs sm:text-[10px] tracking-wider uppercase">
+      <footer className="mt-8 pt-4 pb-6 border-t border-border-default/50 text-center">
+        <span className="text-tertiary text-xs sm:text-[10px] tracking-wider uppercase">
           EVOX Mission Control v0.2
         </span>
       </footer>

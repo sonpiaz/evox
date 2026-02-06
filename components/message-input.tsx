@@ -42,7 +42,7 @@ export function MessageInput({ onSend, placeholder = "Type a message..." }: Mess
   };
 
   return (
-    <div className="flex gap-2 border-t border-zinc-800 bg-zinc-950 p-4">
+    <div className="flex gap-2 border-t border-border-default bg-base p-4">
       <textarea
         ref={textareaRef}
         value={message}
@@ -53,7 +53,7 @@ export function MessageInput({ onSend, placeholder = "Type a message..." }: Mess
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         rows={1}
-        className="flex-1 resize-none rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 placeholder:text-zinc-600 focus:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+        className="flex-1 resize-none rounded-lg border border-border-default bg-surface-1 px-3 py-2 text-sm text-primary placeholder:text-tertiary focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
       />
       <button
         onClick={handleSend}

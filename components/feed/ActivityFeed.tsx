@@ -59,7 +59,7 @@ export function ActivityFeed() {
                 className={cn(
                   "text-xs font-bold uppercase",
                   AGENT_COLORS[item.agentName?.toLowerCase() ?? ""] ??
-                    "text-zinc-400"
+                    "text-secondary"
                 )}
               >
                 {item.agentName || "system"}

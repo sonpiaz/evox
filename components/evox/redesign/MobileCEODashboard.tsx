@@ -162,8 +162,8 @@ export function MobileCEODashboard({ className }: MobileCEODashboardProps) {
     return (
       <div className={cn("flex items-center justify-center min-h-[50vh]", className)}>
         <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-2 border-zinc-700 border-t-blue-500 rounded-full mx-auto mb-4" />
-          <p className="text-sm text-zinc-500">Loading dashboard...</p>
+          <div className="animate-spin h-8 w-8 border-2 border-gray-500 border-t-blue-500 rounded-full mx-auto mb-4" />
+          <p className="text-sm text-primary0">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -225,13 +225,13 @@ export function MobileCEODashboard({ className }: MobileCEODashboardProps) {
         <h3 className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2">
           Live Activity
         </h3>
-        <div className="space-y-1 rounded-lg border border-zinc-800 bg-zinc-900/50 p-2">
+        <div className="space-y-1 rounded-lg border border-border-default bg-surface-1/50 p-2">
           {recentActivity && recentActivity.length > 0 ? (
             recentActivity.slice(0, 5).map((event: any) => (
               <ActivityRow key={event._id} event={event} />
             ))
           ) : (
-            <p className="text-xs text-zinc-500 text-center py-4">No recent activity</p>
+            <p className="text-xs text-primary0 text-center py-4">No recent activity</p>
           )}
         </div>
       </div>
@@ -254,11 +254,11 @@ function MetricBox({
     emerald: "text-emerald-400",
     yellow: "text-yellow-400",
     red: "text-red-400",
-    zinc: "text-zinc-400",
+    zinc: "text-secondary",
   };
 
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 text-center">
+    <div className="rounded-lg border border-border-default bg-surface-1/50 p-3 text-center">
       <div className={cn("text-2xl font-bold tabular-nums", colorMap[color])}>
         {value}
       </div>
@@ -279,12 +279,12 @@ function AgentPill({
   const statusColors = {
     online: "bg-green-500",
     busy: "bg-yellow-500",
-    idle: "bg-zinc-500",
+    idle: "bg-gray-500",
     offline: "bg-red-500",
   };
 
   return (
-    <div className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg border border-zinc-800 bg-zinc-900/50 shrink-0 min-w-[60px]">
+    <div className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg border border-border-default bg-surface-1/50 shrink-0 min-w-[60px]">
       <span className="text-lg">{avatar || "🤖"}</span>
       <span className="text-[10px] font-medium text-white uppercase">{name}</span>
       <span className={cn("h-2 w-2 rounded-full", statusColors[status], status === "busy" && "animate-pulse")} />
@@ -295,13 +295,13 @@ function AgentPill({
 function ActivityRow({ event }: { event: { agentName: string; description: string; timestamp: number } }) {
   return (
     <div className="flex items-center gap-2 text-xs py-1">
-      <span className="text-zinc-600 w-10 shrink-0">
+      <span className="text-tertiary w-10 shrink-0">
         {formatDistanceToNow(event.timestamp, { addSuffix: false })}
       </span>
       <span className="font-medium text-blue-400 uppercase shrink-0">
         {event.agentName}
       </span>
-      <span className="text-zinc-400 truncate">
+      <span className="text-secondary truncate">
         {event.description?.slice(0, 40)}
       </span>
     </div>

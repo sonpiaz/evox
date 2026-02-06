@@ -33,7 +33,7 @@ function keywordStyle(keyword: string): string {
   if (/working|testing|reviewing|started/i.test(keyword)) {
     return "bg-yellow-900/50 text-yellow-300";
   }
-  return "bg-zinc-800 text-zinc-400";
+  return "bg-surface-4 text-secondary";
 }
 
 interface AgentCommsWidgetProps {
@@ -50,8 +50,8 @@ export function AgentCommsWidget({ limit = 8, channel }: AgentCommsWidgetProps) 
   // Loading state
   if (data === undefined) {
     return (
-      <div className="bg-zinc-900/80 rounded-xl p-4 border border-zinc-800">
-        <h3 className="text-sm font-medium text-zinc-400 mb-3">Agent Comms</h3>
+      <div className="bg-surface-1/80 rounded-xl p-4 border border-border-default">
+        <h3 className="text-sm font-medium text-secondary mb-3">Agent Comms</h3>
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="space-y-1.5">
@@ -73,9 +73,9 @@ export function AgentCommsWidget({ limit = 8, channel }: AgentCommsWidgetProps) 
   // Empty state
   if (messages.length === 0) {
     return (
-      <div className="bg-zinc-900/80 rounded-xl p-4 border border-zinc-800">
-        <h3 className="text-sm font-medium text-zinc-400 mb-3">Agent Comms</h3>
-        <div className="text-center text-zinc-500 text-sm py-4">
+      <div className="bg-surface-1/80 rounded-xl p-4 border border-border-default">
+        <h3 className="text-sm font-medium text-secondary mb-3">Agent Comms</h3>
+        <div className="text-center text-primary0 text-sm py-4">
           No recent communications
         </div>
       </div>
@@ -83,11 +83,11 @@ export function AgentCommsWidget({ limit = 8, channel }: AgentCommsWidgetProps) 
   }
 
   return (
-    <div className="bg-zinc-900/80 rounded-xl p-4 border border-zinc-800">
+    <div className="bg-surface-1/80 rounded-xl p-4 border border-border-default">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-zinc-400">Agent Comms</h3>
-        <span className="text-[10px] text-zinc-600">{data.count} msgs</span>
+        <h3 className="text-sm font-medium text-secondary">Agent Comms</h3>
+        <span className="text-[10px] text-tertiary">{data.count} msgs</span>
       </div>
 
       {/* Messages */}
@@ -95,16 +95,16 @@ export function AgentCommsWidget({ limit = 8, channel }: AgentCommsWidgetProps) 
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className="py-2 border-b border-zinc-800/50 last:border-0 min-h-[44px] active:bg-zinc-800/50 transition-colors rounded"
+            className="py-2 border-b border-border-default/50 last:border-0 min-h-[44px] active:bg-surface-4/50 transition-colors rounded"
           >
             {/* Agent -> Channel : Time */}
             <div className="flex items-center gap-1.5 text-xs mb-1">
               <span className="font-semibold text-blue-400">
                 {(msg.sender || "?").toUpperCase()}
               </span>
-              <span className="text-zinc-600">&rarr;</span>
-              <span className="text-zinc-400">#{msg.channel}</span>
-              <span className="text-zinc-700 ml-auto">
+              <span className="text-tertiary">&rarr;</span>
+              <span className="text-secondary">#{msg.channel}</span>
+              <span className="text-tertiary ml-auto">
                 {formatTime(msg.timestamp)}
               </span>
             </div>
@@ -121,7 +121,7 @@ export function AgentCommsWidget({ limit = 8, channel }: AgentCommsWidgetProps) 
                   </span>
                 ))
               ) : (
-                <span className="text-[11px] text-zinc-600 truncate">
+                <span className="text-[11px] text-tertiary truncate">
                   {msg.summary.slice(0, 60)}
                 </span>
               )}

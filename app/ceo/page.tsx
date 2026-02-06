@@ -43,14 +43,14 @@ export default function CEODashboardPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Status Bar - Fixed at top */}
-      <header className="sticky top-0 z-50 bg-zinc-900/95 backdrop-blur border-b border-zinc-800">
+      <header className="sticky top-0 z-50 bg-surface-1/95 backdrop-blur border-b border-border-default">
         <div className="px-4 py-3">
           {/* Top row: Agent dots + key metrics */}
           <div className="flex items-center justify-between gap-4">
             {/* Agent Status */}
             <div className="flex items-center gap-2">
               {isLoading ? (
-                <div className="h-5 w-24 bg-zinc-800 animate-pulse rounded" />
+                <div className="h-5 w-24 bg-surface-4 animate-pulse rounded" />
               ) : (
                 <>
                   <div className="flex items-center gap-1">
@@ -67,7 +67,7 @@ export default function CEODashboardPage() {
                       />
                     ))}
                   </div>
-                  <span className="text-sm text-zinc-400">
+                  <span className="text-sm text-secondary">
                     {agentStatus?.online}/{agentStatus?.total}
                   </span>
                 </>
@@ -78,8 +78,8 @@ export default function CEODashboardPage() {
             <div className="flex items-center gap-4 text-sm">
               {isLoading ? (
                 <>
-                  <div className="h-5 w-16 bg-zinc-800 animate-pulse rounded" />
-                  <div className="h-5 w-16 bg-zinc-800 animate-pulse rounded" />
+                  <div className="h-5 w-16 bg-surface-4 animate-pulse rounded" />
+                  <div className="h-5 w-16 bg-surface-4 animate-pulse rounded" />
                 </>
               ) : (
                 <>
@@ -87,7 +87,7 @@ export default function CEODashboardPage() {
                     <span className="text-emerald-400 font-bold">
                       {todayMetrics?.completed}
                     </span>
-                    <span className="text-zinc-500">done</span>
+                    <span className="text-primary0">done</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <span className="text-blue-400 font-bold">
@@ -102,13 +102,13 @@ export default function CEODashboardPage() {
           {/* North Star Progress (compact) */}
           {northStar && northStar.percentage > 0 && (
             <div className="mt-2 flex items-center gap-2">
-              <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+              <div className="flex-1 h-1.5 bg-surface-4 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full transition-all duration-500"
                   style={{ width: `${northStar.percentage}%` }}
                 />
               </div>
-              <span className="text-xs text-zinc-400 shrink-0">
+              <span className="text-xs text-secondary shrink-0">
                 {northStar.percentage}%
               </span>
             </div>
@@ -120,7 +120,7 @@ export default function CEODashboardPage() {
       <main className="px-4 py-4 max-w-2xl mx-auto space-y-4">
         {/* Alert: In Progress count */}
         {!isLoading && todayMetrics && todayMetrics.inProgress > 0 && (
-          <div className="flex items-center gap-2 text-sm text-zinc-400">
+          <div className="flex items-center gap-2 text-sm text-secondary">
             <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
             <span>{todayMetrics.inProgress} tasks in progress</span>
           </div>
@@ -143,11 +143,11 @@ export default function CEODashboardPage() {
 
         {/* Live Feed - What's happening */}
         <section>
-          <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2 flex items-center gap-2">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-primary0 mb-2 flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
             Live
           </h2>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-2">
+          <div className="bg-surface-1 border border-border-default rounded-lg p-2">
             <LiveFeed limit={8} />
           </div>
         </section>
@@ -158,10 +158,10 @@ export default function CEODashboardPage() {
             onClick={() => setShowTerminals(!showTerminals)}
             className="w-full flex items-center justify-between py-2 text-sm"
           >
-            <span className="text-zinc-500 uppercase tracking-wider text-xs font-bold">
+            <span className="text-primary0 uppercase tracking-wider text-xs font-bold">
               Terminals
             </span>
-            <span className="text-zinc-600">{showTerminals ? "-" : "+"}</span>
+            <span className="text-tertiary">{showTerminals ? "-" : "+"}</span>
           </button>
 
           {showTerminals && (
@@ -169,7 +169,7 @@ export default function CEODashboardPage() {
               {agentStatus?.agents.map((agent) => (
                 <div
                   key={agent.name}
-                  className="bg-zinc-900 border border-zinc-800 rounded-lg p-3"
+                  className="bg-surface-1 border border-border-default rounded-lg p-3"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-lg">{agent.avatar}</span>
@@ -185,9 +185,9 @@ export default function CEODashboardPage() {
                       )}
                     />
                   </div>
-                  <div className="bg-black rounded p-2 font-mono text-xs text-zinc-400">
+                  <div className="bg-black rounded p-2 font-mono text-xs text-secondary">
                     {agent.status === "offline" ? (
-                      <span className="text-zinc-600">Offline</span>
+                      <span className="text-tertiary">Offline</span>
                     ) : (
                       <span>Ready...</span>
                     )}

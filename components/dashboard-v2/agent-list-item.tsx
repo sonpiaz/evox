@@ -31,20 +31,20 @@ export function AgentListItem({ name, role, status, avatar, isSelected, onClick 
       type="button"
       onClick={onClick}
       className={cn(
-        "flex h-14 w-full items-center gap-3 border-b border-zinc-900 px-4 py-3 text-left transition-colors",
+        "flex h-14 w-full items-center gap-3 border-b border-border-default px-4 py-3 text-left transition-colors",
         isSelected
-          ? "border-l-2 border-l-white bg-zinc-800 text-zinc-50"
-          : "hover:bg-zinc-900 text-zinc-400"
+          ? "border-l-2 border-l-white bg-surface-4 text-primary"
+          : "hover:bg-surface-1 text-secondary"
       )}
     >
       <AgentStatusIndicator status={status} size="sm" />
-      <Avatar className="h-5 w-5 shrink-0 border border-zinc-800">
-        <AvatarFallback className="bg-zinc-900 text-[10px] text-zinc-400">{avatar}</AvatarFallback>
+      <Avatar className="h-5 w-5 shrink-0 border border-border-default">
+        <AvatarFallback className="bg-surface-1 text-[10px] text-secondary">{avatar}</AvatarFallback>
       </Avatar>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-zinc-50">{name}</p>
+        <p className="truncate text-sm font-medium text-primary">{name}</p>
       </div>
-      <span className="shrink-0 rounded-[10px] border border-zinc-800 bg-zinc-900 px-2 py-0.5 text-[11px] text-zinc-400">
+      <span className="shrink-0 rounded-[10px] border border-border-default bg-surface-1 px-2 py-0.5 text-[11px] text-secondary">
         {roleLabels[role] ?? role}
       </span>
     </button>

@@ -87,22 +87,22 @@ export function AgentSidebar({
   return (
     <aside
       className={cn(
-        "flex w-[220px] shrink-0 flex-col border-r border-zinc-800 bg-zinc-900",
+        "flex w-[220px] shrink-0 flex-col border-r border-border-default bg-surface-1",
         className
       )}
     >
-      <div className="flex shrink-0 items-center justify-between border-b border-zinc-800 px-3 py-2">
-        <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+      <div className="flex shrink-0 items-center justify-between border-b border-border-default px-3 py-2">
+        <span className="text-[10px] uppercase tracking-[0.2em] text-tertiary">
           Agents
         </span>
         <div className="flex items-center gap-1.5">
           <Link
             href="/agents"
-            className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] font-medium text-zinc-400 hover:bg-white/10 hover:text-zinc-200 transition-colors"
+            className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] font-medium text-secondary hover:bg-white/10 hover:text-primary transition-colors"
           >
             Performance
           </Link>
-          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500">
+          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-tertiary">
             {agents.length}
           </span>
         </div>
@@ -122,9 +122,9 @@ export function AgentSidebar({
               aria-label={`${agent.name}, ${roleLabels[agent.role] ?? agent.role}, ${working ? "working" : status}`}
               aria-current={isSelected ? "true" : undefined}
               className={cn(
-                "flex h-16 w-full cursor-pointer items-center gap-3 border-b border-zinc-800 px-3 text-left transition-colors duration-150",
-                "hover:bg-zinc-800",
-                isSelected && "border-l-2 border-white bg-zinc-800"
+                "flex h-16 w-full cursor-pointer items-center gap-3 border-b border-border-default px-3 text-left transition-colors duration-150",
+                "hover:bg-surface-4",
+                isSelected && "border-l-2 border-white bg-surface-4"
               )}
             >
               {/* Status dot — AGT-285: Use AgentStatusIndicator for consistency */}
@@ -142,10 +142,10 @@ export function AgentSidebar({
               {/* Name + Role + Task */}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="truncate text-sm font-medium text-zinc-50">
+                  <span className="truncate text-sm font-medium text-primary">
                     {agent.name}
                   </span>
-                  <span className="shrink-0 text-xs text-zinc-500">
+                  <span className="shrink-0 text-xs text-tertiary">
                     {roleLabels[agent.role] ?? agent.role}
                   </span>
                 </div>
@@ -156,20 +156,20 @@ export function AgentSidebar({
                         {agent.currentTaskIdentifier}
                       </span>
                       {agent.statusSince && (
-                        <span className="text-[10px] text-zinc-600">
+                        <span className="text-[10px] text-tertiary">
                           {formatDistanceToNow(agent.statusSince, { addSuffix: false })}
                         </span>
                       )}
                     </div>
                     {agent.currentTaskTitle && (
-                      <div className="mt-0.5 truncate text-[11px] text-zinc-500">
+                      <div className="mt-0.5 truncate text-[11px] text-tertiary">
                         {agent.currentTaskTitle}
                       </div>
                     )}
                   </>
                 )}
                 {!working && (
-                  <div className="mt-0.5 text-xs text-zinc-600">
+                  <div className="mt-0.5 text-xs text-tertiary">
                     {status === "idle" || status === "online" ? "Idle" : "Offline"}
                   </div>
                 )}

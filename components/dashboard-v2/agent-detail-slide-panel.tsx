@@ -39,7 +39,7 @@ export function AgentDetailSlidePanel({
       />
       <div
         className={cn(
-          "fixed right-0 top-0 z-50 h-full w-[420px] shrink-0 border-l border-zinc-800 bg-zinc-900 shadow-xl transition-transform duration-200 ease-out",
+          "fixed right-0 top-0 z-50 h-full w-[420px] shrink-0 border-l border-border-default bg-surface-1 shadow-xl transition-transform duration-200 ease-out",
           open ? "translate-x-0" : "translate-x-full"
         )}
         role="dialog"
@@ -47,11 +47,11 @@ export function AgentDetailSlidePanel({
         aria-labelledby="agent-panel-title"
       >
         <div className="flex h-full flex-col min-h-0">
-          <div className="flex shrink-0 items-center justify-end border-b border-zinc-800 px-4 py-2">
+          <div className="flex shrink-0 items-center justify-end border-b border-border-default px-4 py-2">
             <button
               type="button"
               onClick={onClose}
-              className="rounded p-1.5 text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-zinc-50"
+              className="rounded p-1.5 text-primary0 transition-colors hover:bg-surface-4 hover:text-primary"
               aria-label="Close panel"
             >
               ✕

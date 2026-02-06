@@ -49,21 +49,21 @@ export function TaskCard({ task, onClick, onAssigneeClick }: TaskCardProps) {
       type="button"
       onClick={onClick}
       className={cn(
-        "w-full rounded-lg border border-gray-800 bg-zinc-950 p-4 text-left transition-colors hover:border-gray-700 hover:bg-gray-800/50",
+        "w-full rounded-lg border border-gray-800 bg-base p-4 text-left transition-colors hover:border-gray-700 hover:bg-gray-800/50",
         "border-l-4",
         barColor
       )}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-zinc-50">{task.title}</p>
+          <p className="truncate text-sm font-medium text-primary">{task.title}</p>
           {task.linearIdentifier && (
             <a
               href={task.linearUrl ?? "#"}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="font-mono text-xs text-zinc-400 hover:text-zinc-400 whitespace-nowrap"
+              className="font-mono text-xs text-secondary hover:text-secondary whitespace-nowrap"
             >
               {task.linearIdentifier}
             </a>
@@ -75,12 +75,12 @@ export function TaskCard({ task, onClick, onAssigneeClick }: TaskCardProps) {
             onClick={onAssigneeClick && task.assigneeId ? handleAssigneeClick : undefined}
             className={cn(
               "shrink-0",
-              onAssigneeClick && task.assigneeId && "cursor-pointer rounded hover:ring-1 hover:ring-zinc-700"
+              onAssigneeClick && task.assigneeId && "cursor-pointer rounded hover:ring-1 hover:ring-gray-500"
             )}
             title={onAssigneeClick && task.assigneeId ? `Open ${task.assigneeName ?? "agent"}` : undefined}
           >
             <Avatar className="h-6 w-6 border border-gray-700">
-              <AvatarFallback className="bg-gray-800 text-[10px] text-zinc-50">{task.assigneeAvatar}</AvatarFallback>
+              <AvatarFallback className="bg-gray-800 text-[10px] text-primary">{task.assigneeAvatar}</AvatarFallback>
             </Avatar>
           </span>
         )}
@@ -95,7 +95,7 @@ export function TaskCard({ task, onClick, onAssigneeClick }: TaskCardProps) {
           </span>
         ))}
         {task.updatedAt != null && (
-          <span className="text-xs text-zinc-500">{formatDistanceToNow(task.updatedAt, { addSuffix: true })}</span>
+          <span className="text-xs text-primary0">{formatDistanceToNow(task.updatedAt, { addSuffix: true })}</span>
         )}
       </div>
     </button>

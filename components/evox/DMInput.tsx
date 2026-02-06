@@ -43,7 +43,7 @@ export function DMInput({
   if (isViewerMode) return null;
 
   return (
-    <div className={cn("border-t border-zinc-800 p-3 bg-zinc-950", className)}>
+    <div className={cn("border-t border-border-default p-3 bg-base", className)}>
       {/* Type selector */}
       <div className="flex gap-1 mb-2">
         {(["fyi", "update", "request", "handoff"] as const).map((t) => (
@@ -60,8 +60,8 @@ export function DMInput({
                     ? "bg-blue-500/20 text-blue-400"
                     : t === "request"
                       ? "bg-amber-500/20 text-amber-400"
-                      : "bg-zinc-500/20 text-zinc-400"
-                : "text-zinc-600 hover:text-zinc-400"
+                      : "bg-gray-500/20 text-secondary"
+                : "text-tertiary hover:text-secondary"
             )}
           >
             {t}
@@ -78,7 +78,7 @@ export function DMInput({
           placeholder={placeholder}
           disabled={disabled}
           rows={2}
-          className="flex-1 resize-none rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 focus:border-zinc-700 focus:outline-none disabled:opacity-50"
+          className="flex-1 resize-none rounded-lg border border-border-default bg-surface-1 px-3 py-2 text-sm text-primary placeholder:text-tertiary focus:border-gray-500 focus:outline-none disabled:opacity-50"
         />
         <button
           type="button"
@@ -89,7 +89,7 @@ export function DMInput({
           Send
         </button>
       </div>
-      <p className="mt-1 text-[10px] text-zinc-600">Enter to send, Shift+Enter for new line</p>
+      <p className="mt-1 text-[10px] text-tertiary">Enter to send, Shift+Enter for new line</p>
     </div>
   );
 }

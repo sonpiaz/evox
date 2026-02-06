@@ -34,14 +34,14 @@ const SLA_MS: Partial<Record<Stage, number>> = {
 const DOT_COLORS: Record<string, string> = {
   completed: "bg-emerald-500",
   active: "bg-blue-500 animate-pulse",
-  pending: "bg-zinc-700",
+  pending: "bg-gray-500",
   breached: "bg-red-500",
 };
 
 const LABEL_COLORS: Record<string, string> = {
   completed: "text-emerald-400",
   active: "text-blue-400",
-  pending: "text-zinc-600",
+  pending: "text-tertiary",
   breached: "text-red-400",
 };
 
@@ -69,8 +69,8 @@ interface LoopTimelineProps {
 export function LoopTimeline({ message, className }: LoopTimelineProps) {
   if (!message) {
     return (
-      <div className={cn("bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-6", className)}>
-        <div className="text-xs text-zinc-700 text-center">
+      <div className={cn("bg-surface-1/40 border border-border-default/60 rounded-xl p-6", className)}>
+        <div className="text-xs text-tertiary text-center">
           Select a message to view its loop timeline
         </div>
       </div>
@@ -113,12 +113,12 @@ export function LoopTimeline({ message, className }: LoopTimelineProps) {
   });
 
   return (
-    <div className={cn("bg-zinc-900/40 border border-zinc-800/60 rounded-xl overflow-hidden", className)}>
-      <div className="px-4 py-2.5 border-b border-zinc-800/40 flex items-center justify-between">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+    <div className={cn("bg-surface-1/40 border border-border-default/60 rounded-xl overflow-hidden", className)}>
+      <div className="px-4 py-2.5 border-b border-border-default/40 flex items-center justify-between">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-primary0">
           Loop Timeline
         </span>
-        <span className="text-[10px] text-zinc-600 truncate ml-2">
+        <span className="text-[10px] text-tertiary truncate ml-2">
           {message.from} &rarr; {message.to}
         </span>
       </div>
@@ -136,7 +136,7 @@ export function LoopTimeline({ message, className }: LoopTimelineProps) {
                   <span
                     className={cn(
                       "text-[9px] tabular-nums",
-                      t.state === "breached" ? "text-red-400" : "text-zinc-500"
+                      t.state === "breached" ? "text-red-400" : "text-primary0"
                     )}
                   >
                     {formatDuration(t.duration)}
@@ -147,7 +147,7 @@ export function LoopTimeline({ message, className }: LoopTimelineProps) {
                 <div
                   className={cn(
                     "flex-1 h-px mx-1.5",
-                    t.isCompleted ? "bg-emerald-500/40" : "bg-zinc-800"
+                    t.isCompleted ? "bg-emerald-500/40" : "bg-surface-4"
                   )}
                 />
               )}
@@ -155,8 +155,8 @@ export function LoopTimeline({ message, className }: LoopTimelineProps) {
           ))}
         </div>
         {/* Message preview */}
-        <div className="mt-3 pt-3 border-t border-zinc-800/30">
-          <div className="text-[10px] text-zinc-600 truncate">{message.content}</div>
+        <div className="mt-3 pt-3 border-t border-border-default/30">
+          <div className="text-[10px] text-tertiary truncate">{message.content}</div>
         </div>
       </div>
     </div>

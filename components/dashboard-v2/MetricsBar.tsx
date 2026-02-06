@@ -23,31 +23,31 @@ export function MetricsBar({
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {/* Tasks Done Today */}
-      <div className="bg-zinc-900/80 rounded-xl p-4 border border-zinc-800">
+      <div className="bg-surface-1/80 rounded-xl p-4 border border-border-default">
         <div className="text-3xl sm:text-2xl font-bold text-white">
           {tasksToday}
         </div>
-        <div className="text-zinc-500 text-xs uppercase tracking-wide mt-1">
+        <div className="text-primary0 text-xs uppercase tracking-wide mt-1">
           Tasks Today
         </div>
       </div>
 
       {/* Velocity */}
-      <div className="bg-zinc-900/80 rounded-xl p-4 border border-zinc-800">
+      <div className="bg-surface-1/80 rounded-xl p-4 border border-border-default">
         <div className="text-3xl sm:text-2xl font-bold text-blue-400">
           {velocity.toFixed(1)}
         </div>
-        <div className="text-zinc-500 text-xs uppercase tracking-wide mt-1">
+        <div className="text-primary0 text-xs uppercase tracking-wide mt-1">
           Tasks/Hour
         </div>
       </div>
 
       {/* Active Agents */}
-      <div className="bg-zinc-900/80 rounded-xl p-4 border border-zinc-800">
+      <div className="bg-surface-1/80 rounded-xl p-4 border border-border-default">
         <div className="text-3xl sm:text-2xl font-bold text-green-400">
           {activeAgents}/{totalAgents}
         </div>
-        <div className="text-zinc-500 text-xs uppercase tracking-wide mt-1">
+        <div className="text-primary0 text-xs uppercase tracking-wide mt-1">
           Agents Online
         </div>
       </div>
@@ -56,15 +56,15 @@ export function MetricsBar({
       <div className={`rounded-xl p-4 border ${
         blockers > 0
           ? "bg-red-950/50 border-red-900/50"
-          : "bg-zinc-900/80 border-zinc-800"
+          : "bg-surface-1/80 border-border-default"
       }`}>
         <div className={`text-3xl sm:text-2xl font-bold ${
-          blockers > 0 ? "text-red-400" : "text-zinc-400"
+          blockers > 0 ? "text-red-400" : "text-secondary"
         }`}>
           {blockers}
         </div>
         <div className={`text-xs uppercase tracking-wide mt-1 ${
-          blockers > 0 ? "text-red-400/70" : "text-zinc-500"
+          blockers > 0 ? "text-red-400/70" : "text-primary0"
         }`}>
           Blockers
         </div>

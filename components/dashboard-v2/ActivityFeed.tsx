@@ -23,7 +23,7 @@ const eventColors: Record<string, string> = {
   channel_message: "bg-blue-500",
   dm_sent: "bg-purple-500",
   dm_received: "bg-blue-500",
-  dm_read: "bg-zinc-500",
+  dm_read: "bg-gray-500",
   dm_replied: "bg-cyan-500",
   task_completed: "bg-green-500",
   commit: "bg-emerald-500",
@@ -49,12 +49,12 @@ function getEventIcon(eventType?: string): string | null {
 }
 
 function getEventColor(eventType?: string): string {
-  if (!eventType) return "bg-zinc-600";
+  if (!eventType) return "bg-gray-600";
   const type = eventType.toLowerCase();
   for (const [key, color] of Object.entries(eventColors)) {
     if (type.includes(key)) return color;
   }
-  return "bg-zinc-600";
+  return "bg-gray-600";
 }
 
 function formatTime(timestamp: number): string {
@@ -73,7 +73,7 @@ export function ActivityFeed({ activities, limit = 10 }: ActivityFeedProps) {
 
   if (displayActivities.length === 0) {
     return (
-      <div className="py-8 text-center text-sm text-zinc-500">
+      <div className="py-8 text-center text-sm text-primary0">
         No recent activity
       </div>
     );
@@ -83,8 +83,8 @@ export function ActivityFeed({ activities, limit = 10 }: ActivityFeedProps) {
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-medium text-zinc-400">Live Activity</h2>
-        <span className="text-[10px] text-zinc-600">{activities.length} events</span>
+        <h2 className="text-sm font-medium text-secondary">Live Activity</h2>
+        <span className="text-[10px] text-tertiary">{activities.length} events</span>
       </div>
 
       {/* List */}
@@ -92,7 +92,7 @@ export function ActivityFeed({ activities, limit = 10 }: ActivityFeedProps) {
         {displayActivities.map((activity, i) => (
           <div
             key={activity.id || i}
-            className="bg-zinc-900/50 active:bg-zinc-800 sm:hover:bg-zinc-900 rounded-lg p-4 sm:p-3 flex items-start gap-3 transition-colors border border-transparent sm:hover:border-zinc-800 min-h-[56px]"
+            className="bg-surface-1/50 active:bg-surface-4 sm:hover:bg-surface-1 rounded-lg p-4 sm:p-3 flex items-start gap-3 transition-colors border border-transparent sm:hover:border-border-default min-h-[56px]"
           >
             {/* Event indicator: icon for DMs, dot for others */}
             {getEventIcon(activity.eventType) ? (
@@ -106,14 +106,14 @@ export function ActivityFeed({ activities, limit = 10 }: ActivityFeedProps) {
             {/* Content */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-semibold text-sm sm:text-xs text-zinc-200">
+                <span className="font-semibold text-sm sm:text-xs text-primary">
                   {activity.agentName || "System"}
                 </span>
-                <span className="text-zinc-600 text-xs sm:text-[10px]">
+                <span className="text-tertiary text-xs sm:text-[10px]">
                   {formatTime(activity.timestamp)}
                 </span>
               </div>
-              <div className="text-zinc-400 text-sm sm:text-xs line-clamp-2 sm:truncate mt-0.5">
+              <div className="text-secondary text-sm sm:text-xs line-clamp-2 sm:truncate mt-0.5">
                 {activity.description || activity.title || "Activity"}
               </div>
             </div>

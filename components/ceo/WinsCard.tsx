@@ -49,7 +49,7 @@ export function WinsCard({ className, collapsed = false }: WinsCardProps) {
             >
               <span className="text-emerald-400">!</span>
               <span className="text-white flex-1 truncate">{win.title}</span>
-              <span className="text-zinc-500 text-xs shrink-0">
+              <span className="text-primary0 text-xs shrink-0">
                 {win.agent} {formatDistanceToNow(win.completedAt || 0, { addSuffix: false })}
               </span>
             </div>

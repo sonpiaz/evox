@@ -64,7 +64,7 @@ export function TaskDetailModal({ open, task, onClose }: TaskDetailModalProps) {
       onClick={onClose}
     >
       <div
-        className="max-h-[90vh] w-full max-w-[700px] overflow-hidden rounded-xl border border-white/[0.08] bg-zinc-900 shadow-2xl flex flex-col"
+        className="max-h-[90vh] w-full max-w-[700px] overflow-hidden rounded-xl border border-white/[0.08] bg-surface-1 shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

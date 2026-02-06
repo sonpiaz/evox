@@ -41,21 +41,21 @@ export function NotificationPanel({
   onNotificationClick,
 }: NotificationPanelProps) {
   return (
-    <div className="w-80 rounded-lg border border-zinc-800 bg-zinc-900 shadow-xl">
-      <div className="border-b border-zinc-800 p-3">
-        <h3 className="font-semibold text-zinc-50">Notifications</h3>
+    <div className="w-80 rounded-lg border border-border-default bg-surface-1 shadow-xl">
+      <div className="border-b border-border-default p-3">
+        <h3 className="font-semibold text-primary">Notifications</h3>
       </div>
       <div className="max-h-[480px] overflow-y-auto">
         {byAgent.length === 0 ? (
           <div className="p-8 text-center">
-            <p className="text-sm text-zinc-500">No notifications</p>
+            <p className="text-sm text-primary0">No notifications</p>
           </div>
         ) : (
           <div className="p-2 space-y-4">
             {byAgent.map((group) => (
               <div key={group.agentId}>
                 <div className="flex items-center justify-between px-2 py-1.5">
-                  <span className="text-xs font-semibold text-zinc-400">
+                  <span className="text-xs font-semibold text-secondary">
                     {group.agentName}
                     {group.unreadCount > 0 && (
                       <span className="ml-1.5 text-blue-400">({group.unreadCount} unread)</span>

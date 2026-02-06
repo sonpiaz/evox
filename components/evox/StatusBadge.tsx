@@ -24,9 +24,9 @@ const statusConfig: Record<StatusType, { bg: string; text: string; dot: string }
     dot: "bg-yellow-500",
   },
   idle: {
-    bg: "bg-zinc-500/10",
-    text: "text-zinc-400",
-    dot: "bg-zinc-500",
+    bg: "bg-gray-500/10",
+    text: "text-secondary",
+    dot: "bg-gray-500",
   },
   offline: {
     bg: "bg-red-500/10",

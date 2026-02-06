@@ -95,14 +95,14 @@ export function FileActivityMatrix({ className, limit = 50 }: FileActivityMatrix
 
   if (!activities || activities.length === 0) {
     return (
-      <div className={cn("flex flex-col border border-zinc-800 bg-zinc-900 rounded-lg", className)}>
-        <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2">
-          <span className="flex items-center gap-2 text-xs text-zinc-400">
+      <div className={cn("flex flex-col border border-border-default bg-surface-1 rounded-lg", className)}>
+        <div className="flex items-center justify-between border-b border-border-default px-3 py-2">
+          <span className="flex items-center gap-2 text-xs text-secondary">
             <span>📁</span>
             <span className="uppercase tracking-wider">File Activity</span>
           </span>
         </div>
-        <div className="flex-1 flex items-center justify-center py-8 text-xs text-zinc-500">
+        <div className="flex-1 flex items-center justify-center py-8 text-xs text-tertiary">
           No recent file activity
         </div>
       </div>
@@ -110,10 +110,10 @@ export function FileActivityMatrix({ className, limit = 50 }: FileActivityMatrix
   }
 
   return (
-    <div className={cn("flex flex-col border border-zinc-800 bg-zinc-900 rounded-lg", className)}>
+    <div className={cn("flex flex-col border border-border-default bg-surface-1 rounded-lg", className)}>
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2">
-        <span className="flex items-center gap-2 text-xs text-zinc-400">
+      <div className="flex items-center justify-between border-b border-border-default px-3 py-2">
+        <span className="flex items-center gap-2 text-xs text-secondary">
           <span>📁</span>
           <span className="uppercase tracking-wider">File Activity</span>
           <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-medium">
@@ -130,7 +130,7 @@ export function FileActivityMatrix({ className, limit = 50 }: FileActivityMatrix
               "rounded px-2 py-1 text-[10px] transition-colors",
               viewMode === "matrix"
                 ? "bg-white/10 text-white"
-                : "text-zinc-500 hover:text-zinc-400"
+                : "text-tertiary hover:text-secondary"
             )}
           >
             Matrix
@@ -142,7 +142,7 @@ export function FileActivityMatrix({ className, limit = 50 }: FileActivityMatrix
               "rounded px-2 py-1 text-[10px] transition-colors",
               viewMode === "tree"
                 ? "bg-white/10 text-white"
-                : "text-zinc-500 hover:text-zinc-400"
+                : "text-tertiary hover:text-secondary"
             )}
           >
             Tree
@@ -171,15 +171,15 @@ export function FileActivityMatrix({ className, limit = 50 }: FileActivityMatrix
 
       {/* Tooltip */}
       {hoveredActivity && (
-        <div className="border-t border-zinc-800 px-3 py-2">
+        <div className="border-t border-border-default px-3 py-2">
           <div className="flex items-center gap-2 text-xs">
             <span className={cn("font-medium", actionColors[hoveredActivity.action]?.text)}>
               {hoveredActivity.action.toUpperCase()}
             </span>
-            <span className="font-mono text-zinc-50">{hoveredActivity.filePath}</span>
-            <span className="text-zinc-500">by</span>
-            <span className="font-medium text-zinc-50">{hoveredActivity.agentName.toUpperCase()}</span>
-            <span className="text-[10px] text-zinc-500">
+            <span className="font-mono text-primary">{hoveredActivity.filePath}</span>
+            <span className="text-tertiary">by</span>
+            <span className="font-medium text-primary">{hoveredActivity.agentName.toUpperCase()}</span>
+            <span className="text-[10px] text-tertiary">
               {formatDistanceToNow(hoveredActivity.timestamp, { addSuffix: true })}
             </span>
           </div>
@@ -187,11 +187,11 @@ export function FileActivityMatrix({ className, limit = 50 }: FileActivityMatrix
       )}
 
       {/* Legend */}
-      <div className="flex items-center gap-4 border-t border-zinc-800 px-3 py-2">
+      <div className="flex items-center gap-4 border-t border-border-default px-3 py-2">
         {Object.entries(actionColors).map(([action, colors]) => (
           <div key={action} className="flex items-center gap-1.5">
             <span className={cn("h-2 w-2 rounded-full", colors.dot)} />
-            <span className="text-[10px] text-zinc-500 capitalize">{action}</span>
+            <span className="text-[10px] text-tertiary capitalize">{action}</span>
           </div>
         ))}
       </div>
@@ -216,7 +216,7 @@ function MatrixView({
       {Array.from(folderGroups.entries()).map(([folder, files]) => (
         <div key={folder} className="flex items-start gap-3">
           {/* Folder name */}
-          <div className="w-24 shrink-0 truncate text-xs text-zinc-400">
+          <div className="w-24 shrink-0 truncate text-xs text-secondary">
             {folder}/
           </div>
 
@@ -268,7 +268,7 @@ function TreeView({
       {Array.from(folderGroups.entries()).map(([folder, files]) => (
         <div key={folder}>
           {/* Folder */}
-          <div className="flex items-center gap-2 text-zinc-400">
+          <div className="flex items-center gap-2 text-secondary">
             <span>📁</span>
             <span>{folder}/</span>
           </div>
@@ -293,7 +293,7 @@ function TreeView({
                     isHovered && "bg-white/5"
                   )}
                 >
-                  <span className="text-zinc-500">{isLast ? "└─" : "├─"}</span>
+                  <span className="text-tertiary">{isLast ? "└─" : "├─"}</span>
                   <span className={cn(
                     "h-2 w-2 shrink-0 rounded-full",
                     colors.dot,
@@ -301,7 +301,7 @@ function TreeView({
                   )} />
                   <span className={cn(
                     "truncate",
-                    recent ? "text-zinc-50" : "text-zinc-400"
+                    recent ? "text-primary" : "text-secondary"
                   )}>
                     {fileName}
                   </span>

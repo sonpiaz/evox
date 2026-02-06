@@ -103,7 +103,7 @@ export function DispatchQueue({ className, collapsed = false, onToggle }: Dispat
         type="button"
         onClick={onToggle}
         className={cn(
-          "flex h-10 w-full items-center justify-between border-t border-zinc-800 bg-zinc-900 px-3 text-zinc-500 transition-colors hover:bg-zinc-900",
+          "flex h-10 w-full items-center justify-between border-t border-border-default bg-surface-1 px-3 text-tertiary transition-colors hover:bg-surface-1",
           className
         )}
       >
@@ -121,16 +121,16 @@ export function DispatchQueue({ className, collapsed = false, onToggle }: Dispat
   }
 
   return (
-    <div className={cn("flex flex-col border-t border-zinc-800 bg-zinc-900", className)}>
+    <div className={cn("flex flex-col border-t border-border-default bg-surface-1", className)}>
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2">
+      <div className="flex items-center justify-between border-b border-border-default px-3 py-2">
         <button
           type="button"
           onClick={onToggle}
           className="flex items-center gap-2 transition-colors hover:text-white"
         >
           <span>⚡</span>
-          <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+          <span className="text-[10px] uppercase tracking-[0.2em] text-tertiary">
             Dispatch Queue
           </span>
           {count > 0 && (
@@ -143,7 +143,7 @@ export function DispatchQueue({ className, collapsed = false, onToggle }: Dispat
           <button
             type="button"
             onClick={() => setShowAddForm(!showAddForm)}
-            className="rounded px-2 py-0.5 text-[10px] text-zinc-600 transition-colors hover:bg-white/5 hover:text-zinc-500"
+            className="rounded px-2 py-0.5 text-[10px] text-tertiary transition-colors hover:bg-white/5 hover:text-tertiary"
           >
             + Add Dispatch
           </button>
@@ -152,15 +152,15 @@ export function DispatchQueue({ className, collapsed = false, onToggle }: Dispat
 
       {/* Add form (placeholder) */}
       {showAddForm && (
-        <div className="border-b border-zinc-800 bg-zinc-950 px-3 py-2">
-          <div className="text-[10px] text-zinc-600">
+        <div className="border-b border-border-default bg-base px-3 py-2">
+          <div className="text-[10px] text-tertiary">
             Add task form (dispatch via OpenClaw CLI)
           </div>
           <div className="mt-2 flex gap-2">
             <input
               type="text"
               placeholder="openclaw dispatch sam work_ticket AGT-XXX"
-              className="flex-1 rounded border border-zinc-700 bg-zinc-900 px-2 py-1 text-xs text-white placeholder-zinc-600 focus:border-zinc-600 focus:outline-none"
+              className="flex-1 rounded border border-gray-500 bg-surface-1 px-2 py-1 text-xs text-white placeholder-tertiary focus:border-gray-500 focus:outline-none"
             />
             <button
               type="button"
@@ -174,7 +174,7 @@ export function DispatchQueue({ className, collapsed = false, onToggle }: Dispat
 
       {/* Queue items with drag-drop */}
       {count === 0 ? (
-        <div className="px-3 py-4 text-center text-xs text-zinc-600">
+        <div className="px-3 py-4 text-center text-xs text-tertiary">
           No pending dispatches
         </div>
       ) : (
@@ -241,8 +241,8 @@ function SortableDispatchItem({ dispatch }: { dispatch: Dispatch }) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center gap-2 border-b border-zinc-800 px-3 py-2 text-xs transition-colors",
-        isDragging && "bg-zinc-900 opacity-80 shadow-lg",
+        "flex items-center gap-2 border-b border-border-default px-3 py-2 text-xs transition-colors",
+        isDragging && "bg-surface-1 opacity-80 shadow-lg",
         dispatch.blocked && "bg-orange-500/5"
       )}
     >
@@ -252,7 +252,7 @@ function SortableDispatchItem({ dispatch }: { dispatch: Dispatch }) {
           type="button"
           {...attributes}
           {...listeners}
-          className="cursor-grab text-zinc-700 hover:text-zinc-500 active:cursor-grabbing"
+          className="cursor-grab text-tertiary hover:text-tertiary active:cursor-grabbing"
         >
           ⠿
         </button>
@@ -269,18 +269,18 @@ function SortableDispatchItem({ dispatch }: { dispatch: Dispatch }) {
       )}
 
       {/* Agent */}
-      <span className="w-10 shrink-0 truncate font-medium text-zinc-50">
+      <span className="w-10 shrink-0 truncate font-medium text-primary">
         {agentName}
       </span>
 
       {/* Command */}
-      <span className="shrink-0 font-mono text-zinc-500">
+      <span className="shrink-0 font-mono text-tertiary">
         {dispatch.command}
       </span>
 
       {/* Payload summary */}
       {payloadSummary && (
-        <span className="shrink-0 font-mono text-zinc-50">
+        <span className="shrink-0 font-mono text-primary">
           {payloadSummary}
         </span>
       )}
@@ -301,7 +301,7 @@ function SortableDispatchItem({ dispatch }: { dispatch: Dispatch }) {
       <span className="flex-1" />
 
       {/* Wait time */}
-      <span className="shrink-0 text-[10px] text-zinc-600">
+      <span className="shrink-0 text-[10px] text-tertiary">
         {waitTime}
       </span>
     </div>

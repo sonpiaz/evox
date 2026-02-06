@@ -51,7 +51,7 @@ function getAgentAvatarColor(agentName: string): string {
   if (name === "max") return "bg-amber-500/20 border-amber-500/30";
   if (name === "sam") return "bg-emerald-500/20 border-emerald-500/30";
   if (name === "leo") return "bg-blue-500/20 border-blue-500/30";
-  return "bg-zinc-900 border-zinc-800";
+  return "bg-surface-1 border-border-default";
 }
 
 /** AGT-163: Spec 5.5 — 40px row, ticket ID + title, no raw Convex IDs */
@@ -60,7 +60,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
   const list = safe.slice(0, 20);
 
   if (list.length === 0) {
-    return <p className="text-sm text-zinc-500">No recent activity</p>;
+    return <p className="text-sm text-primary0">No recent activity</p>;
   }
 
   return (
@@ -88,7 +88,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
           >
             <div className="flex min-h-[1.25rem] items-center gap-2">
               <Avatar className={cn("h-5 w-5 shrink-0 border", avatarColor)}>
-                <AvatarFallback className={cn("text-[10px] text-zinc-400", avatarColor)}>{avatar}</AvatarFallback>
+                <AvatarFallback className={cn("text-[10px] text-secondary", avatarColor)}>{avatar}</AvatarFallback>
               </Avatar>
               <span className="w-12 shrink-0 truncate text-xs font-medium text-white/80" title={agentName}>
                 {agentName}

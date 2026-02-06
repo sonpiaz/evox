@@ -79,12 +79,12 @@ export function DMPanel({
   return (
     <div
       className={cn(
-        "flex flex-col h-full bg-zinc-950 border-l border-zinc-800",
+        "flex flex-col h-full bg-base border-l border-border-default",
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-zinc-800 px-3 sm:px-4 py-2 sm:py-3">
+      <div className="flex items-center justify-between border-b border-border-default px-3 sm:px-4 py-2 sm:py-3">
         <div className="flex items-center gap-2 sm:gap-3">
           <span className="text-base sm:text-lg">💬</span>
           <span className="text-lg sm:text-xl">{otherAgentAvatar}</span>
@@ -95,7 +95,7 @@ export function DMPanel({
         <button
           type="button"
           onClick={onClose}
-          className="rounded p-1 text-zinc-500 hover:bg-zinc-800 hover:text-white"
+          className="rounded p-1 text-primary0 hover:bg-surface-4 hover:text-white"
           aria-label="Close"
         >
           ✕
@@ -106,11 +106,11 @@ export function DMPanel({
       <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 sm:space-y-3 min-h-0">
         {conversation === undefined ? (
           <div className="flex items-center justify-center h-full">
-            <span className="animate-pulse text-sm text-zinc-500">Loading...</span>
+            <span className="animate-pulse text-sm text-primary0">Loading...</span>
           </div>
         ) : conversation.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-sm text-zinc-500">No messages yet. Start the conversation!</p>
+            <p className="text-sm text-primary0">No messages yet. Start the conversation!</p>
           </div>
         ) : (
           <>

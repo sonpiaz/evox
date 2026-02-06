@@ -39,7 +39,7 @@ export function Panel({
               </h3>
             )}
             {subtitle && (
-              <p className="mt-0.5 text-[10px] sm:text-xs text-zinc-500">
+              <p className="mt-0.5 text-[10px] sm:text-xs text-primary0">
                 {subtitle}
               </p>
             )}
