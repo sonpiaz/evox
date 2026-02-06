@@ -53,7 +53,7 @@ type PerformanceMetric = {
 
 /** Trend arrow indicator */
 function TrendArrow({ value, baseline, invert = false }: { value: number; baseline: number; invert?: boolean }) {
-  if (baseline === 0 && value === 0) return <span className="text-[#555555]">—</span>;
+  if (baseline === 0 && value === 0) return <span className="text-zinc-500">—</span>;
 
   const diff = value - baseline;
   const pctChange = baseline > 0 ? Math.round((diff / baseline) * 100) : value > 0 ? 100 : 0;
@@ -62,7 +62,7 @@ function TrendArrow({ value, baseline, invert = false }: { value: number; baseli
   const isGood = invert ? diff < 0 : diff > 0;
   const isNeutral = diff === 0;
 
-  if (isNeutral) return <span className="text-[#555555]">→ 0%</span>;
+  if (isNeutral) return <span className="text-zinc-500">→ 0%</span>;
 
   return (
     <span className={cn(
@@ -109,8 +109,8 @@ function Sparkline({ data, color = "#22c55e", className }: { data: number[]; col
 function UtilizationBar({ percent, label }: { percent: number; label: string }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-[#888888] w-12 truncate">{label}</span>
-      <div className="flex-1 h-2 bg-[#1a1a1a] rounded-full overflow-hidden">
+      <span className="text-xs text-zinc-400 w-12 truncate">{label}</span>
+      <div className="flex-1 h-2 bg-zinc-900 rounded-full overflow-hidden">
         <div
           className={cn(
             "h-full rounded-full transition-all",
@@ -151,17 +151,17 @@ function BigNumber({
 }) {
   return (
     <div>
-      <div className="text-xs text-[#666666] mb-1">{label}</div>
+      <div className="text-xs text-zinc-500 mb-1">{label}</div>
       <div className="flex items-baseline gap-1">
         <span className={cn("text-3xl font-bold", `text-${color}`)}>
           {typeof value === "number" ? value.toLocaleString() : value}
         </span>
-        {unit && <span className="text-sm text-[#555555]">{unit}</span>}
+        {unit && <span className="text-sm text-zinc-500">{unit}</span>}
       </div>
       {trend !== undefined && trendBaseline !== undefined && (
         <div className="mt-1">
           <TrendArrow value={trend} baseline={trendBaseline} invert={invertTrend} />
-          <span className="text-xs text-[#444444] ml-1">vs yesterday</span>
+          <span className="text-xs text-zinc-600 ml-1">vs yesterday</span>
         </div>
       )}
     </div>
@@ -310,7 +310,7 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
 
   if (!agents || !metrics) {
     return (
-      <div className={cn("flex items-center justify-center h-full text-[#555555]", className)}>
+      <div className={cn("flex items-center justify-center h-full text-zinc-500", className)}>
         <span className="animate-pulse">Loading metrics...</span>
       </div>
     );
@@ -321,7 +321,7 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-white">Performance</h2>
-        <span className="text-xs text-[#555555]">
+        <span className="text-xs text-zinc-500">
           {format(new Date(), "MMM d, yyyy")}
         </span>
       </div>
@@ -329,7 +329,7 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
       {/* Top Row: Key Metrics */}
       <div className="grid grid-cols-5 gap-4">
         {/* Velocity */}
-        <div className="rounded-lg border border-[#222222] bg-[#111111] p-4">
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
           <BigNumber
             value={metrics.velocityToday}
             unit="tasks/hr"
@@ -343,7 +343,7 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
         </div>
 
         {/* Cost per Task */}
-        <div className="rounded-lg border border-[#222222] bg-[#111111] p-4">
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
           <BigNumber
             value={`$${metrics.avgCostPerTask}`}
             label="$/task"
@@ -351,13 +351,13 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
             trendBaseline={metrics.avgCostYesterday}
             invertTrend
           />
-          <div className="mt-3 text-xs text-[#555555]">
+          <div className="mt-3 text-xs text-zinc-500">
             Total: ${metrics.todayCost.toFixed(2)}
           </div>
         </div>
 
         {/* Utilization */}
-        <div className="rounded-lg border border-[#222222] bg-[#111111] p-4">
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
           <BigNumber
             value={metrics.avgUtilization}
             unit="%"
@@ -366,7 +366,7 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
           {metrics.underutilized && (
             <div className="mt-3 text-xs">
               <span className="text-yellow-400">⚠</span>
-              <span className="text-[#888888] ml-1">
+              <span className="text-zinc-400 ml-1">
                 {metrics.underutilized.name} underutilized
               </span>
             </div>
@@ -374,7 +374,7 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
         </div>
 
         {/* Bottlenecks */}
-        <div className="rounded-lg border border-[#222222] bg-[#111111] p-4">
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
           <BigNumber
             value={metrics.waitingCount}
             label="Waiting"
@@ -382,7 +382,7 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
           {metrics.topBlocker && (
             <div className="mt-3 text-xs">
               <span className="text-red-400">●</span>
-              <span className="text-[#888888] ml-1">
+              <span className="text-zinc-400 ml-1">
                 {metrics.topBlocker.id} stuck {metrics.topBlocker.stuckFor}
               </span>
             </div>
@@ -390,13 +390,13 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
         </div>
 
         {/* ROI */}
-        <div className="rounded-lg border border-[#222222] bg-[#111111] p-4">
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
           <BigNumber
             value={`${metrics.roi}x`}
             label="ROI"
             color={Number(metrics.roi) >= 10 ? "emerald-400" : Number(metrics.roi) >= 5 ? "yellow-400" : "red-400"}
           />
-          <div className="mt-3 text-xs text-[#555555]">
+          <div className="mt-3 text-xs text-zinc-500">
             ${metrics.valueGenerated} value / ${metrics.totalCost.toFixed(2)} cost
           </div>
         </div>
@@ -405,8 +405,8 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
       {/* Middle Row: Agent Breakdown */}
       <div className="grid grid-cols-2 gap-4">
         {/* Agent Utilization */}
-        <div className="rounded-lg border border-[#222222] bg-[#111111] p-4">
-          <div className="text-xs text-[#666666] mb-3 uppercase tracking-wider">Agent Utilization</div>
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+          <div className="text-xs text-zinc-500 mb-3 uppercase tracking-wider">Agent Utilization</div>
           <div className="space-y-3">
             {metrics.agentUtilization
               .sort((a, b) => b.utilization - a.utilization)
@@ -421,20 +421,20 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
         </div>
 
         {/* Cost Breakdown */}
-        <div className="rounded-lg border border-[#222222] bg-[#111111] p-4">
-          <div className="text-xs text-[#666666] mb-3 uppercase tracking-wider">Cost Breakdown</div>
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+          <div className="text-xs text-zinc-500 mb-3 uppercase tracking-wider">Cost Breakdown</div>
           <div className="space-y-2">
             {metrics.agentUtilization.map(agent => (
               <div key={agent.name} className="flex items-center justify-between text-sm">
-                <span className="text-[#888888]">{agent.name}</span>
+                <span className="text-zinc-400">{agent.name}</span>
                 <div className="flex items-center gap-3">
-                  <span className="text-[#555555]">{agent.tasksCompleted} tasks</span>
+                  <span className="text-zinc-500">{agent.tasksCompleted} tasks</span>
                   <span className="text-white font-medium">${agent.cost.toFixed(2)}</span>
                 </div>
               </div>
             ))}
-            <div className="border-t border-[#222222] pt-2 mt-2 flex items-center justify-between text-sm">
-              <span className="text-[#666666]">Total</span>
+            <div className="border-t border-zinc-800 pt-2 mt-2 flex items-center justify-between text-sm">
+              <span className="text-zinc-500">Total</span>
               <span className="text-white font-bold">${metrics.todayCost.toFixed(2)}</span>
             </div>
           </div>
@@ -442,9 +442,9 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
       </div>
 
       {/* Bottom Row: Tasks Completed Today */}
-      <div className="rounded-lg border border-[#222222] bg-[#111111] p-4">
+      <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
         <div className="flex items-center justify-between">
-          <div className="text-xs text-[#666666] uppercase tracking-wider">Tasks Completed Today</div>
+          <div className="text-xs text-zinc-500 uppercase tracking-wider">Tasks Completed Today</div>
           <div className="flex items-center gap-4">
             <span className="text-2xl font-bold text-white">{metrics.completedToday}</span>
             <TrendArrow value={metrics.completedToday} baseline={metrics.completedYesterday} />
@@ -454,7 +454,7 @@ export function ElonDashboard({ className }: ElonDashboardProps) {
           {metrics.agentUtilization.map(agent => (
             <div key={agent.name} className="flex items-center gap-2">
               <span className="text-lg">{agent.avatar}</span>
-              <span className="text-sm text-[#888888]">{agent.name}</span>
+              <span className="text-sm text-zinc-400">{agent.name}</span>
               <span className="text-sm font-medium text-white">{agent.tasksCompleted}</span>
             </div>
           ))}

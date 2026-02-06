@@ -40,7 +40,7 @@ export function ActivityDrawer({ open, onClose }: ActivityDrawerProps) {
       />
       <div
         className={cn(
-          "fixed top-0 right-0 h-full w-[400px] z-40 border-l border-white/[0.08] bg-[#0f0f1a] shadow-xl transition-transform duration-300",
+          "fixed top-0 right-0 h-full w-[400px] z-40 border-l border-white/[0.08] bg-zinc-950 shadow-xl transition-transform duration-300",
           open ? "translate-x-0" : "translate-x-full"
         )}
         role="dialog"

@@ -48,11 +48,11 @@ export function AgentActivityFeed({ className }: AgentActivityFeedProps) {
 
   if (!sortedAgents.length) {
     return (
-      <div className={cn("rounded-lg border border-[#222222] bg-[#111111] p-4", className)}>
-        <div className="mb-3 text-[10px] uppercase tracking-[0.2em] text-[#888888]">
+      <div className={cn("rounded-lg border border-zinc-800 bg-zinc-900 p-4", className)}>
+        <div className="mb-3 text-[10px] uppercase tracking-[0.2em] text-zinc-400">
           Agent Activity
         </div>
-        <div className="text-sm text-[#555555]">No agents available</div>
+        <div className="text-sm text-zinc-500">No agents available</div>
       </div>
     );
   }
@@ -79,8 +79,8 @@ export function AgentActivityFeed({ className }: AgentActivityFeedProps) {
   };
 
   return (
-    <div className={cn("rounded-lg border border-[#222222] bg-[#111111] p-4", className)}>
-      <div className="mb-3 text-[10px] uppercase tracking-[0.2em] text-[#888888]">
+    <div className={cn("rounded-lg border border-zinc-800 bg-zinc-900 p-4", className)}>
+      <div className="mb-3 text-[10px] uppercase tracking-[0.2em] text-zinc-400">
         Agent Activity
       </div>
       <div className="space-y-2">
@@ -92,14 +92,14 @@ export function AgentActivityFeed({ className }: AgentActivityFeedProps) {
           return (
             <div
               key={agent.name}
-              className="flex items-start gap-2 rounded border border-[#1a1a1a] bg-[#0a0a0a] p-2 text-sm"
+              className="flex items-start gap-2 rounded border border-zinc-900 bg-zinc-950 p-2 text-sm"
             >
               <span className="shrink-0 text-base leading-none">{emoji}</span>
               <div className="min-w-0 flex-1">
-                <span className="font-semibold uppercase text-[#fafafa]">
+                <span className="font-semibold uppercase text-zinc-50">
                   {agent.name}
                 </span>
-                <span className="ml-1 text-[#888888]">{activityText}</span>
+                <span className="ml-1 text-zinc-400">{activityText}</span>
               </div>
             </div>
           );

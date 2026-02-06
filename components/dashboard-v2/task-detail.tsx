@@ -30,7 +30,7 @@ export function TaskDetail({ task, onClose }: TaskDetailProps) {
           <h4 className="text-xs font-semibold uppercase text-zinc-500">Title</h4>
           <p className="mt-1 text-sm text-zinc-50">{task.title}</p>
           {task.linearIdentifier && (
-            <a href={task.linearUrl ?? "#"} target="_blank" rel="noopener noreferrer" className="font-mono text-xs text-[#888] hover:text-zinc-400">
+            <a href={task.linearUrl ?? "#"} target="_blank" rel="noopener noreferrer" className="font-mono text-xs text-zinc-400 hover:text-zinc-400">
               {task.linearIdentifier}
             </a>
           )}

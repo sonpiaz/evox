@@ -51,7 +51,7 @@ function getAgentAvatarColor(agentName: string): string {
   if (name === "max") return "bg-amber-500/20 border-amber-500/30";
   if (name === "sam") return "bg-emerald-500/20 border-emerald-500/30";
   if (name === "leo") return "bg-blue-500/20 border-blue-500/30";
-  return "bg-[#111] border-[#222]";
+  return "bg-zinc-900 border-zinc-800";
 }
 
 /** AGT-163: Spec 5.5 — 40px row, ticket ID + title, no raw Convex IDs */

@@ -70,7 +70,7 @@ export function WorkingMemoryPanel({
 
   if (editing) {
     return (
-      <div className={cn("h-64 rounded-lg border border-[#222] overflow-hidden", className)}>
+      <div className={cn("h-64 rounded-lg border border-zinc-800 overflow-hidden", className)}>
         <MarkdownEditor
           content={draft}
           onChange={setDraft}
@@ -90,21 +90,21 @@ export function WorkingMemoryPanel({
 
   return (
     <div
-      className={cn("rounded-lg border border-[#222] bg-[#111]", className)}
+      className={cn("rounded-lg border border-zinc-800 bg-zinc-900", className)}
       onKeyDown={handleKeyDown}
       tabIndex={0}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#222] px-3 py-2">
+      <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2">
         <div className="flex items-center gap-2">
           <span className="text-base">🧠</span>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#666]">
+          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
             WORKING MEMORY
           </span>
         </div>
         <div className="flex items-center gap-2">
           {updatedAt != null && (
-            <span className="text-xs text-[#444]">
+            <span className="text-xs text-zinc-600">
               Updated {formatDistanceToNow(updatedAt, { addSuffix: true })}
             </span>
           )}
@@ -113,7 +113,7 @@ export function WorkingMemoryPanel({
             <button
               type="button"
               onClick={() => setEditing(true)}
-              className="rounded px-2 py-1 text-xs text-[#555] hover:bg-[#222] hover:text-white"
+              className="rounded px-2 py-1 text-xs text-zinc-500 hover:bg-zinc-800 hover:text-white"
             >
               Edit
             </button>
@@ -126,14 +126,14 @@ export function WorkingMemoryPanel({
         {content ? (
           <div className="whitespace-pre-wrap text-sm text-zinc-400">{content}</div>
         ) : (
-          <p className="text-sm text-[#555] italic">No working memory set. Click Edit to add.</p>
+          <p className="text-sm text-zinc-500 italic">No working memory set. Click Edit to add.</p>
         )}
       </div>
 
       {/* Keyboard hint — hidden in demo mode */}
       {!isViewerMode && (
-        <div className="border-t border-[#1a1a1a] px-3 py-1">
-          <span className="text-[10px] text-[#333]">⌘E to edit</span>
+        <div className="border-t border-zinc-900 px-3 py-1">
+          <span className="text-[10px] text-zinc-700">⌘E to edit</span>
         </div>
       )}
     </div>

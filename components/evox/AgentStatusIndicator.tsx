@@ -71,7 +71,7 @@ export function AgentStatusIndicator({
         "relative inline-block shrink-0 rounded-full",
         colorClass,
         sizeClass,
-        shouldPulse && "ring-2 ring-offset-1 ring-offset-[#0a0a0a]",
+        shouldPulse && "ring-2 ring-offset-1 ring-offset-zinc-950",
         shouldPulse && ringClass,
         shouldPulse && "animate-pulse",
         className

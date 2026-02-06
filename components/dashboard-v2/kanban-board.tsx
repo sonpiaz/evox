@@ -52,7 +52,7 @@ export function KanbanBoard({ tasks, onTaskClick, onAssigneeClick, className = "
         return (
           <div
             key={col.status}
-            className="flex w-64 shrink-0 flex-col rounded-lg border border-gray-800 bg-[#0a0a0a]"
+            className="flex w-64 shrink-0 flex-col rounded-lg border border-gray-800 bg-zinc-950"
           >
             <div className="flex items-center justify-between border-b border-gray-800 px-3 py-2">
               <h3 className="text-xs font-medium uppercase tracking-wider text-gray-400">{col.title}</h3>
@@ -77,7 +77,7 @@ export function KanbanBoard({ tasks, onTaskClick, onAssigneeClick, className = "
       })}
 
       {/* AGT-184: Analytics panel — right side, shows all status counts */}
-      <div className="flex w-48 shrink-0 flex-col rounded-lg border border-gray-800 bg-[#0a0a0a]">
+      <div className="flex w-48 shrink-0 flex-col rounded-lg border border-gray-800 bg-zinc-950">
         <div className="border-b border-gray-800 px-3 py-2">
           <h3 className="text-xs font-medium uppercase tracking-wider text-gray-400">Analytics</h3>
         </div>

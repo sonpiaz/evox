@@ -40,8 +40,8 @@ export function DailyNotesList({ notes, className }: DailyNotesListProps) {
 
   if (notes.length === 0) {
     return (
-      <div className={cn("rounded-lg border border-[#222] bg-[#111] p-4", className)}>
-        <p className="text-sm text-[#555]">No daily notes yet.</p>
+      <div className={cn("rounded-lg border border-zinc-800 bg-zinc-900 p-4", className)}>
+        <p className="text-sm text-zinc-500">No daily notes yet.</p>
       </div>
     );
   }
@@ -52,17 +52,17 @@ export function DailyNotesList({ notes, className }: DailyNotesListProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-base">📝</span>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#666]">
+          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
             DAILY NOTES
           </span>
-          <span className="text-xs text-[#444]">({notes.length})</span>
+          <span className="text-xs text-zinc-600">({notes.length})</span>
         </div>
         <input
           type="text"
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-32 rounded border border-[#222] bg-[#0a0a0a] px-2 py-1 text-xs text-zinc-300 placeholder:text-[#555] focus:border-[#333] focus:outline-none"
+          className="w-32 rounded border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs text-zinc-300 placeholder:text-zinc-500 focus:border-zinc-700 focus:outline-none"
         />
       </div>
 
@@ -83,7 +83,7 @@ export function DailyNotesList({ notes, className }: DailyNotesListProps) {
         <button
           type="button"
           onClick={() => setShowAll(true)}
-          className="w-full rounded border border-[#222] py-2 text-xs text-[#555] hover:bg-[#111] hover:text-[#888]"
+          className="w-full rounded border border-zinc-800 py-2 text-xs text-zinc-500 hover:bg-zinc-900 hover:text-zinc-400"
         >
           Load more ({filteredNotes.length - 5} more notes)
         </button>
@@ -91,7 +91,7 @@ export function DailyNotesList({ notes, className }: DailyNotesListProps) {
 
       {/* Search results info */}
       {search && (
-        <p className="text-xs text-[#444]">
+        <p className="text-xs text-zinc-600">
           {filteredNotes.length} of {notes.length} notes match "{search}"
         </p>
       )}

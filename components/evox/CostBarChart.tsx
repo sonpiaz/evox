@@ -21,7 +21,7 @@ export function CostBarChart({ data, className }: CostBarChartProps) {
 
   if (data.length === 0) {
     return (
-      <div className={cn("text-center text-sm text-[#555]", className)}>
+      <div className={cn("text-center text-sm text-zinc-500", className)}>
         No cost data available
       </div>
     );
@@ -33,8 +33,8 @@ export function CostBarChart({ data, className }: CostBarChartProps) {
         const width = (item.value / maxValue) * 100;
         return (
           <div key={idx} className="flex items-center gap-3">
-            <span className="w-20 text-xs text-[#888] truncate">{item.label}</span>
-            <div className="flex-1 h-4 rounded bg-[#1a1a1a] overflow-hidden">
+            <span className="w-20 text-xs text-zinc-400 truncate">{item.label}</span>
+            <div className="flex-1 h-4 rounded bg-zinc-900 overflow-hidden">
               <div
                 className="h-full rounded transition-[width] duration-500"
                 style={{

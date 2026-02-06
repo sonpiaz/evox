@@ -69,7 +69,7 @@ export function DirectMessagesView({
   return (
     <div className={cn("flex h-full", className)}>
       {/* DM List sidebar */}
-      <div className="w-48 shrink-0 border-r border-[#222] p-2">
+      <div className="w-48 shrink-0 border-r border-zinc-800 p-2">
         <DMList
           currentAgentName={currentAgentName}
           agents={agents}

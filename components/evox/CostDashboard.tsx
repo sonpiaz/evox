@@ -81,7 +81,7 @@ export function CostDashboard({
   if (!stats) {
     return (
       <div className={cn("flex items-center justify-center py-12", className)}>
-        <span className="animate-pulse text-sm text-[#555]">Loading cost data...</span>
+        <span className="animate-pulse text-sm text-zinc-500">Loading cost data...</span>
       </div>
     );
   }
@@ -97,7 +97,7 @@ export function CostDashboard({
         <select
           value={timeFilter}
           onChange={(e) => setTimeFilter(e.target.value as TimeFilter)}
-          className="rounded border border-[#222] bg-[#0a0a0a] px-2 py-1 text-xs text-zinc-300 focus:outline-none"
+          className="rounded border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs text-zinc-300 focus:outline-none"
         >
           <option value="today">Today</option>
           <option value="7days">7 days</option>
@@ -109,21 +109,21 @@ export function CostDashboard({
       <BudgetAlert current={stats.totalCost} budget={budget} />
 
       {/* Daily cost breakdown */}
-      <div className="rounded-lg border border-[#222] bg-[#111] p-4">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-[#666] mb-3">
+      <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-3">
           Daily Costs {agentName && `(${agentName.toUpperCase()})`}
         </h4>
         {stats.daily.length > 0 ? (
           <CostBarChart data={stats.daily} />
         ) : (
-          <p className="text-sm text-[#555]">No cost data for this period</p>
+          <p className="text-sm text-zinc-500">No cost data for this period</p>
         )}
       </div>
 
       {/* Agent comparison (if not filtered to specific agent) */}
       {!agentName && agentComparison.length > 0 && (
-        <div className="rounded-lg border border-[#222] bg-[#111] p-4">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-[#666] mb-3">
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-3">
             By Agent
           </h4>
           <CostBarChart data={agentComparison} />
@@ -131,19 +131,19 @@ export function CostDashboard({
       )}
 
       {/* Token usage */}
-      <div className="rounded-lg border border-[#222] bg-[#111] p-4">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-[#666] mb-3">
+      <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-3">
           🔢 TOKEN USAGE
         </h4>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-xs text-[#666]">Input</p>
+            <p className="text-xs text-zinc-500">Input</p>
             <p className="text-lg font-semibold text-white">
               {(stats.inputTokens / 1000).toFixed(1)}K
             </p>
           </div>
           <div>
-            <p className="text-xs text-[#666]">Output</p>
+            <p className="text-xs text-zinc-500">Output</p>
             <p className="text-lg font-semibold text-white">
               {(stats.outputTokens / 1000).toFixed(1)}K
             </p>
@@ -152,15 +152,15 @@ export function CostDashboard({
       </div>
 
       {/* Summary */}
-      <div className="rounded-lg border border-[#222] bg-[#111] p-4">
+      <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-[#888]">Total Cost</span>
+          <span className="text-sm text-zinc-400">Total Cost</span>
           <span className="text-xl font-bold text-emerald-400">
             ${stats.totalCost.toFixed(2)}
           </span>
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-xs text-[#666]">Budget Remaining</span>
+          <span className="text-xs text-zinc-500">Budget Remaining</span>
           <span
             className={cn(
               "text-sm font-medium",

@@ -26,14 +26,14 @@ export function LiveDashboard() {
       {/* Header */}
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold text-white">EVOX</h1>
-        <p className="text-sm text-[#666]">AI Agents at Work</p>
+        <p className="text-sm text-zinc-500">AI Agents at Work</p>
       </div>
 
       {/* Agent Cards */}
       <div className="mx-auto max-w-2xl space-y-4">
         {agents?.length === 0 && (
-          <div className="rounded-lg border border-[#222] bg-[#111] p-8 text-center">
-            <p className="text-[#666]">No agents configured</p>
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-8 text-center">
+            <p className="text-zinc-500">No agents configured</p>
           </div>
         )}
 
@@ -44,43 +44,43 @@ export function LiveDashboard() {
 
       {/* Live Activity Feed */}
       <div className="mx-auto mt-8 max-w-2xl">
-        <h2 className="mb-4 text-sm font-medium text-[#666]">LIVE ACTIVITY</h2>
+        <h2 className="mb-4 text-sm font-medium text-zinc-500">LIVE ACTIVITY</h2>
         <div className="space-y-2">
           {recentActivity?.slice(0, 5).map((event) => (
             <div
               key={event._id}
-              className="flex items-center gap-3 rounded border border-[#222] bg-[#0a0a0a] px-4 py-2 text-sm"
+              className="flex items-center gap-3 rounded border border-zinc-800 bg-zinc-950 px-4 py-2 text-sm"
             >
-              <span className="text-[#666]">
+              <span className="text-zinc-500">
                 {formatDistanceToNow(event.timestamp, { addSuffix: true })}
               </span>
-              <span className="text-[#888]">{event.title}</span>
+              <span className="text-zinc-400">{event.title}</span>
             </div>
           ))}
           {(!recentActivity || recentActivity.length === 0) && (
-            <p className="text-center text-sm text-[#444]">No recent activity</p>
+            <p className="text-center text-sm text-zinc-600">No recent activity</p>
           )}
         </div>
       </div>
 
       {/* Stats Footer */}
-      <div className="mx-auto mt-8 max-w-2xl border-t border-[#222] pt-6">
+      <div className="mx-auto mt-8 max-w-2xl border-t border-zinc-800 pt-6">
         <div className="flex justify-center gap-8 text-center">
           <div>
             <div className="text-2xl font-bold text-white">{todayCompleted}</div>
-            <div className="text-xs text-[#666]">Tasks Today</div>
+            <div className="text-xs text-zinc-500">Tasks Today</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-green-400">
               ${totalCost.toFixed(2)}
             </div>
-            <div className="text-xs text-[#666]">Total Cost</div>
+            <div className="text-xs text-zinc-500">Total Cost</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-blue-400">
               {activeAgents?.length ?? 0}
             </div>
-            <div className="text-xs text-[#666]">Active Agents</div>
+            <div className="text-xs text-zinc-500">Active Agents</div>
           </div>
         </div>
       </div>
@@ -114,8 +114,8 @@ function AgentLiveCard({ agent }: AgentLiveCardProps) {
 
   return (
     <div
-      className={`rounded-lg border bg-[#111] p-4 transition-all ${
-        isActive ? "border-green-500/30" : "border-[#222]"
+      className={`rounded-lg border bg-zinc-900 p-4 transition-all ${
+        isActive ? "border-green-500/30" : "border-zinc-800"
       }`}
     >
       <div className="flex items-center justify-between">
@@ -130,19 +130,19 @@ function AgentLiveCard({ agent }: AgentLiveCardProps) {
           {/* Name & Role */}
           <div>
             <div className="font-semibold text-white">{agent.name}</div>
-            <div className="text-xs text-[#666]">{agent.role}</div>
+            <div className="text-xs text-zinc-500">{agent.role}</div>
           </div>
         </div>
 
         {/* Status */}
         <div className="text-right">
           <div
-            className={`text-sm ${isActive ? "text-green-400" : "text-[#666]"}`}
+            className={`text-sm ${isActive ? "text-green-400" : "text-zinc-500"}`}
           >
             {status.toUpperCase()}
           </div>
           {agent.statusReason && (
-            <div className="text-xs text-[#555]">{agent.statusReason}</div>
+            <div className="text-xs text-zinc-500">{agent.statusReason}</div>
           )}
         </div>
       </div>
@@ -150,21 +150,21 @@ function AgentLiveCard({ agent }: AgentLiveCardProps) {
       {/* Progress bar simulation for active agents */}
       {isActive && (
         <div className="mt-3">
-          <div className="h-1.5 overflow-hidden rounded-full bg-[#222]">
+          <div className="h-1.5 overflow-hidden rounded-full bg-zinc-800">
             <div
               className="h-full animate-pulse rounded-full bg-green-500/50"
               style={{ width: "65%" }}
             />
           </div>
           {agent.currentTask && (
-            <div className="mt-1 text-xs text-[#555]">{agent.currentTask}</div>
+            <div className="mt-1 text-xs text-zinc-500">{agent.currentTask}</div>
           )}
         </div>
       )}
 
       {/* Last seen for offline */}
       {!isActive && agent.lastHeartbeat && (
-        <div className="mt-2 text-xs text-[#444]">
+        <div className="mt-2 text-xs text-zinc-600">
           Last seen {formatDistanceToNow(agent.lastHeartbeat, { addSuffix: true })}
         </div>
       )}

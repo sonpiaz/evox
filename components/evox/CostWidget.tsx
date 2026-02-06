@@ -74,25 +74,25 @@ export function CostWidget({ className, budget = 100 }: CostWidgetProps) {
   if (!stats) {
     return (
       <div className={cn("p-4 text-center", className)}>
-        <span className="animate-pulse text-sm text-[#555]">Loading costs...</span>
+        <span className="animate-pulse text-sm text-zinc-500">Loading costs...</span>
       </div>
     );
   }
 
   return (
-    <div className={cn("rounded-xl border border-[#222] bg-[#111] p-4", className)}>
+    <div className={cn("rounded-xl border border-zinc-800 bg-zinc-900 p-4", className)}>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-base">💰</span>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#666]">
+          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
             COSTS
           </span>
         </div>
         <select
           value={timeFilter}
           onChange={(e) => setTimeFilter(e.target.value as TimeFilter)}
-          className="rounded border border-[#222] bg-[#0a0a0a] px-2 py-1 text-xs text-zinc-300 focus:outline-none"
+          className="rounded border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs text-zinc-300 focus:outline-none"
         >
           <option value="7days">7 days</option>
           <option value="30days">30 days</option>
@@ -106,9 +106,9 @@ export function CostWidget({ className, budget = 100 }: CostWidgetProps) {
       <CostBarChart data={stats.agents} className="mb-4" />
 
       {/* Totals */}
-      <div className="border-t border-[#222] pt-3 space-y-1.5">
+      <div className="border-t border-zinc-800 pt-3 space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-[#666]">TOTAL</span>
+          <span className="text-xs text-zinc-500">TOTAL</span>
           <div className="flex items-center gap-2">
             <span className="text-sm font-semibold text-white">
               ${stats.totalCost.toFixed(2)}
@@ -117,13 +117,13 @@ export function CostWidget({ className, budget = 100 }: CostWidgetProps) {
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-xs text-[#666]">Tokens</span>
-          <span className="text-xs text-[#888]">
+          <span className="text-xs text-zinc-500">Tokens</span>
+          <span className="text-xs text-zinc-400">
             {(stats.totalTokens / 1000).toFixed(1)}K
           </span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-xs text-[#666]">Budget left</span>
+          <span className="text-xs text-zinc-500">Budget left</span>
           <span
             className={cn(
               "text-xs font-medium",

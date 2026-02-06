@@ -34,7 +34,7 @@ export function AgentStrip({ onAgentClick }: AgentStripProps) {
   if (!agents.length) return null;
 
   return (
-    <div className="flex h-14 shrink-0 items-center gap-3 border-b border-[#222] bg-[#111] px-4">
+    <div className="flex h-14 shrink-0 items-center gap-3 border-b border-zinc-800 bg-zinc-900 px-4">
       {agents.map((a) => {
         const label = a.currentTaskIdentifier ?? "Idle";
         const isWorking = !!a.currentTaskIdentifier;
@@ -43,12 +43,12 @@ export function AgentStrip({ onAgentClick }: AgentStripProps) {
             key={a._id}
             type="button"
             onClick={() => onAgentClick(a._id)}
-            className="inline-flex items-center gap-2 rounded border border-[#222] bg-[#0a0a0a] px-2.5 py-1.5 text-left transition-colors hover:border-[#333] hover:bg-[#1a1a1a]"
+            className="inline-flex items-center gap-2 rounded border border-zinc-800 bg-zinc-950 px-2.5 py-1.5 text-left transition-colors hover:border-zinc-700 hover:bg-zinc-900"
           >
             <AgentStatusIndicator status={a.status} showPulse={isWorking} size="sm" />
             <span className="text-xs font-semibold text-zinc-50">{a.name}</span>
             <span className="text-xs text-zinc-500">·</span>
-            <span className="font-mono text-xs text-[#888]">{label}</span>
+            <span className="font-mono text-xs text-zinc-400">{label}</span>
           </button>
         );
       })}

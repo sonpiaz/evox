@@ -34,7 +34,7 @@ export function DetailPanel({
   className = "",
 }: DetailPanelProps) {
   return (
-    <aside className={`flex h-full flex-col border-l border-gray-800 bg-[#0a0a0a] ${className}`}>
+    <aside className={`flex h-full flex-col border-l border-gray-800 bg-zinc-950 ${className}`}>
       {mode === "livefeed" && <LiveFeed />}
       {mode === "agent" && agent && (
         <AgentProfile

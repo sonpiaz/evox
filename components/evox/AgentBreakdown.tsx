@@ -24,7 +24,7 @@ export function AgentBreakdown({ agents, className }: AgentBreakdownProps) {
 
   if (agents.length === 0) {
     return (
-      <div className={cn("text-center text-[#555555] py-4", className)}>
+      <div className={cn("text-center text-zinc-500 py-4", className)}>
         No agent data available
       </div>
     );
@@ -56,7 +56,7 @@ export function AgentBreakdown({ agents, className }: AgentBreakdownProps) {
             </div>
 
             {/* Progress bar */}
-            <div className="flex-1 h-3 sm:h-5 rounded bg-[#1a1a1a] overflow-hidden">
+            <div className="flex-1 h-3 sm:h-5 rounded bg-zinc-900 overflow-hidden">
               <div
                 className="h-full rounded bg-gradient-to-r from-blue-600 to-blue-400 transition-[width] duration-500"
                 style={{ width: `${barWidth}%` }}

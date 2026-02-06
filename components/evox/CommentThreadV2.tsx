@@ -64,7 +64,7 @@ function MentionAutocomplete({ query, onSelect, position }: MentionAutocompleteP
 
   return (
     <div
-      className="absolute z-50 w-48 rounded-lg border border-[#333] bg-[#111] shadow-xl"
+      className="absolute z-50 w-48 rounded-lg border border-zinc-700 bg-zinc-900 shadow-xl"
       style={{ top: position.top, left: position.left }}
     >
       {filtered.map((agent: any) => (
@@ -72,7 +72,7 @@ function MentionAutocomplete({ query, onSelect, position }: MentionAutocompleteP
           key={agent._id}
           type="button"
           onClick={() => onSelect(agent.name)}
-          className="flex w-full items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:bg-[#222] transition-colors first:rounded-t-lg last:rounded-b-lg"
+          className="flex w-full items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors first:rounded-t-lg last:rounded-b-lg"
         >
           <span className="text-lg">{agent.avatar || "🤖"}</span>
           <span className="font-medium uppercase">{agent.name}</span>
@@ -95,12 +95,12 @@ interface CommentItemProps {
 function CommentItem({ comment, onReply, isReply, replyCount, isExpanded, onToggleReplies }: CommentItemProps) {
   return (
     <div className={cn(
-      "flex gap-3 rounded-lg border border-[#222] bg-[#0f0f0f] p-4 hover:border-[#333] transition-colors",
+      "flex gap-3 rounded-lg border border-zinc-800 bg-zinc-900 p-4 hover:border-zinc-700 transition-colors",
       isReply && "ml-8 border-l-2 border-l-blue-500/30"
     )}>
       {/* Avatar */}
       <div className="shrink-0">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#333] bg-[#1a1a1a] text-lg">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900 text-lg">
           {comment.agentAvatar || "🤖"}
         </div>
       </div>
@@ -298,7 +298,7 @@ export function CommentThreadV2({ taskId }: CommentThreadV2Props) {
       {/* Comments list */}
       <div className="flex-1 min-h-0 overflow-y-auto space-y-3 mb-3">
         {!comments || comments.length === 0 ? (
-          <div className="flex items-center justify-center h-32 rounded-lg border border-[#222] bg-[#0a0a0a]">
+          <div className="flex items-center justify-center h-32 rounded-lg border border-zinc-800 bg-zinc-950">
             <p className="text-sm text-zinc-600">No comments yet. Start the conversation!</p>
           </div>
         ) : (
@@ -356,7 +356,7 @@ export function CommentThreadV2({ taskId }: CommentThreadV2Props) {
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               placeholder={replyingTo ? `Reply to ${replyingTo.agentName}...` : "Write a comment... (@mention to notify)"}
-              className="w-full min-h-[100px] rounded-lg border border-[#222] bg-[#111] px-3 py-2 pr-20 text-sm text-zinc-50 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-blue-500/50 resize-none"
+              className="w-full min-h-[100px] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 pr-20 text-sm text-zinc-50 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-blue-500/50 resize-none"
               rows={3}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -383,7 +383,7 @@ export function CommentThreadV2({ taskId }: CommentThreadV2Props) {
                 "absolute bottom-2 right-2 rounded-lg px-4 py-1.5 text-xs font-medium transition-colors",
                 draft.trim()
                   ? "bg-blue-600 text-white hover:bg-blue-500"
-                  : "bg-[#222] text-zinc-600 cursor-not-allowed"
+                  : "bg-zinc-800 text-zinc-600 cursor-not-allowed"
               )}
             >
               Send

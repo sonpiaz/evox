@@ -79,27 +79,27 @@ export function KillSwitch({ className }: KillSwitchProps) {
             className="fixed inset-0 z-50 bg-black/60"
             onClick={() => setShowConfirm(false)}
           />
-          <div className="fixed left-1/2 top-1/2 z-50 w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-red-500/30 bg-[#0f0f0f] p-6 shadow-2xl">
+          <div className="fixed left-1/2 top-1/2 z-50 w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-red-500/30 bg-zinc-950 p-6 shadow-2xl">
             <h2 className="flex items-center gap-2 text-lg font-semibold text-red-400">
               <span>EMERGENCY STOP</span>
             </h2>
-            <p className="mt-3 text-sm text-[#888888]">
+            <p className="mt-3 text-sm text-zinc-400">
               This will immediately:
             </p>
-            <ul className="mt-2 space-y-1 text-sm text-[#666666]">
+            <ul className="mt-2 space-y-1 text-sm text-zinc-500">
               <li>Set all agents to offline</li>
               <li>Cancel all pending dispatches</li>
               <li>Pause all automation</li>
             </ul>
 
             <div className="mt-4">
-              <label className="text-xs text-[#888888]">Reason (required)</label>
+              <label className="text-xs text-zinc-400">Reason (required)</label>
               <input
                 type="text"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder="Why are you stopping the system?"
-                className="mt-1 w-full rounded-md border border-[#333333] bg-[#1a1a1a] px-3 py-2 text-sm text-white placeholder-[#555555] focus:border-red-500/50 focus:outline-none"
+                className="mt-1 w-full rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-red-500/50 focus:outline-none"
                 autoFocus
               />
             </div>
@@ -108,7 +108,7 @@ export function KillSwitch({ className }: KillSwitchProps) {
               <button
                 type="button"
                 onClick={() => setShowConfirm(false)}
-                className="flex-1 rounded-md border border-[#333333] bg-[#1a1a1a] px-4 py-2 text-sm text-[#888888] transition-colors hover:bg-[#222222] hover:text-white"
+                className="flex-1 rounded-md border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
               >
                 Cancel
               </button>
