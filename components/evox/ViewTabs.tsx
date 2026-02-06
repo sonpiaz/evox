@@ -27,7 +27,7 @@ export function ViewTabs({ activeTab, onTabChange, className }: ViewTabsProps) {
   return (
     <div
       className={cn(
-        "flex items-center border-b border-zinc-800 bg-zinc-950 px-4 overflow-x-auto scrollbar-hide",
+        "flex items-center border-b border-border-default bg-base px-4 overflow-x-auto scrollbar-hide",
         className
       )}
       role="tablist"
@@ -46,8 +46,8 @@ export function ViewTabs({ activeTab, onTabChange, className }: ViewTabsProps) {
           className={cn(
             "relative px-3 py-2.5 text-sm transition-colors whitespace-nowrap shrink-0",
             activeTab === tab.id
-              ? "text-white"
-              : "text-zinc-500 hover:text-zinc-300"
+              ? "text-text-primary"
+              : "text-text-tertiary hover:text-text-secondary"
           )}
         >
           {tab.label}

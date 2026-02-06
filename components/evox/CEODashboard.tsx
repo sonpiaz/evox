@@ -118,9 +118,9 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
   const isLoading = !dataLoaded;
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-base text-white">
       {/* ─── Header ─── */}
-      <header className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-zinc-800/60">
+      <header className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-border-default">
         <h1 className="text-lg font-bold tracking-tight">
           EVOX
         </h1>
@@ -144,7 +144,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
         {/* ─── Metric Cards ─── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {/* Velocity */}
-          <div className="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-4">
+          <div className="bg-surface-1 border border-border-default rounded-xl p-4">
             <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
               Velocity
             </div>
@@ -169,7 +169,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
           </div>
 
           {/* Commits */}
-          <div className="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-4">
+          <div className="bg-surface-1 border border-border-default rounded-xl p-4">
             <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
               Commits
             </div>
@@ -180,7 +180,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
           </div>
 
           {/* Team */}
-          <div className="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-4">
+          <div className="bg-surface-1 border border-border-default rounded-xl p-4">
             <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
               Team
             </div>
@@ -191,7 +191,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
           </div>
 
           {/* Today */}
-          <div className="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-4">
+          <div className="bg-surface-1 border border-border-default rounded-xl p-4">
             <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
               Today
             </div>
@@ -207,7 +207,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
           </div>
 
           {/* Success Rate (merged from Health) */}
-          <div className="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-4">
+          <div className="bg-surface-1 border border-border-default rounded-xl p-4">
             <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
               Success Rate
             </div>
@@ -245,7 +245,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
           </div>
 
           {/* Errors (merged from Health) */}
-          <div className="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-4">
+          <div className="bg-surface-1 border border-border-default rounded-xl p-4">
             <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
               Errors
             </div>
@@ -266,7 +266,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
                       key={i}
                       className={cn(
                         "flex-1 rounded-sm min-h-[2px]",
-                        d.value > 0 ? "bg-red-500/60" : "bg-zinc-800"
+                        d.value > 0 ? "bg-red-500/60" : "bg-surface-4"
                       )}
                       style={{ height: `${(d.value / max) * 100}%`, minHeight: d.value > 0 ? "4px" : "2px" }}
                       title={`${d.label}: ${d.value}`}
@@ -297,7 +297,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
             <Link
               key={agent.name}
               href={`/agents/${agent.name.toLowerCase()}`}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 shrink-0 hover:bg-zinc-800/30 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 shrink-0 hover:bg-surface-2 rounded-lg transition-colors"
             >
               <span className="text-xs font-medium text-zinc-300">
                 {agent.name}
@@ -309,13 +309,13 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
         {/* ─── Activity + Commits (2-col desktop) ─── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Live Activity */}
-          <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl overflow-hidden">
-            <div className="px-4 py-2.5 border-b border-zinc-800/40">
+          <div className="bg-surface-1 border border-border-default rounded-xl overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-border-default">
               <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
                 Live Activity
               </span>
             </div>
-            <div className="divide-y divide-zinc-800/30">
+            <div className="divide-y divide-border-default">
               {liveFeed && liveFeed.length > 0 ? (
                 liveFeed.map((item) => (
                   <div key={item.id} className="px-4 py-2.5 flex items-start gap-2.5">
@@ -342,13 +342,13 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
           </div>
 
           {/* Recent Commits */}
-          <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl overflow-hidden">
-            <div className="px-4 py-2.5 border-b border-zinc-800/40">
+          <div className="bg-surface-1 border border-border-default rounded-xl overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-border-default">
               <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
                 Recent Commits
               </span>
             </div>
-            <div className="divide-y divide-zinc-800/30">
+            <div className="divide-y divide-border-default">
               {commits && commits.length > 0 ? (
                 commits.slice(0, 5).map((commit) => (
                   <div key={commit._id} className="px-4 py-2.5 flex items-start gap-2.5">
@@ -373,13 +373,13 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
         </div>
 
         {/* ─── Agent Comms ─── */}
-        <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl overflow-hidden">
-          <div className="px-4 py-2.5 border-b border-zinc-800/40">
+        <div className="bg-surface-1 border border-border-default rounded-xl overflow-hidden">
+          <div className="px-4 py-2.5 border-b border-border-default">
             <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
               Agent Comms
             </span>
           </div>
-          <div className="divide-y divide-zinc-800/30">
+          <div className="divide-y divide-border-default">
             {comms && comms.length > 0 ? (
               comms.slice(0, 5).map((msg, i) => (
                 <div key={msg._id || i} className="px-4 py-2.5">
@@ -412,7 +412,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
                               ? "bg-emerald-500/20 text-emerald-400"
                               : /blocked|failed/i.test(kw)
                               ? "bg-red-500/20 text-red-400"
-                              : "bg-zinc-800 text-zinc-500"
+                              : "bg-surface-4 text-zinc-500"
                           )}
                         >
                           {kw}

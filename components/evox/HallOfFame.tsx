@@ -78,7 +78,7 @@ export function HallOfFame({ className }: HallOfFameProps) {
                   key={agent.name}
                   href={`/agents/${agent.name.toLowerCase()}`}
                   className={cn(
-                    "border rounded-xl p-4 text-center transition-colors hover:bg-zinc-800/30",
+                    "border rounded-xl p-4 text-center transition-colors hover:bg-surface-2",
                     style.border, style.bg,
                     agent.rank === 1 && "sm:order-first"
                   )}
@@ -100,7 +100,7 @@ export function HallOfFame({ className }: HallOfFameProps) {
                   {agent.badges.length > 0 && (
                     <div className="flex flex-wrap justify-center gap-1 mt-3">
                       {agent.badges.map((b) => (
-                        <span key={b} className={cn("text-[9px] px-1.5 py-0.5 rounded", BADGE_COLORS[b] ?? "bg-zinc-800 text-zinc-400")}>
+                        <span key={b} className={cn("text-[9px] px-1.5 py-0.5 rounded", BADGE_COLORS[b] ?? "bg-surface-4 text-text-secondary")}>
                           {b}
                         </span>
                       ))}
@@ -133,8 +133,8 @@ export function HallOfFame({ className }: HallOfFameProps) {
         )}
 
         {/* Leaderboard Table */}
-        <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl overflow-hidden">
-          <div className="px-4 py-2.5 border-b border-zinc-800/40">
+        <div className="bg-surface-1 border border-border-default rounded-xl overflow-hidden">
+          <div className="px-4 py-2.5 border-b border-border-default">
             <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
               Leaderboard
             </span>
@@ -142,7 +142,7 @@ export function HallOfFame({ className }: HallOfFameProps) {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="text-[10px] uppercase text-zinc-600 border-b border-zinc-800/30">
+                <tr className="text-[10px] uppercase text-zinc-600 border-b border-border-default">
                   <th className="text-left px-4 py-2 font-medium w-8">#</th>
                   <th className="text-left px-3 py-2 font-medium">Agent</th>
                   <th className="text-right px-3 py-2 font-medium">Tasks</th>
@@ -152,9 +152,9 @@ export function HallOfFame({ className }: HallOfFameProps) {
                   <th className="text-left px-4 py-2 font-medium">Badges</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800/20">
+              <tbody className="divide-y divide-border-default">
                 {leaderboard.map((agent) => (
-                  <tr key={agent.name} className="hover:bg-zinc-800/20 transition-colors">
+                  <tr key={agent.name} className="hover:bg-surface-2 transition-colors">
                     <td className="px-4 py-2.5 tabular-nums text-zinc-500">{agent.rank}</td>
                     <td className="px-3 py-2.5">
                       <Link
@@ -174,7 +174,7 @@ export function HallOfFame({ className }: HallOfFameProps) {
                     <td className="px-4 py-2.5">
                       <div className="flex gap-1 flex-wrap">
                         {agent.badges.map((b) => (
-                          <span key={b} className={cn("text-[9px] px-1.5 py-0.5 rounded", BADGE_COLORS[b] ?? "bg-zinc-800 text-zinc-400")}>
+                          <span key={b} className={cn("text-[9px] px-1.5 py-0.5 rounded", BADGE_COLORS[b] ?? "bg-surface-4 text-text-secondary")}>
                             {b}
                           </span>
                         ))}
