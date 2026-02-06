@@ -1,11 +1,11 @@
 "use client";
 
-import { MinimalDashboard } from "@/components/evox/MinimalDashboard";
+import { CEODashboardV3 } from "@/components/evox/CEODashboardV3";
 
 /**
- * /dashboard — v0.3-MINIMAL CEO Dashboard
- * Two panels: Agent Status + Live Terminal
+ * /dashboard — AGT-324 CEO Dashboard v0.3 LEAN
+ * CEO understands status in 3 seconds.
  */
 export default function DashboardPage() {
-  return <MinimalDashboard />;
+  return <CEODashboardV3 />;
 }
