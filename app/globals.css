@@ -190,6 +190,26 @@
   --evox-accent-yellow: #eab308;
   --evox-accent-red: #ef4444;
   --evox-accent-purple: #a855f7;
+
+  /* AGT-333: Dashboard Redesign tokens */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #2a2a2a;
+
+  --text-primary: #e5e5e5;
+  --text-secondary: #a3a3a3;
+  --text-tertiary: #666666;
+
+  --status-online: #10b981;
+  --status-offline: #ef4444;
+  --status-warning: #f59e0b;
+  --status-info: #3b82f6;
+
+  --accent-primary: #3b82f6;
+  --accent-hover: #2563eb;
+
+  --border-default: #333333;
+  --border-focus: #3b82f6;
 }
 
 /* Utility classes for EVOX tokens */
@@ -212,4 +232,28 @@
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* AGT-333: Pulse animation for online status */
+@keyframes pulse-status {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+}
+
+.animate-pulse-status {
+  animation: pulse-status 2s infinite;
+}
+
+/* AGT-333: Hover lift effect */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
