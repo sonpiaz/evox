@@ -1190,6 +1190,30 @@ export default defineSchema({
     .index("by_agent_period", ["agentName", "period", "periodKey"])
     .index("by_period", ["period", "periodKey"]),
 
+  // Task Dispatch Tracking — who assigned what to whom
+  taskAssignments: defineTable({
+    fromAgent: v.string(),                // "EVOX", "MAX", "SAM"
+    toAgent: v.string(),                  // "SAM", "LEO", "QUINN"
+    task: v.string(),                     // Short description
+    ticket: v.optional(v.string()),       // "AGT-336"
+    status: v.union(
+      v.literal("assigned"),
+      v.literal("in_progress"),
+      v.literal("done"),
+      v.literal("failed"),
+      v.literal("cancelled")
+    ),
+    assignedAt: v.number(),
+    startedAt: v.optional(v.number()),
+    completedAt: v.optional(v.number()),
+    result: v.optional(v.string()),
+    commitHash: v.optional(v.string()),
+  })
+    .index("by_from", ["fromAgent", "assignedAt"])
+    .index("by_to", ["toAgent", "assignedAt"])
+    .index("by_ticket", ["ticket"])
+    .index("by_status", ["status", "assignedAt"]),
+
   // CORE-209: The Loop — SLA breach alerts
   loopAlerts: defineTable({
     messageId: v.id("agentMessages"),
