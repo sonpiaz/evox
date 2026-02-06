@@ -13,16 +13,16 @@ import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
 
 const AGENT_COLORS: Record<string, string> = {
-  max: "text-purple-400",
-  sam: "text-emerald-400",
-  leo: "text-blue-400",
-  quinn: "text-amber-400",
+  max: "text-purple-800",
+  sam: "text-green-800",
+  leo: "text-blue-800",
+  quinn: "text-amber-800",
 };
 
 const PODIUM_STYLES: Record<number, { border: string; bg: string; label: string; size: string }> = {
   1: { border: "border-yellow-500/40", bg: "bg-yellow-500/10", label: "1st", size: "text-3xl" },
-  2: { border: "border-gray-400/40", bg: "bg-gray-400/10", label: "2nd", size: "text-2xl" },
-  3: { border: "border-amber-700/40", bg: "bg-amber-700/10", label: "3rd", size: "text-2xl" },
+  2: { border: "border-gray-800/40", bg: "bg-gray-800/10", label: "2nd", size: "text-2xl" },
+  3: { border: "border-amber-800/40", bg: "bg-amber-800/10", label: "3rd", size: "text-2xl" },
 };
 
 const STATUS_DOT: Record<string, string> = {
@@ -35,8 +35,8 @@ const STATUS_DOT: Record<string, string> = {
 const BADGE_COLORS: Record<string, string> = {
   "Top Performer": "bg-yellow-500/20 text-yellow-400",
   "Most Productive": "bg-emerald-500/20 text-emerald-400",
-  "Loop Master": "bg-blue-500/20 text-blue-400",
-  "Cost Efficient": "bg-purple-500/20 text-purple-400",
+  "Loop Master": "bg-blue-700/20 text-blue-800",
+  "Cost Efficient": "bg-purple-700/20 text-purple-800",
   "Quick Responder": "bg-cyan-500/20 text-cyan-400",
   "Mentor": "bg-pink-500/20 text-pink-400",
 };
@@ -96,7 +96,7 @@ export function HallOfFame({ className, onAgentClick }: HallOfFameProps) {
                   <div className="text-lg font-bold tabular-nums text-primary">
                     {Math.round(agent.compositeScore * 100)}
                   </div>
-                  <div className="text-[10px] text-tertiary">score</div>
+                  <div className="text-[10px] text-secondary">score</div>
                   {agent.badges.length > 0 && (
                     <div className="flex flex-wrap justify-center gap-1 mt-3">
                       {agent.badges.map((b) => (
