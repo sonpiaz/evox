@@ -203,10 +203,23 @@ export default defineSchema({
     taskRef: v.optional(v.id("tasks")),
     // Legacy: kept for backward compatibility
     status: v.optional(v.union(v.literal("unread"), v.literal("read"))),
-    // New message status system: 0=pending, 1=delivered, 2=seen, 3=replied
+    // Message status system: 0=pending, 1=delivered, 2=seen, 3=replied, 4=acted, 5=reported
     statusCode: v.optional(v.number()),
     seenAt: v.optional(v.number()),
     repliedAt: v.optional(v.number()),
+    // CORE-209: The Loop — extended status tracking
+    actedAt: v.optional(v.number()),       // When recipient started acting on message
+    reportedAt: v.optional(v.number()),    // When recipient reported completion
+    // SLA tracking
+    expectedReplyBy: v.optional(v.number()),   // seenAt + 15 min
+    expectedActionBy: v.optional(v.number()),  // repliedAt + 2 hours
+    expectedReportBy: v.optional(v.number()),  // actedAt + 24 hours
+    // Loop metadata
+    loopBroken: v.optional(v.boolean()),
+    loopBrokenReason: v.optional(v.string()),
+    // Work linkage
+    linkedTaskId: v.optional(v.id("tasks")),
+    finalReport: v.optional(v.string()),
     timestamp: v.number(),
     sentAt: v.optional(v.number()), // Alias for timestamp
     priority: v.optional(v.union(
@@ -216,7 +229,9 @@ export default defineSchema({
   })
     .index("by_to_status", ["to", "status"])
     .index("by_from_to", ["from", "to"])
-    .index("by_timestamp", ["timestamp"]),
+    .index("by_timestamp", ["timestamp"])
+    .index("by_statusCode", ["statusCode"])
+    .index("by_to_statusCode", ["to", "statusCode"]),
 
   // Activity tracking
   activities: defineTable({
@@ -1343,5 +1358,51 @@ export default defineSchema({
     .index("by_category", ["agent", "category"])
     .index("by_importance", ["agent", "importance"])
     .index("by_verified", ["agent", "verified"]),
+
+  // CORE-209: The Loop — Aggregated metrics per agent per period
+  loopMetrics: defineTable({
+    agentName: v.string(),
+    period: v.string(),              // "hourly" | "daily"
+    periodKey: v.string(),           // "2026-02-06T14" or "2026-02-06"
+    totalMessages: v.number(),
+    loopsClosed: v.number(),         // Reached REPORTED (5)
+    loopsBroken: v.number(),
+    avgSeenTimeMs: v.optional(v.number()),
+    avgReplyTimeMs: v.optional(v.number()),
+    avgActionTimeMs: v.optional(v.number()),
+    avgReportTimeMs: v.optional(v.number()),
+    slaBreaches: v.number(),
+    completionRate: v.number(),      // loopsClosed / totalMessages (0-1)
+    timestamp: v.number(),
+  })
+    .index("by_agent_period", ["agentName", "period", "periodKey"])
+    .index("by_period", ["period", "periodKey"]),
+
+  // CORE-209: The Loop — SLA breach alerts
+  loopAlerts: defineTable({
+    messageId: v.id("agentMessages"),
+    agentName: v.string(),           // Agent who breached SLA
+    alertType: v.union(
+      v.literal("reply_overdue"),    // Seen but not replied > 15 min
+      v.literal("action_overdue"),   // Replied but not acted > 2 hours
+      v.literal("report_overdue"),   // Acted but not reported > 24 hours
+      v.literal("loop_broken")       // Explicitly broken
+    ),
+    severity: v.union(
+      v.literal("warning"),
+      v.literal("critical")
+    ),
+    status: v.union(
+      v.literal("active"),
+      v.literal("resolved"),
+      v.literal("escalated")
+    ),
+    escalatedTo: v.optional(v.string()),  // "max" or "ceo"
+    resolvedAt: v.optional(v.number()),
+    createdAt: v.number(),
+  })
+    .index("by_agent", ["agentName", "status"])
+    .index("by_status", ["status", "createdAt"])
+    .index("by_message", ["messageId"]),
 
 });

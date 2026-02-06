@@ -121,4 +121,29 @@ crons.interval(
   {}
 );
 
+// CORE-209: The Loop — SLA Monitor every 5 minutes
+// Checks for overdue replies (>15min), actions (>2h), reports (>24h)
+crons.interval(
+  "loop-sla-monitor",
+  { minutes: 5 },
+  internal.loopMonitor.checkSLABreaches,
+  {}
+);
+
+// CORE-209: The Loop — Hourly metrics aggregation
+crons.cron(
+  "loop-metrics-hourly",
+  "0 * * * *", // Top of every hour
+  internal.loopMetrics.aggregateHourlyMetrics,
+  {}
+);
+
+// CORE-209: The Loop — Daily metrics for CEO dashboard
+crons.cron(
+  "loop-metrics-daily",
+  "0 6 * * *", // 6:00 AM UTC daily
+  internal.loopMetrics.aggregateDailyMetrics,
+  {}
+);
+
 export default crons;

@@ -51,6 +51,8 @@ import type * as http from "../http.js";
 import type * as learnings from "../learnings.js";
 import type * as lib_httpAuth from "../lib/httpAuth.js";
 import type * as linearSync from "../linearSync.js";
+import type * as loopMetrics from "../loopMetrics.js";
+import type * as loopMonitor from "../loopMonitor.js";
 import type * as maxMonitor from "../maxMonitor.js";
 import type * as mentions from "../mentions.js";
 import type * as messageStatus from "../messageStatus.js";
@@ -132,6 +134,8 @@ declare const fullApi: ApiFromModules<{
   learnings: typeof learnings;
   "lib/httpAuth": typeof lib_httpAuth;
   linearSync: typeof linearSync;
+  loopMetrics: typeof loopMetrics;
+  loopMonitor: typeof loopMonitor;
   maxMonitor: typeof maxMonitor;
   mentions: typeof mentions;
   messageStatus: typeof messageStatus;
