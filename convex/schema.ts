@@ -199,8 +199,18 @@ export default defineSchema({
     ),
     content: v.string(),
     taskRef: v.optional(v.id("tasks")),
-    status: v.union(v.literal("unread"), v.literal("read")),
+    // Legacy: kept for backward compatibility
+    status: v.optional(v.union(v.literal("unread"), v.literal("read"))),
+    // New message status system: 0=pending, 1=delivered, 2=seen, 3=replied
+    statusCode: v.optional(v.number()),
+    seenAt: v.optional(v.number()),
+    repliedAt: v.optional(v.number()),
     timestamp: v.number(),
+    sentAt: v.optional(v.number()), // Alias for timestamp
+    priority: v.optional(v.union(
+      v.literal("normal"),
+      v.literal("urgent")
+    )),
   })
     .index("by_to_status", ["to", "status"])
     .index("by_from_to", ["from", "to"])
