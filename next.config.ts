@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     const exact = [
-      "/dashboard",
       "/standup",
       "/agents",
       "/tasks",
