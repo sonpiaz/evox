@@ -98,16 +98,16 @@ export function MinimalDashboard() {
 
       {/* Content — 2 panels */}
       <div className="flex flex-1 min-h-0 flex-col md:flex-row overflow-hidden">
-        {/* Left: Agent Status Strip */}
-        <div className="md:w-[220px] md:shrink-0 md:border-r border-b md:border-b-0 border-zinc-800/80 overflow-y-auto">
+        {/* Left: Agent Status Strip — capped on mobile so terminal stays visible */}
+        <div className="max-h-[30vh] md:max-h-none md:w-[220px] md:shrink-0 md:border-r border-b md:border-b-0 border-zinc-800/80 overflow-y-auto">
           <AgentStatusStrip
             onAgentClick={handleAgentClick}
             selectedAgent={activeTab === "all" ? undefined : activeTab}
           />
         </div>
 
-        {/* Right: Terminal with agent tabs */}
-        <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+        {/* Right: Terminal with agent tabs — min-h ensures terminal is usable on mobile */}
+        <div className="flex-1 min-w-0 min-h-[50vh] md:min-h-0 flex flex-col overflow-hidden">
           {/* Agent tabs */}
           <div className="flex items-center gap-1 px-3 py-2 border-b border-zinc-800/80 overflow-x-auto scrollbar-hide">
             {AGENT_TABS.map((tab) => (
@@ -116,7 +116,7 @@ export function MinimalDashboard() {
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "px-3 py-2 rounded-md text-xs font-medium transition-all min-h-[36px] shrink-0",
+                  "px-3 py-2.5 rounded-md text-xs font-medium transition-all min-h-[44px] shrink-0 touch-manipulation",
                   activeTab === tab.id
                     ? cn("bg-white/10", TAB_COLORS[tab.id])
                     : "text-zinc-600 hover:bg-white/5 hover:text-zinc-400"
