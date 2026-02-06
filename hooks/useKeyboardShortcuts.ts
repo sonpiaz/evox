@@ -21,7 +21,7 @@ export function useKeyboardShortcuts({
   onCloseModals,
   onViewTabChange,
 }: UseKeyboardShortcutsProps) {
-  // AGT-206: Cmd+0/1/2/3/4/5/6/7/8/9 = switch view tabs
+  // Cmd+0/1/2/3 = switch view tabs
   useHotkeys(
     "meta+0",
     (e) => {
@@ -44,7 +44,7 @@ export function useKeyboardShortcuts({
     "meta+2",
     (e) => {
       e.preventDefault();
-      onViewTabChange?.("terminal");
+      onViewTabChange?.("health");
     },
     { enableOnFormTags: false }
   );
@@ -53,61 +53,7 @@ export function useKeyboardShortcuts({
     "meta+3",
     (e) => {
       e.preventDefault();
-      onViewTabChange?.("queue");
-    },
-    { enableOnFormTags: false }
-  );
-
-  useHotkeys(
-    "meta+4",
-    (e) => {
-      e.preventDefault();
-      onViewTabChange?.("activity");
-    },
-    { enableOnFormTags: false }
-  );
-
-  useHotkeys(
-    "meta+5",
-    (e) => {
-      e.preventDefault();
-      onViewTabChange?.("health");
-    },
-    { enableOnFormTags: false }
-  );
-
-  useHotkeys(
-    "meta+6",
-    (e) => {
-      e.preventDefault();
-      onViewTabChange?.("automation");
-    },
-    { enableOnFormTags: false }
-  );
-
-  useHotkeys(
-    "meta+7",
-    (e) => {
-      e.preventDefault();
-      onViewTabChange?.("messages");
-    },
-    { enableOnFormTags: false }
-  );
-
-  useHotkeys(
-    "meta+8",
-    (e) => {
-      e.preventDefault();
       onViewTabChange?.("comms");
-    },
-    { enableOnFormTags: false }
-  );
-
-  useHotkeys(
-    "meta+9",
-    (e) => {
-      e.preventDefault();
-      onViewTabChange?.("metrics");
     },
     { enableOnFormTags: false }
   );

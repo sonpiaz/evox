@@ -22,9 +22,6 @@ import { SystemPausedBanner } from "@/components/evox/KillSwitch";
 import { HealthDashboard } from "@/components/evox/HealthDashboard";
 import { CommunicationLog } from "@/components/evox/CommunicationLog";
 import { CEODashboard } from "@/components/evox/CEODashboard";
-import { StatsPage } from "@/components/evox/StatsPage";
-import { ActivityFeed } from "@/components/evox/ActivityFeed";
-import { AgentsPage } from "@/components/dashboard-v2/agents-page";
 import type { KanbanTask } from "@/components/dashboard-v2/task-card";
 import type { DateFilterMode } from "@/components/dashboard-v2/date-filter";
 import { sortAgents, AGENT_ORDER } from "@/lib/constants";
@@ -161,9 +158,6 @@ export default function Home() {
             {activeViewTab === "ceo" && (
               <CEODashboard className="h-full" />
             )}
-            {activeViewTab === "agents" && (
-              <AgentsPage agents={agentsList} />
-            )}
             {activeViewTab === "kanban" && (
               <MissionQueue
                 date={date}
@@ -174,22 +168,11 @@ export default function Home() {
                 onAssigneeClick={(id) => handleAgentClick(id as Id<"agents">)}
               />
             )}
-            {activeViewTab === "queue" && (
-              <div className="h-full p-4 overflow-auto">
-                <DispatchQueue className="h-full" />
-              </div>
-            )}
-            {activeViewTab === "activity" && (
-              <ActivityFeed className="h-full" />
-            )}
             {activeViewTab === "health" && (
               <HealthDashboard className="h-full" />
             )}
             {activeViewTab === "comms" && (
               <CommunicationLog className="h-full" />
-            )}
-            {activeViewTab === "metrics" && (
-              <StatsPage className="h-full" />
             )}
           </div>
         </main>
