@@ -115,6 +115,8 @@ export default defineSchema({
     blockedSince: v.optional(v.number()),         // Timestamp when task became blocked
     // AGT-318: Escalation Tiers
     escalationTier: v.optional(v.number()),       // 0=none, 1=T1, 2=T2, 3=T3, 4=T4
+    // AGT-335: Loop P2 — Task-Message Linkage
+    linkedMessageId: v.optional(v.id("agentMessages")),  // Message that spawned this task
   })
     .index("by_project", ["projectId"])
     .index("by_status", ["status"])
@@ -125,7 +127,8 @@ export default defineSchema({
     .index("by_linearId", ["linearId"])
     .index("by_linearIdentifier", ["linearIdentifier"])
     .index("by_completedAt", ["completedAt"])
-    .index("by_status_updatedAt", ["status", "updatedAt"]),
+    .index("by_status_updatedAt", ["status", "updatedAt"])
+    .index("by_linkedMessage", ["linkedMessageId"]),
 
   // Communication - Channel messages
   messages: defineTable({

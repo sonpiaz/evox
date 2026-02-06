@@ -120,6 +120,7 @@ export const completeTask = mutation({
         status: newStatus,
         assignee: agentId, // Ensure agent is assigned
         updatedAt: now,
+        ...(newStatus === "done" && { completedAt: now }),
       });
     }
 
@@ -211,6 +212,28 @@ export const completeTask = mutation({
           metadata: { summary: args.summary, filesChanged: args.filesChanged },
         },
       });
+
+      // AGT-335: Auto-close message loop if task has linkedMessageId
+      if (task.linkedMessageId) {
+        try {
+          await ctx.db.patch(task.linkedMessageId, {
+            statusCode: 5, // REPORTED
+            reportedAt: now,
+            finalReport: args.summary,
+          });
+          // Resolve any active loop alerts for this message
+          const loopAlerts = await ctx.db
+            .query("loopAlerts")
+            .withIndex("by_message", (q) => q.eq("messageId", task.linkedMessageId!))
+            .filter((q) => q.eq(q.field("status"), "active"))
+            .collect();
+          for (const alert of loopAlerts) {
+            await ctx.db.patch(alert._id, { status: "resolved", resolvedAt: now });
+          }
+        } catch (e) {
+          console.error(`Failed to close loop for message ${task.linkedMessageId}:`, e);
+        }
+      }
     } else if (args.action === "in_progress") {
       await logToDailyNotes(ctx, agentId, "started", task.linearIdentifier ?? args.ticket, args.summary);
 
@@ -230,6 +253,37 @@ export const completeTask = mutation({
       statusChange: newStatus ? { from: oldStatus, to: newStatus } : null,
       linearIdentifier: task.linearIdentifier,
     };
+  },
+});
+
+/**
+ * AGT-335: Link a message to a task (for Loop tracking).
+ * Called when an agent creates a task in response to a message.
+ */
+export const linkMessageToTask = mutation({
+  args: {
+    taskId: v.id("tasks"),
+    messageId: v.id("agentMessages"),
+  },
+  handler: async (ctx, args) => {
+    const task = await ctx.db.get(args.taskId);
+    if (!task) throw new Error(`Task not found: ${args.taskId}`);
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error(`Message not found: ${args.messageId}`);
+
+    await ctx.db.patch(args.taskId, {
+      linkedMessageId: args.messageId,
+    });
+
+    // Also link the message to the task (bidirectional)
+    if (!message.linkedTaskId) {
+      await ctx.db.patch(args.messageId, {
+        linkedTaskId: args.taskId,
+      });
+    }
+
+    return { success: true, taskId: args.taskId, messageId: args.messageId };
   },
 });
 
@@ -629,6 +683,34 @@ export const updateWorkingMemory = mutation({
       });
       return { success: true, updated: false, created: true, id };
     }
+  },
+});
+
+/**
+ * AGT-335: Get task by Linear ticket identifier (for check-linked-message.sh).
+ * Returns task with linkedMessageId if present.
+ */
+export const getTaskByTicket = query({
+  args: {
+    ticket: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const ticketUpper = args.ticket.toUpperCase();
+    const task = await ctx.db
+      .query("tasks")
+      .withIndex("by_linearIdentifier", (q) => q.eq("linearIdentifier", ticketUpper))
+      .first();
+
+    if (!task) return null;
+
+    return {
+      _id: task._id,
+      title: task.title,
+      status: task.status,
+      linearIdentifier: task.linearIdentifier,
+      linkedMessageId: task.linkedMessageId,
+      completedAt: task.completedAt,
+    };
   },
 });
 
