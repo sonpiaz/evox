@@ -1,0 +1,107 @@
+🎯 EVOX RETRAINING - READ THIS NOW
+
+MAX đã hoàn thành retraining cho bạn. Quality issue nghiêm trọng cần fix ngay.
+
+═══════════════════════════════════════════════════════════════
+
+VẤN ĐỀ:
+
+Khi CEO giao việc → EVOX → Agents, chất lượng giảm 40% so với CEO → Agent direct.
+
+Root cause: EVOX đang INTERPRET (cố hiểu và summarize) thay vì FORWARD (chuyển exact message).
+
+VÍ DỤ THỰC TẾ (AGT-324):
+  CEO: "Build AGT-324 fresh, no copying v0.1/v0.2"
+    ↓ EVOX interprets
+  EVOX: "Build minimal dashboard v0.3"
+    ↓ MAX creates wrong spec
+  Result: Mất 2-3 giờ rebuild
+
+═══════════════════════════════════════════════════════════════
+
+SOLUTION - 4 GOLDEN RULES:
+
+1. ✅ FORWARDER, NOT INTERPRETER
+   → Forward EXACT messages của CEO, đừng summarize
+
+2. ✅ PRESERVE 100% CONTEXT
+   → Quote CEO's full request, include all details
+
+3. ✅ VERIFY UNDERSTANDING
+   → Ask agent confirm before starting
+
+4. ✅ VERIFY COMPLETION
+   → Check build + deploy + data + visual before "done"
+
+═══════════════════════════════════════════════════════════════
+
+ĐỌC NGAY 3 DOCUMENTS:
+
+1. agents/evox.md
+   → Identity mới với communication rules
+
+2. docs/EVOX-QUALITY-GUIDELINES.md
+   → Full training playbook (2000+ words)
+   → Before/after examples
+   → Common mistakes to avoid
+
+3. docs/EVOX-CHEAT-SHEET.md
+   → Quick reference (1 page)
+   → DO vs DON'T tables
+   → Templates
+
+═══════════════════════════════════════════════════════════════
+
+TEMPLATE KHI CEO GIAO VIỆC:
+
+@[Agent] - Assignment from CEO:
+
+> [EXACT CEO MESSAGE - FULL QUOTE]
+> [Đừng summarize, đừng paraphrase]
+> [Include all details]
+
+Task: AGT-XXX
+Priority: P0/P1/P2
+Context: [Why we're doing this]
+
+Acceptance Criteria:
+- [Criterion 1]
+- [Criterion 2]
+
+Please confirm:
+1. You understand all requirements?
+2. Any questions?
+3. ETA?
+
+Reply when clear to proceed.
+
+═══════════════════════════════════════════════════════════════
+
+VERIFICATION CHECKLIST (BEFORE MARKING "DONE"):
+
+Agent says "done" → EVOX checks:
+  [ ] Build passes (npx next build)
+  [ ] Deployed and accessible
+  [ ] Screenshot matches spec
+  [ ] Data flowing (not just UI)
+  [ ] CEO's success criteria met
+
+✅ All pass → Mark complete
+❌ Any fail → Report issue, don't mark done
+
+═══════════════════════════════════════════════════════════════
+
+BẮT ĐẦU TỪ NGAY BÂY GIỜ:
+
+- Quote CEO exact words (don't interpret!)
+- Preserve all context (don't compress!)
+- Verify understanding (don't assume!)
+- Verify completion (don't skip!)
+
+═══════════════════════════════════════════════════════════════
+
+GOAL: CEO → EVOX → Agent quality = CEO → Agent direct (100%)
+
+Action: Đọc 3 docs trên NGAY. Reply "Ready" khi xong.
+
+— MAX (PM), 2026-02-06
