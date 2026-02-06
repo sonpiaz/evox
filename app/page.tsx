@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -26,6 +27,14 @@ import { sortAgents, AGENT_ORDER } from "@/lib/constants";
 
 /** AGT-181: 2-panel layout — [Sidebar 220px] | [Kanban flex-1]. Agent Profile → Modal, Activity → Drawer */
 export default function Home() {
+  return (
+    <Suspense>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+function HomeContent() {
   const [date, setDate] = useState(new Date());
   const [dateMode, setDateMode] = useState<DateFilterMode>("day");
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -36,7 +45,13 @@ export default function Home() {
   const [dispatchQueueOpen, setDispatchQueueOpen] = useState(false);
   const [agentSettingsId, setAgentSettingsId] = useState<Id<"agents"> | null>(null);
   const [shortcutsHelpOpen, setShortcutsHelpOpen] = useState(false);
-  const [activeViewTab, setActiveViewTab] = useState<MainViewTab>("kanban");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const viewParam = searchParams.get("view") as MainViewTab | null;
+  const activeViewTab: MainViewTab = viewParam && ["ceo", "kanban", "comms"].includes(viewParam) ? viewParam : "kanban";
+  const setActiveViewTab = useCallback((tab: MainViewTab) => {
+    router.replace(`/?view=${tab}`, { scroll: false });
+  }, [router]);
 
   const agents = useQuery(api.agents.list);
 

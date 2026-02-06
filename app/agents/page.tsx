@@ -26,6 +26,13 @@ const PODIUM_STYLES: Record<number, { border: string; bg: string; label: string;
   3: { border: "border-amber-700/40", bg: "bg-amber-700/10", label: "3rd", size: "text-2xl" },
 };
 
+const STATUS_DOT: Record<string, string> = {
+  online: "bg-green-500",
+  busy: "bg-yellow-500",
+  idle: "bg-zinc-500",
+  offline: "bg-zinc-700",
+};
+
 const BADGE_COLORS: Record<string, string> = {
   "Top Performer": "bg-yellow-500/20 text-yellow-400",
   "Most Productive": "bg-emerald-500/20 text-emerald-400",
@@ -83,8 +90,11 @@ export default function HallOfFamePage() {
                   <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-2">
                     {style.label}
                   </div>
-                  <div className={cn("font-bold uppercase mb-1", style.size, AGENT_COLORS[agent.name.toLowerCase()] ?? "text-zinc-300")}>
-                    {agent.name}
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <span className={cn("h-2 w-2 rounded-full shrink-0", STATUS_DOT[agent.status?.toLowerCase()] ?? STATUS_DOT.offline)} />
+                    <span className={cn("font-bold uppercase", style.size, AGENT_COLORS[agent.name.toLowerCase()] ?? "text-zinc-300")}>
+                      {agent.name}
+                    </span>
                   </div>
                   <div className="text-[10px] text-zinc-500 uppercase mb-3">{agent.role}</div>
                   <div className="text-lg font-bold tabular-nums text-zinc-200">
@@ -153,9 +163,12 @@ export default function HallOfFamePage() {
                     <td className="px-3 py-2.5">
                       <Link
                         href={`/agents/${agent.name.toLowerCase()}`}
-                        className={cn("font-bold uppercase hover:underline", AGENT_COLORS[agent.name.toLowerCase()] ?? "text-zinc-300")}
+                        className="flex items-center gap-2 hover:underline"
                       >
-                        {agent.name}
+                        <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", STATUS_DOT[agent.status?.toLowerCase()] ?? STATUS_DOT.offline)} />
+                        <span className={cn("font-bold uppercase", AGENT_COLORS[agent.name.toLowerCase()] ?? "text-zinc-300")}>
+                          {agent.name}
+                        </span>
                       </Link>
                     </td>
                     <td className="text-right px-3 py-2.5 tabular-nums text-zinc-400">{agent.tasksCompleted}</td>
