@@ -4,10 +4,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* === Fonts === */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* === shadcn/ui tokens === */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -37,13 +40,141 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+
+  /* === Design System V2 — Border Radius (6/8/12/9999) === */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 12px;
+  --radius-2xl: 12px;
+  --radius-3xl: 12px;
+  --radius-4xl: 12px;
+  --radius-full: 9999px;
+
+  /* === Design System V2 — Surface Colors === */
+  --color-base: #0A0A0A;
+  --color-surface-1: #111111;
+  --color-surface-2: #171717;
+  --color-surface-3: #1A1A1A;
+  --color-surface-4: #222222;
+
+  /* === Design System V2 — Semantic Text === */
+  --color-text-primary: #EDEDED;
+  --color-text-secondary: #A1A1A1;
+  --color-text-tertiary: #666666;
+
+  /* === Design System V2 — Borders === */
+  --color-border-default: #222222;
+  --color-border-hover: #333333;
+  --color-border-focus: #0070F3;
+
+  /* === Design System V2 — 10-Step Gray Scale === */
+  --color-gray-100: #111111;
+  --color-gray-200: #1A1A1A;
+  --color-gray-300: #222222;
+  --color-gray-400: #2E2E2E;
+  --color-gray-500: #3A3A3A;
+  --color-gray-600: #4A4A4A;
+  --color-gray-700: #6B6B6B;
+  --color-gray-800: #7A7A7A;
+  --color-gray-900: #A1A1A1;
+  --color-gray-1000: #EDEDED;
+
+  /* === Design System V2 — 10-Step Blue Scale (Accent) === */
+  --color-blue-100: #0A1A2F;
+  --color-blue-200: #0D2847;
+  --color-blue-300: #10365F;
+  --color-blue-400: #1A4B8A;
+  --color-blue-500: #2563A8;
+  --color-blue-600: #3178C6;
+  --color-blue-700: #0070F3;
+  --color-blue-800: #2E8AFF;
+  --color-blue-900: #6DB3F8;
+  --color-blue-1000: #B4D9FF;
+
+  /* === Design System V2 — 10-Step Green Scale (Success) === */
+  --color-green-100: #0A1F15;
+  --color-green-200: #0D2E1E;
+  --color-green-300: #113D28;
+  --color-green-400: #1A5C3A;
+  --color-green-500: #22794B;
+  --color-green-600: #2B965D;
+  --color-green-700: #10B981;
+  --color-green-800: #34D399;
+  --color-green-900: #6EE7B7;
+  --color-green-1000: #A7F3D0;
+
+  /* === Design System V2 — 10-Step Red Scale (Error) === */
+  --color-red-100: #1F0A0A;
+  --color-red-200: #2E0D0D;
+  --color-red-300: #3D1111;
+  --color-red-400: #5C1A1A;
+  --color-red-500: #7F2222;
+  --color-red-600: #A12B2B;
+  --color-red-700: #EF4444;
+  --color-red-800: #F87171;
+  --color-red-900: #FCA5A5;
+  --color-red-1000: #FEE2E2;
+
+  /* === Design System V2 — 10-Step Amber Scale (Warning) === */
+  --color-amber-100: #1F1A0A;
+  --color-amber-200: #2E260D;
+  --color-amber-300: #3D3311;
+  --color-amber-400: #5C4D1A;
+  --color-amber-500: #7F6A22;
+  --color-amber-600: #A1882B;
+  --color-amber-700: #F59E0B;
+  --color-amber-800: #FBBF24;
+  --color-amber-900: #FCD34D;
+  --color-amber-1000: #FEF3C7;
+
+  /* === Design System V2 — 10-Step Purple Scale (Highlight) === */
+  --color-purple-100: #150A1F;
+  --color-purple-200: #1E0D2E;
+  --color-purple-300: #27113D;
+  --color-purple-400: #3B1A5C;
+  --color-purple-500: #4E227F;
+  --color-purple-600: #622BA1;
+  --color-purple-700: #8B5CF6;
+  --color-purple-800: #A78BFA;
+  --color-purple-900: #C4B5FD;
+  --color-purple-1000: #EDE9FE;
+
+  /* === Design System V2 — Semantic Type Scale === */
+  --text-heading-48: 48px;
+  --text-heading-32: 32px;
+  --text-heading-24: 24px;
+  --text-heading-20: 20px;
+  --text-label-14: 14px;
+  --text-label-12: 12px;
+  --text-copy-16: 16px;
+  --text-copy-14: 14px;
+  --text-copy-13: 13px;
+  --text-mono-14: 14px;
+  --text-mono-12: 12px;
+
+  /* === Design System V2 — Animations === */
+  --animate-shimmer: shimmer 2s infinite linear;
+  --animate-pulse-dot: pulse-dot 2s infinite ease-in-out;
+  --animate-slide-in-right: slide-in-right 300ms ease-out;
+  --animate-fade-scale-in: fade-scale-in 200ms ease-out;
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(1.5); opacity: 0; }
+  }
+  @keyframes slide-in-right {
+    0% { transform: translateX(100%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes fade-scale-in {
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
 }
 
 :root {
@@ -135,13 +266,13 @@
   scrollbar-color: #222 #0a0a0a;
 }
 
-/* Agent working pulse animation */
+/* Agent working pulse animation (V2: uses accent #0070F3) */
 @keyframes agent-pulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 0 0 rgba(0, 112, 243, 0.4);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+    box-shadow: 0 0 0 8px rgba(0, 112, 243, 0);
   }
 }
 
@@ -159,71 +290,57 @@
 }
 
 /* ===========================================
-   EVOX Design System Tokens
+   EVOX Design System V2 Tokens
    =========================================== */
 
 :root {
-  /* Surface colors */
-  --evox-bg: #000000;
-  --evox-surface: #0a0a0a;
-  --evox-surface-raised: #0f0f0f;
-  --evox-surface-hover: #1a1a1a;
+  color-scheme: dark;
 
-  /* Border colors */
-  --evox-border: #222222;
-  --evox-border-subtle: #1a1a1a;
+  /* Background layers (elevation via bg, not shadows) */
+  --bg-base: #0A0A0A;
+  --bg-surface-1: #111111;
+  --bg-surface-2: #171717;
+  --bg-surface-3: #1A1A1A;
+  --bg-surface-4: #222222;
 
-  /* Text colors */
-  --evox-text-primary: #fafafa;
-  --evox-text-secondary: #888888;
-  --evox-text-muted: #555555;
-
-  /* Status colors (AGT-273) */
-  --evox-status-online: #22c55e;
-  --evox-status-busy: #eab308;
-  --evox-status-idle: #71717a;
-  --evox-status-offline: #ef4444;
-
-  /* Accent colors */
-  --evox-accent-blue: #3b82f6;
-  --evox-accent-emerald: #10b981;
-  --evox-accent-yellow: #eab308;
-  --evox-accent-red: #ef4444;
-  --evox-accent-purple: #a855f7;
-
-  /* AGT-333: Dashboard Redesign tokens */
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #1a1a1a;
-  --bg-tertiary: #2a2a2a;
-
-  --text-primary: #e5e5e5;
-  --text-secondary: #a3a3a3;
+  /* Text */
+  --text-primary: #EDEDED;
+  --text-secondary: #A1A1A1;
   --text-tertiary: #666666;
 
-  --status-online: #10b981;
-  --status-offline: #ef4444;
-  --status-warning: #f59e0b;
-  --status-info: #3b82f6;
+  /* Borders */
+  --border-default: #222222;
+  --border-hover: #333333;
+  --border-focus: #0070F3;
 
-  --accent-primary: #3b82f6;
-  --accent-hover: #2563eb;
+  /* Status (semantic) */
+  --status-online: #10B981;
+  --status-offline: #EF4444;
+  --status-warning: #F59E0B;
+  --status-info: #0070F3;
 
-  --border-default: #333333;
-  --border-focus: #3b82f6;
+  /* Accent */
+  --accent-primary: #0070F3;
+  --accent-hover: #2E8AFF;
+
+  /* Alpha variants */
+  --alpha-subtle: rgba(255, 255, 255, 0.04);
+  --alpha-border: rgba(255, 255, 255, 0.08);
+  --alpha-hover: rgba(255, 255, 255, 0.12);
+  --alpha-backdrop: rgba(0, 0, 0, 0.60);
+
+  /* Shadow (float only) */
+  --shadow-float: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-default);
+
+  /* V1 compat aliases (will be removed after component migration) */
+  --evox-bg: var(--bg-base);
+  --evox-surface: var(--bg-surface-1);
+  --evox-border: var(--border-default);
+  --evox-text-primary: var(--text-primary);
+  --evox-text-secondary: var(--text-secondary);
+  --evox-text-muted: var(--text-tertiary);
+  --evox-accent-blue: var(--accent-primary);
 }
-
-/* Utility classes for EVOX tokens */
-.bg-evox-bg { background-color: var(--evox-bg); }
-.bg-evox-surface { background-color: var(--evox-surface); }
-.bg-evox-surface-raised { background-color: var(--evox-surface-raised); }
-.bg-evox-surface-hover { background-color: var(--evox-surface-hover); }
-
-.border-evox-border { border-color: var(--evox-border); }
-.border-evox-border-subtle { border-color: var(--evox-border-subtle); }
-
-.text-evox-primary { color: var(--evox-text-primary); }
-.text-evox-secondary { color: var(--evox-text-secondary); }
-.text-evox-muted { color: var(--evox-text-muted); }
 
 /* Hide scrollbar utility */
 .scrollbar-hide {
@@ -234,7 +351,7 @@
   display: none;
 }
 
-/* AGT-333: Pulse animation for online status */
+/* Status dot pulse */
 @keyframes pulse-status {
   0%, 100% {
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
@@ -248,12 +365,21 @@
   animation: pulse-status 2s infinite;
 }
 
-/* AGT-333: Hover lift effect */
+/* Hover lift (V2: 200ms standard tier) */
 .hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 200ms ease-out, box-shadow 200ms ease-out;
 }
 
 .hover-lift:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-float);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
