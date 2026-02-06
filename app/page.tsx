@@ -10,8 +10,6 @@ import { NotificationTopBarWrapper } from "@/components/notification-topbar-wrap
 import { MissionQueue } from "@/components/dashboard-v2/mission-queue";
 import { SettingsModal } from "@/components/dashboard-v2/settings-modal";
 import { AgentSidebar } from "@/components/evox/AgentSidebar";
-import { ScratchPad } from "@/components/evox/ScratchPad";
-import { DispatchQueue } from "@/components/evox/DispatchQueue";
 import { AgentSettingsModal } from "@/components/evox/AgentSettingsModal";
 import { ShortcutsHelpModal } from "@/components/evox/ShortcutsHelpModal";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -42,8 +40,6 @@ function HomeContent() {
   const [activityDrawerOpen, setActivityDrawerOpen] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState<Id<"agents"> | null>(null);
   const [selectedTask, setSelectedTask] = useState<KanbanTask | null>(null);
-  const [scratchPadOpen, setScratchPadOpen] = useState(false);
-  const [dispatchQueueOpen, setDispatchQueueOpen] = useState(false);
   const [agentSettingsId, setAgentSettingsId] = useState<Id<"agents"> | null>(null);
   const [shortcutsHelpOpen, setShortcutsHelpOpen] = useState(false);
   const searchParams = useSearchParams();
@@ -100,7 +96,7 @@ function HomeContent() {
   useKeyboardShortcuts({
     agents: agentsList,
     onAgentSwitch: (agentId) => setSelectedAgentId(agentId),
-    onToggleScratchPad: () => setScratchPadOpen((prev) => !prev),
+    onToggleScratchPad: () => {},
     onToggleHelp: () => setShortcutsHelpOpen((prev) => !prev),
     onCloseModals: () => {
       setSelectedAgentId(null);
@@ -159,11 +155,6 @@ function HomeContent() {
             onAgentDoubleClick={handleAgentDoubleClick}
             className="flex-1"
           />
-          <DispatchQueue
-            collapsed={!dispatchQueueOpen}
-            onToggle={() => setDispatchQueueOpen((prev) => !prev)}
-          />
-          <ScratchPad isOpen={scratchPadOpen} onToggle={() => setScratchPadOpen((prev) => !prev)} />
         </div>
         <main className="flex-1 min-w-0 flex flex-col overflow-hidden">
           <ViewTabs activeTab={activeViewTab} onTabChange={setActiveViewTab} />
