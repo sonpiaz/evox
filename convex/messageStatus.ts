@@ -1,13 +1,15 @@
 /**
- * Message Status System
+ * Message Status System — "The Loop"
  *
- * Status flow: sent → delivered → seen → replied
+ * Status flow: sent → delivered → seen → replied → acted → reported
  *
  * Encoded status:
  * 0 = pending (not delivered yet)
  * 1 = delivered (in recipient's inbox)
  * 2 = seen (recipient opened/read)
  * 3 = replied (recipient sent response)
+ * 4 = acted (recipient started working on it)  — CORE-209
+ * 5 = reported (recipient reported completion)  — CORE-209
  */
 
 import { v } from "convex/values";
@@ -21,6 +23,8 @@ export const MessageStatus = {
   DELIVERED: 1,
   SEEN: 2,
   REPLIED: 3,
+  ACTED: 4,
+  REPORTED: 5,
 } as const;
 
 export const StatusLabels = {
@@ -28,6 +32,15 @@ export const StatusLabels = {
   1: "delivered",
   2: "seen",
   3: "replied",
+  4: "acted",
+  5: "reported",
+} as const;
+
+// SLA durations
+const SLA = {
+  REPLY: 15 * 60 * 1000,         // 15 minutes
+  ACTION: 2 * 60 * 60 * 1000,    // 2 hours
+  REPORT: 24 * 60 * 60 * 1000,   // 24 hours
 } as const;
 
 // ============================================================
@@ -60,9 +73,11 @@ export const markAsSeen = mutation({
       return { success: true, alreadySeen: true };
     }
 
+    const now = Date.now();
     await ctx.db.patch(args.messageId, {
       statusCode: MessageStatus.SEEN,
-      seenAt: Date.now(),
+      seenAt: now,
+      expectedReplyBy: now + SLA.REPLY, // CORE-209: SLA tracking
     });
 
     return { success: true, alreadySeen: false };
@@ -110,9 +125,11 @@ export const markAsReplied = mutation({
       throw new Error("Original message not found");
     }
 
+    const now = Date.now();
     await ctx.db.patch(args.originalMessageId, {
       statusCode: MessageStatus.REPLIED,
-      repliedAt: Date.now(),
+      repliedAt: now,
+      expectedActionBy: now + SLA.ACTION, // CORE-209: SLA tracking
     });
 
     return { success: true };
@@ -350,5 +367,127 @@ export const getAllConversations = query({
         statusLabel: StatusLabels[(conv.lastMessage.statusCode ?? MessageStatus.DELIVERED) as keyof typeof StatusLabels],
       },
     })).sort((a, b) => b.lastMessage.sentAt - a.lastMessage.sentAt);
+  },
+});
+
+// ============================================================
+// CORE-209: THE LOOP — Extended Status Mutations
+// ============================================================
+
+/**
+ * Mark message as ACTED — recipient started working on it.
+ * Sets status = 4, links to task, starts report SLA timer.
+ */
+export const markAsActed = mutation({
+  args: {
+    messageId: v.id("agentMessages"),
+    agentName: v.string(),
+    taskId: v.optional(v.id("tasks")),
+  },
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const currentStatus = message.statusCode ?? MessageStatus.DELIVERED;
+    if (currentStatus >= MessageStatus.ACTED) {
+      return { success: true, alreadyActed: true };
+    }
+
+    const now = Date.now();
+    await ctx.db.patch(args.messageId, {
+      statusCode: MessageStatus.ACTED,
+      actedAt: now,
+      expectedReportBy: now + SLA.REPORT,
+      linkedTaskId: args.taskId,
+    });
+
+    // Resolve any active loop alerts for this message
+    const alerts = await ctx.db
+      .query("loopAlerts")
+      .withIndex("by_message", (q) => q.eq("messageId", args.messageId))
+      .filter((q) => q.eq(q.field("status"), "active"))
+      .collect();
+
+    for (const alert of alerts) {
+      if (alert.alertType === "reply_overdue" || alert.alertType === "action_overdue") {
+        await ctx.db.patch(alert._id, { status: "resolved", resolvedAt: now });
+      }
+    }
+
+    return { success: true, alreadyActed: false };
+  },
+});
+
+/**
+ * Mark message as REPORTED — loop closed.
+ * Sets status = 5, stores final report, clears all pending alerts.
+ */
+export const markAsReported = mutation({
+  args: {
+    messageId: v.id("agentMessages"),
+    agentName: v.string(),
+    report: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const currentStatus = message.statusCode ?? MessageStatus.DELIVERED;
+    if (currentStatus >= MessageStatus.REPORTED) {
+      return { success: true, alreadyReported: true };
+    }
+
+    const now = Date.now();
+    await ctx.db.patch(args.messageId, {
+      statusCode: MessageStatus.REPORTED,
+      reportedAt: now,
+      finalReport: args.report,
+    });
+
+    // Resolve ALL active loop alerts for this message
+    const alerts = await ctx.db
+      .query("loopAlerts")
+      .withIndex("by_message", (q) => q.eq("messageId", args.messageId))
+      .filter((q) => q.eq(q.field("status"), "active"))
+      .collect();
+
+    for (const alert of alerts) {
+      await ctx.db.patch(alert._id, { status: "resolved", resolvedAt: now });
+    }
+
+    return { success: true, alreadyReported: false };
+  },
+});
+
+/**
+ * Mark loop as explicitly broken — preserves audit trail, escalates to MAX.
+ */
+export const markLoopBroken = mutation({
+  args: {
+    messageId: v.id("agentMessages"),
+    agentName: v.string(),
+    reason: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    await ctx.db.patch(args.messageId, {
+      loopBroken: true,
+      loopBrokenReason: args.reason,
+    });
+
+    // Create loop_broken alert
+    await ctx.db.insert("loopAlerts", {
+      messageId: args.messageId,
+      agentName: args.agentName,
+      alertType: "loop_broken",
+      severity: "critical",
+      status: "escalated",
+      escalatedTo: "max",
+      createdAt: Date.now(),
+    });
+
+    return { success: true };
   },
 });
