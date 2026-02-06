@@ -83,7 +83,7 @@ For each unread message:
 
 After responding to ALL messages, say MESSAGES_DONE."
 
-    gtimeout --foreground 300 claude --dangerously-skip-permissions $MODEL_FLAG "$PROMPT" 2>/dev/null || true
+    timeout 300 claude --dangerously-skip-permissions $MODEL_FLAG "$PROMPT" 2>/dev/null || true
   else
     echo "   ✅ No unread messages"
   fi
