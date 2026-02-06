@@ -14,12 +14,11 @@
  * 6. Agent Comms — last 3-5 messages
  */
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
-import { formatDistanceToNow, subDays, startOfDay, format } from "date-fns";
-import Link from "next/link";
+import { subDays, startOfDay, format } from "date-fns";
 
 /** Agent colors */
 const AGENT_COLORS: Record<string, string> = {
@@ -34,21 +33,40 @@ function agentColor(name: string) {
 }
 
 function timeAgo(ts: number) {
-  return formatDistanceToNow(ts, { addSuffix: false });
+  const diff = Date.now() - ts;
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return "now";
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ${minutes % 60}m`;
+  const days = Math.floor(hours / 24);
+  return `${days}d`;
 }
+
+export type TimeRange = "1d" | "7d" | "30d";
 
 interface CEODashboardProps {
   className?: string;
+  onAgentClick?: (name: string) => void;
+  timeRange?: TimeRange;
+  onTimeRangeChange?: (range: TimeRange) => void;
 }
 
-export function CEODashboard({ className }: CEODashboardProps = {}) {
+const TIME_RANGE_DAYS: Record<TimeRange, number> = { "1d": 1, "7d": 7, "30d": 30 };
+const TIME_RANGE_LABEL: Record<TimeRange, string> = { "1d": "Today", "7d": "7d", "30d": "30d" };
+
+export function CEODashboard({ className, onAgentClick, timeRange: externalTimeRange, onTimeRangeChange }: CEODashboardProps = {}) {
+  const [internalTimeRange, setInternalTimeRange] = useState<TimeRange>("1d");
+  const timeRange = externalTimeRange ?? internalTimeRange;
+  const setTimeRange = onTimeRangeChange ?? setInternalTimeRange;
+  const days = TIME_RANGE_DAYS[timeRange];
+
   // Data queries — only real data
   const agentStatus = useQuery(api.ceoMetrics.getAgentStatus);
-  const todayMetrics = useQuery(api.ceoMetrics.getTodayMetrics);
-  const blockers = useQuery(api.ceoMetrics.getBlockers);
+  const todayMetrics = useQuery(api.ceoMetrics.getTodayMetrics, { days });
   const liveFeed = useQuery(api.ceoMetrics.getLiveFeed, { limit: 5 });
   const commits = useQuery(api.gitActivity.getRecent, { limit: 5 });
-  const velocityTrend = useQuery(api.dashboard.getVelocityTrend, { days: 7 });
+  const velocityTrend = useQuery(api.dashboard.getVelocityTrend, { days });
   const comms = useQuery(api.ceoMetrics.getRecentComms, { limit: 5 });
 
   // Computed values
@@ -70,23 +88,22 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
     if (!tasks) return null;
     const now = Date.now();
     const day24h = 24 * 60 * 60 * 1000;
-    const day7 = 7 * day24h;
+    const periodMs = days * day24h;
 
-    const tasks24h = tasks.filter(t => t.updatedAt > now - day24h);
-    const tasks7d = tasks.filter(t => t.updatedAt > now - day7);
+    const tasksInPeriod = tasks.filter(t => t.updatedAt > now - periodMs);
     const withErrors = tasks.filter(t => (t.retryCount && t.retryCount > 0) || t.lastError);
 
-    const completed24h = tasks24h.filter(t => t.status?.toLowerCase() === "done");
-    const attempted24h = tasks24h.filter(t => t.status?.toLowerCase() === "done" || t.status?.toLowerCase() === "in_progress");
-    const successRate = attempted24h.length > 0
-      ? Math.round((completed24h.filter(t => !t.lastError && (!t.retryCount || t.retryCount === 0)).length / attempted24h.length) * 100)
+    const completedInPeriod = tasksInPeriod.filter(t => t.status?.toLowerCase() === "done");
+    const attemptedInPeriod = tasksInPeriod.filter(t => t.status?.toLowerCase() === "done" || t.status?.toLowerCase() === "in_progress");
+    const successRate = attemptedInPeriod.length > 0
+      ? Math.round((completedInPeriod.filter(t => !t.lastError && (!t.retryCount || t.retryCount === 0)).length / attemptedInPeriod.length) * 100)
       : 100;
 
-    const errors7d = withErrors.filter(t => t.updatedAt > now - day7).length;
+    const errorsInPeriod = withErrors.filter(t => t.updatedAt > now - periodMs).length;
 
-    // 7-day success trend for sparkline
+    // Success trend sparkline (per-day for the period)
     const successByDay: number[] = [];
-    for (let i = 6; i >= 0; i--) {
+    for (let i = days - 1; i >= 0; i--) {
       const dayStart = startOfDay(subDays(now, i)).getTime();
       const dayEnd = dayStart + day24h;
       const dayTasks = tasks.filter(t => t.updatedAt >= dayStart && t.updatedAt < dayEnd);
@@ -95,17 +112,17 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
       successByDay.push(dayAttempted.length > 0 ? (dayCompleted.length / dayAttempted.length) * 100 : 100);
     }
 
-    // 7-day error bars
+    // Error bars (per-day for the period)
     const errorsByDay: { label: string; value: number }[] = [];
-    for (let i = 6; i >= 0; i--) {
+    for (let i = days - 1; i >= 0; i--) {
       const dayStart = startOfDay(subDays(now, i)).getTime();
       const dayEnd = dayStart + day24h;
       const dayErrors = withErrors.filter(t => t.updatedAt >= dayStart && t.updatedAt < dayEnd);
       errorsByDay.push({ label: format(dayStart, "EEE"), value: dayErrors.length });
     }
 
-    return { successRate, errors7d, successByDay, errorsByDay };
-  }, [tasks]);
+    return { successRate, errorsInPeriod, successByDay, errorsByDay };
+  }, [tasks, days]);
 
   const commitCount = commits?.length ?? 0;
   const totalAgents = agentStatus?.total ?? 0;
@@ -113,7 +130,6 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
   const inProgress = todayMetrics?.inProgress ?? 0;
   const blocked = todayMetrics?.blocked ?? 0;
 
-  const hasAlerts = blockers && blockers.length > 0;
   const dataLoaded = !!agentStatus && !!todayMetrics;
   const isLoading = !dataLoaded;
 
@@ -125,9 +141,14 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
           EVOX
         </h1>
         <div className="flex items-center gap-3">
-          <Link href="/?view=team" className="text-xs text-primary0 hover:text-primary transition-colors">
-            Team
-          </Link>
+          <div className="flex items-center gap-1 bg-surface-1 border border-border-default rounded-lg p-0.5">
+            {(["1d", "7d", "30d"] as const).map(r => (
+              <button key={r} onClick={() => setTimeRange(r)}
+                className={cn("px-2 py-1 text-[10px] rounded transition-colors", timeRange === r ? "bg-surface-4 text-primary" : "text-tertiary hover:text-secondary")}>
+                {r}
+              </button>
+            ))}
+          </div>
           <div className="flex items-center gap-2">
             <div className={cn(
               "h-2 w-2 rounded-full",
@@ -190,10 +211,10 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
             <div className="text-[10px] text-tertiary">agents</div>
           </div>
 
-          {/* Today */}
+          {/* Period Summary */}
           <div className="bg-surface-1 border border-border-default rounded-xl p-4">
             <div className="text-[10px] font-bold uppercase tracking-wider text-primary0 mb-1">
-              Today
+              {TIME_RANGE_LABEL[timeRange]}
             </div>
             {isLoading ? (
               <div className="text-2xl font-bold text-tertiary">—</div>
@@ -219,7 +240,7 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
             )}>
               {healthMetrics ? `${healthMetrics.successRate}%` : "—"}
             </div>
-            <div className="text-[10px] text-tertiary">24h</div>
+            <div className="text-[10px] text-tertiary">{timeRange}</div>
             {healthMetrics && healthMetrics.successByDay.length > 0 && (
               <svg width={80} height={24} className="mt-2">
                 <polyline
@@ -252,11 +273,11 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
             <div className={cn(
               "text-2xl font-bold tabular-nums",
               !healthMetrics ? "text-tertiary" :
-              healthMetrics.errors7d === 0 ? "text-emerald-400" : "text-red-400"
+              healthMetrics.errorsInPeriod === 0 ? "text-emerald-400" : "text-red-400"
             )}>
-              {healthMetrics ? healthMetrics.errors7d : "—"}
+              {healthMetrics ? healthMetrics.errorsInPeriod : "—"}
             </div>
-            <div className="text-[10px] text-tertiary">7d</div>
+            <div className="text-[10px] text-tertiary">{timeRange}</div>
             {healthMetrics && healthMetrics.errorsByDay.length > 0 && (
               <div className="flex items-end gap-[2px] h-6 mt-2">
                 {healthMetrics.errorsByDay.map((d, i) => {
@@ -278,31 +299,21 @@ export function CEODashboard({ className }: CEODashboardProps = {}) {
           </div>
         </div>
 
-        {/* ─── Alerts Banner ─── */}
-        {hasAlerts && (
-          <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-2.5 text-sm">
-            <span className="text-yellow-400 shrink-0">!</span>
-            <span className="text-yellow-300">
-              {blockers.length} task{blockers.length > 1 ? "s" : ""} blocked
-            </span>
-          </div>
-        )}
-
         {/* ─── Team Strip ─── */}
         <div className="flex items-center gap-1 overflow-x-auto py-1">
           <span className="text-[10px] font-bold uppercase tracking-wider text-tertiary mr-2 shrink-0">
             Team
           </span>
           {agentStatus?.agents.map((agent) => (
-            <Link
+            <button
               key={agent.name}
-              href={`/agents/${agent.name.toLowerCase()}`}
+              onClick={() => onAgentClick?.(agent.name)}
               className="flex items-center gap-1.5 px-2.5 py-1.5 shrink-0 hover:bg-surface-2 rounded-lg transition-colors"
             >
               <span className="text-xs font-medium text-primary">
                 {agent.name}
               </span>
-            </Link>
+            </button>
           ))}
         </div>
 

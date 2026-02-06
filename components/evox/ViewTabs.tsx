@@ -14,8 +14,8 @@ interface ViewTabsProps {
 const tabs: { id: MainViewTab; label: string; href: string }[] = [
   { id: "ceo", label: "Overview", href: "/?view=ceo" },
   { id: "kanban", label: "Kanban", href: "/?view=kanban" },
-  { id: "comms", label: "Comms", href: "/?view=comms" },
   { id: "team", label: "Team", href: "/?view=team" },
+  { id: "comms", label: "Comms", href: "/?view=comms" },
 ];
 
 /**

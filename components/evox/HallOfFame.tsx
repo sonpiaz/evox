@@ -8,7 +8,6 @@
  * Click agent name → /agents/[name] career profile.
  */
 
-import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
@@ -44,9 +43,10 @@ const BADGE_COLORS: Record<string, string> = {
 
 interface HallOfFameProps {
   className?: string;
+  onAgentClick?: (name: string) => void;
 }
 
-export function HallOfFame({ className }: HallOfFameProps) {
+export function HallOfFame({ className, onAgentClick }: HallOfFameProps) {
   const data = useQuery(api.agentProfiles.getHallOfFame);
 
   if (!data) {
@@ -74,11 +74,11 @@ export function HallOfFame({ className }: HallOfFameProps) {
             {podium.map((agent) => {
               const style = PODIUM_STYLES[agent.rank] ?? PODIUM_STYLES[3];
               return (
-                <Link
+                <div
                   key={agent.name}
-                  href={`/agents/${agent.name.toLowerCase()}`}
+                  onClick={() => onAgentClick?.(agent.name)}
                   className={cn(
-                    "border rounded-xl p-4 text-center transition-colors hover:bg-surface-2",
+                    "border rounded-xl p-4 text-center transition-colors hover:bg-surface-2 cursor-pointer",
                     style.border, style.bg,
                     agent.rank === 1 && "sm:order-first"
                   )}
@@ -106,7 +106,7 @@ export function HallOfFame({ className }: HallOfFameProps) {
                       ))}
                     </div>
                   )}
-                </Link>
+                </div>
               );
             })}
           </div>
@@ -121,12 +121,12 @@ export function HallOfFame({ className }: HallOfFameProps) {
             {categoryWinners.map((cat) => (
               <div key={cat.label} className="flex items-center gap-1.5 shrink-0">
                 <span className="text-[10px] text-primary0">{cat.label}:</span>
-                <Link
-                  href={`/agents/${cat.agent!.toLowerCase()}`}
+                <button
+                  onClick={() => onAgentClick?.(cat.agent!)}
                   className={cn("text-xs font-bold uppercase hover:underline", AGENT_COLORS[cat.agent!.toLowerCase()] ?? "text-primary")}
                 >
                   {cat.agent}
-                </Link>
+                </button>
               </div>
             ))}
           </div>
@@ -157,15 +157,15 @@ export function HallOfFame({ className }: HallOfFameProps) {
                   <tr key={agent.name} className="hover:bg-surface-2 transition-colors">
                     <td className="px-4 py-2.5 tabular-nums text-primary0">{agent.rank}</td>
                     <td className="px-3 py-2.5">
-                      <Link
-                        href={`/agents/${agent.name.toLowerCase()}`}
+                      <button
+                        onClick={() => onAgentClick?.(agent.name)}
                         className="flex items-center gap-2 hover:underline"
                       >
                         <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", STATUS_DOT[agent.status?.toLowerCase()] ?? STATUS_DOT.offline)} />
                         <span className={cn("font-bold uppercase", AGENT_COLORS[agent.name.toLowerCase()] ?? "text-primary")}>
                           {agent.name}
                         </span>
-                      </Link>
+                      </button>
                     </td>
                     <td className="text-right px-3 py-2.5 tabular-nums text-secondary">{agent.tasksCompleted}</td>
                     <td className="text-right px-3 py-2.5 tabular-nums text-secondary">{Math.round(agent.successRate * 100)}%</td>

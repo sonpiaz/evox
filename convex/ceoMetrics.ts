@@ -51,10 +51,15 @@ export const getAgentStatus = query({
  * Returns: { completed: number, inProgress: number, blocked: number, cost: number }
  */
 export const getTodayMetrics = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    days: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
     const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const daysBack = args.days ?? 1;
+    const periodStart = daysBack === 1
+      ? new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
+      : now.getTime() - daysBack * 24 * 60 * 60 * 1000;
 
     const tasks = await ctx.db.query("tasks").collect();
 
@@ -66,12 +71,11 @@ export const getTodayMetrics = query({
     for (const task of tasks) {
       const status = task.status?.toLowerCase() || "";
 
-      if (status === "done" && task.completedAt && task.completedAt >= todayStart) {
+      if (status === "done" && task.completedAt && task.completedAt >= periodStart) {
         completed++;
       } else if (status === "in_progress" || status === "review") {
         inProgress++;
       } else if (status === "backlog" || status === "todo") {
-        // Consider tasks in backlog with urgent priority as blocked
         if (task.priority?.toLowerCase() === "urgent") {
           blocked++;
         }
