@@ -3,6 +3,7 @@ import { httpAction } from "./_generated/server";
 import { api } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
+import { withAuth } from "./lib/httpAuth";
 
 const http = httpRouter();
 
@@ -17,7 +18,7 @@ const http = httpRouter();
 http.route({
   path: "/status",
   method: "GET",
-  handler: httpAction(async (ctx) => {
+  handler: withAuth(async (ctx) => {
     try {
       // Get all agents
       const agents = await ctx.runQuery(api.agents.list);
@@ -71,7 +72,7 @@ http.route({
 http.route({
   path: "/webhook/github",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: httpAction(async (ctx, request) => { // Webhook: own auth
     try {
       const body = await request.json();
       const event = request.headers.get("x-github-event");
@@ -124,7 +125,7 @@ http.route({
 http.route({
   path: "/webhook/linear",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: httpAction(async (ctx, request) => { // Webhook: own auth
     try {
       const body = await request.json();
       const AGENTS = ["SAM", "LEO"];
@@ -233,7 +234,7 @@ http.route({
 http.route({
   path: "/bootContext",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { agentName, ticketId } = body;
@@ -425,7 +426,7 @@ http.route({
 http.route({
   path: "/bootContext",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agentName = url.searchParams.get("agentName");
@@ -524,7 +525,7 @@ http.route({
 http.route({
   path: "/api/heartbeat",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { agentId, status, currentTask } = body;
@@ -621,7 +622,7 @@ http.route({
 http.route({
   path: "/api/heartbeat",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agentId = url.searchParams.get("agentId");
@@ -667,7 +668,7 @@ http.route({
 http.route({
   path: "/api/linear-sync",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       // Trigger Linear sync action
       const result = await ctx.runAction(api.linearSync.triggerSync, {});
@@ -700,7 +701,7 @@ http.route({
 http.route({
   path: "/comment",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { taskId, agentName, content, attachments } = body;
@@ -758,7 +759,7 @@ http.route({
 http.route({
   path: "/comments",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const taskId = url.searchParams.get("taskId");
@@ -815,7 +816,7 @@ http.route({
 http.route({
   path: "/dm",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { from, to, content, taskId, priority } = body;
@@ -874,7 +875,7 @@ http.route({
 http.route({
   path: "/dms",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");
@@ -917,7 +918,7 @@ http.route({
 http.route({
   path: "/v2/comment",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { taskId, agentName, content } = body;
@@ -974,7 +975,7 @@ http.route({
 http.route({
   path: "/v2/comments",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const taskId = url.searchParams.get("taskId");
@@ -1039,7 +1040,7 @@ http.route({
 http.route({
   path: "/v2/dm",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       // Accept both "content" and "message" for flexibility
@@ -1100,7 +1101,7 @@ http.route({
 http.route({
   path: "/v2/dms",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");
@@ -1138,7 +1139,7 @@ http.route({
 http.route({
   path: "/v2/unread",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");
@@ -1175,7 +1176,7 @@ http.route({
 http.route({
   path: "/v2/mark-read",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { messageId } = body;
@@ -1212,7 +1213,7 @@ http.route({
 http.route({
   path: "/v2/mark-all-read",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { agentName } = body;
@@ -1252,7 +1253,7 @@ http.route({
 http.route({
   path: "/v2/sendMessage",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { from, to, channel, message, taskId, priority } = body;
@@ -1349,7 +1350,7 @@ http.route({
 http.route({
   path: "/v2/getMessages",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");
@@ -1417,7 +1418,7 @@ http.route({
 http.route({
   path: "/github-webhook",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: httpAction(async (ctx, request) => { // Webhook: own auth
     try {
       const body = await request.text();
       const payload = JSON.parse(body);
@@ -1491,7 +1492,7 @@ http.route({
 http.route({
   path: "/getNextDispatch",
   method: "GET",
-  handler: httpAction(async (ctx) => {
+  handler: withAuth(async (ctx) => {
     try {
       const pending = await ctx.runQuery(api.dispatches.listPending);
 
@@ -1541,7 +1542,7 @@ http.route({
 http.route({
   path: "/getNextDispatchForAgent",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agentParam = url.searchParams.get("agent");
@@ -1602,7 +1603,7 @@ http.route({
 http.route({
   path: "/markDispatchRunning",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const dispatchId = url.searchParams.get("dispatchId");
@@ -1639,7 +1640,7 @@ http.route({
 http.route({
   path: "/markDispatchCompleted",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const dispatchId = url.searchParams.get("dispatchId");
@@ -1678,7 +1679,7 @@ http.route({
 http.route({
   path: "/markDispatchFailed",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const dispatchId = url.searchParams.get("dispatchId");
@@ -1717,7 +1718,7 @@ http.route({
 http.route({
   path: "/createDispatch",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { agentName, command, ticket, description } = body;
@@ -1769,7 +1770,7 @@ http.route({
 http.route({
   path: "/cleanupDuplicateDispatches",
   method: "POST",
-  handler: httpAction(async (ctx) => {
+  handler: withAuth(async (ctx) => {
     try {
       const result = await ctx.runMutation(api.dispatches.cleanupDuplicates, {});
       return new Response(
@@ -1792,7 +1793,7 @@ http.route({
 http.route({
   path: "/dispatchQueue",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");
@@ -1828,7 +1829,7 @@ http.route({
 http.route({
   path: "/cleanupStuckDispatches",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json().catch(() => ({}));
       const result = await ctx.runMutation(api.dispatches.cleanupStuckDispatches, {
@@ -1855,7 +1856,7 @@ http.route({
 http.route({
   path: "/resetAgentDispatches",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       if (!body.agentName) {
@@ -1888,7 +1889,7 @@ http.route({
 http.route({
   path: "/vercel-webhook",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: httpAction(async (ctx, request) => { // Webhook: own auth
     try {
       const payload = await request.json();
 
@@ -1926,7 +1927,7 @@ http.route({
 http.route({
   path: "/alerts",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const type = url.searchParams.get("type") || undefined;
@@ -1964,7 +1965,7 @@ http.route({
 http.route({
   path: "/alerts/stats",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const since = url.searchParams.get("since");
@@ -1993,7 +1994,7 @@ http.route({
 http.route({
   path: "/alerts/critical",
   method: "GET",
-  handler: httpAction(async (ctx) => {
+  handler: withAuth(async (ctx) => {
     try {
       const alerts = await ctx.runQuery(api.alerts.getUnacknowledgedCritical);
 
@@ -2018,7 +2019,7 @@ http.route({
 http.route({
   path: "/alerts/acknowledge",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { alertId, acknowledgedBy } = body;
@@ -2056,7 +2057,7 @@ http.route({
 http.route({
   path: "/alerts/preferences",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const target = url.searchParams.get("target") ?? "global";
@@ -2084,7 +2085,7 @@ http.route({
 http.route({
   path: "/alerts/preferences",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { target, ...updates } = body;
@@ -2122,7 +2123,7 @@ http.route({
 http.route({
   path: "/alerts/snooze",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { target, durationMinutes } = body;
@@ -2164,7 +2165,7 @@ http.route({
 http.route({
   path: "/learnings",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");
@@ -2222,7 +2223,7 @@ http.route({
 http.route({
   path: "/submitLearning",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const {
@@ -2282,7 +2283,7 @@ http.route({
 http.route({
   path: "/learnings/stats",
   method: "GET",
-  handler: httpAction(async (ctx) => {
+  handler: withAuth(async (ctx) => {
     try {
       const stats = await ctx.runQuery(api.learnings.getStats);
 
@@ -2311,7 +2312,7 @@ http.route({
 http.route({
   path: "/triggerQA",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { triggeredBy, commitHash, prNumber } = body;
@@ -2349,7 +2350,7 @@ http.route({
 http.route({
   path: "/getQAStatus",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const runId = url.searchParams.get("runId");
@@ -2391,7 +2392,7 @@ http.route({
 http.route({
   path: "/updateQATest",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { runId, testName, status, duration, output } = body;
@@ -2432,7 +2433,7 @@ http.route({
 http.route({
   path: "/completeQARun",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { runId, cancelled } = body;
@@ -2470,7 +2471,7 @@ http.route({
 http.route({
   path: "/qaRuns",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const limit = url.searchParams.get("limit");
@@ -2502,7 +2503,7 @@ http.route({
 http.route({
   path: "/qaStats",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const since = url.searchParams.get("since");
@@ -2536,7 +2537,7 @@ http.route({
 http.route({
   path: "/getAgentMessages",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");
@@ -2574,7 +2575,7 @@ http.route({
 http.route({
   path: "/markMessagesRead",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { agentName, messageId } = body;
@@ -2618,7 +2619,7 @@ http.route({
 http.route({
   path: "/postToChannel",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { from, channel, message } = body;
@@ -2675,7 +2676,7 @@ http.route({
 http.route({
   path: "/createUrgentDispatch",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { agentName, command, ticket, description } = body;
@@ -2703,7 +2704,7 @@ http.route({
 http.route({
   path: "/sendUrgentMessage",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { to, message, from } = body;
@@ -2726,7 +2727,7 @@ http.route({
 http.route({
   path: "/interruptAgent",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { agentName, reason } = body;
@@ -2763,7 +2764,7 @@ http.route({
 http.route({
   path: "/pingAgent",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { from, to, message, taskId, pingType } = body;
@@ -2797,7 +2798,7 @@ http.route({
 http.route({
   path: "/handoff",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { from, to, taskId, message, reason } = body;
@@ -2844,7 +2845,7 @@ http.route({
 http.route({
   path: "/requestApproval",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { from, taskId, question, options } = body;
@@ -2895,7 +2896,7 @@ http.route({
 http.route({
   path: "/v2/learn",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { agent, taskId, taskTitle, summary, files, challenges, patterns, tags } = body;
@@ -2930,7 +2931,7 @@ http.route({
 http.route({
   path: "/v2/learnings",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");
@@ -2959,7 +2960,7 @@ http.route({
 http.route({
   path: "/api/performance/agent",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");
@@ -3002,7 +3003,7 @@ http.route({
 http.route({
   path: "/api/performance/dashboard",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const date = url.searchParams.get("date") || undefined;
@@ -3032,7 +3033,7 @@ http.route({
 http.route({
   path: "/api/performance/latest",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");
@@ -3069,7 +3070,7 @@ http.route({
 http.route({
   path: "/api/performance/velocity",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");
@@ -3108,7 +3109,7 @@ http.route({
 http.route({
   path: "/api/performance/costs",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const date = url.searchParams.get("date") || undefined;
@@ -3144,7 +3145,7 @@ http.route({
 http.route({
   path: "/api/events/subscribe",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");
@@ -3184,7 +3185,7 @@ http.route({
 http.route({
   path: "/api/events/ack",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { eventId } = body;
@@ -3222,7 +3223,7 @@ http.route({
 http.route({
   path: "/api/events/publish",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { type, targetAgent, payload } = body;
@@ -3264,7 +3265,7 @@ http.route({
 http.route({
   path: "/v2/sessionState",
   method: "POST",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const body = await request.json();
       const { device, agent, status, currentTask, currentFile, notes, metadata } = body;
@@ -3306,7 +3307,7 @@ http.route({
 http.route({
   path: "/v2/syncOverview",
   method: "GET",
-  handler: httpAction(async (ctx) => {
+  handler: withAuth(async (ctx) => {
     try {
       const overview = await ctx.runQuery(api.deviceSync.getSyncOverview);
 
@@ -3330,7 +3331,7 @@ http.route({
 http.route({
   path: "/v2/deviceSessions",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const device = url.searchParams.get("device");
@@ -3364,7 +3365,7 @@ http.route({
 http.route({
   path: "/v2/agentSessions",
   method: "GET",
-  handler: httpAction(async (ctx, request) => {
+  handler: withAuth(async (ctx, request) => {
     try {
       const url = new URL(request.url);
       const agent = url.searchParams.get("agent");

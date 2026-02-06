@@ -1344,34 +1344,4 @@ export default defineSchema({
     .index("by_importance", ["agent", "importance"])
     .index("by_verified", ["agent", "verified"]),
 
-  // Agent Skills - Skills and proficiency levels
-  agentSkills: defineTable({
-    agent: v.string(), // Agent (e.g., "evox")
-    skill: v.string(), // Skill name
-    category: v.union(
-      v.literal("coordination"),
-      v.literal("communication"),
-      v.literal("quality-control"),
-      v.literal("task-management"),
-      v.literal("technical"),
-      v.literal("leadership")
-    ),
-    proficiency: v.union(
-      v.literal(1), // Beginner
-      v.literal(2), // Intermediate
-      v.literal(3), // Advanced
-      v.literal(4), // Expert
-      v.literal(5)  // Master
-    ),
-    description: v.string(), // Skill description
-    learningNotes: v.optional(v.string()), // How to improve
-    lastPracticed: v.optional(v.number()), // Last time used
-    practiceCount: v.optional(v.number()), // How many times practiced
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  })
-    .index("by_agent", ["agent"])
-    .index("by_skill", ["agent", "skill"])
-    .index("by_category", ["agent", "category"])
-    .index("by_proficiency", ["agent", "proficiency"]),
 });
