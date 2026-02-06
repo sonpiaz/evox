@@ -3395,4 +3395,109 @@ http.route({
   }),
 });
 
+// ============================================================
+// AGT-337: LOOP P4 — ENFORCEMENT & COMPLIANCE ENDPOINTS
+// ============================================================
+
+/**
+ * GET /loop/compliance?agent=sam&days=7 — Agent loop compliance stats
+ */
+http.route({
+  path: "/loop/compliance",
+  method: "GET",
+  handler: withAuth(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const agent = url.searchParams.get("agent") || undefined;
+      const days = url.searchParams.get("days");
+
+      const compliance = await ctx.runQuery(api.messageStatus.getAgentLoopCompliance, {
+        agentName: agent,
+        sinceDays: days ? parseInt(days, 10) : undefined,
+      });
+
+      return new Response(JSON.stringify({ compliance }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Loop compliance error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * GET /loop/breaches?limit=20 — List current SLA breaches
+ */
+http.route({
+  path: "/loop/breaches",
+  method: "GET",
+  handler: withAuth(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const limit = url.searchParams.get("limit");
+      const agent = url.searchParams.get("agent") || undefined;
+
+      const breaches = await ctx.runQuery(api.loopMetrics.getActiveAlerts, {
+        agentName: agent,
+        limit: limit ? parseInt(limit, 10) : undefined,
+      });
+
+      return new Response(JSON.stringify({ breaches }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Loop breaches error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
+/**
+ * POST /loop/escalate — Manually escalate a stuck message
+ * Body: { messageId: string, reason: string, escalateTo?: "max" | "ceo" }
+ */
+http.route({
+  path: "/loop/escalate",
+  method: "POST",
+  handler: withAuth(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const { messageId, reason, escalateTo } = body;
+
+      if (!messageId || !reason) {
+        return new Response(
+          JSON.stringify({ error: "messageId and reason are required" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const result = await ctx.runMutation(api.messageStatus.escalateToManager, {
+        messageId: messageId as Id<"agentMessages">,
+        reason,
+        escalateTo,
+      });
+
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Loop escalate error:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }),
+});
+
 export default http;

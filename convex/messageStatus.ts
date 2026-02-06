@@ -37,8 +37,8 @@ export const StatusLabels = {
   5: "reported",
 } as const;
 
-// SLA durations
-const SLA = {
+// SLA durations (single source of truth — import, never duplicate)
+export const SLA = {
   REPLY: 15 * 60 * 1000,         // 15 minutes
   ACTION: 2 * 60 * 60 * 1000,    // 2 hours
   REPORT: 24 * 60 * 60 * 1000,   // 24 hours
@@ -405,6 +405,13 @@ export const markAsActed = mutation({
       return { success: true, alreadyActed: true };
     }
 
+    // AGT-337: Enforce loop order — must be REPLIED before ACTED
+    if (currentStatus < MessageStatus.REPLIED) {
+      throw new Error(
+        `Loop order violation: cannot mark as ACTED before REPLIED (current: ${StatusLabels[currentStatus as keyof typeof StatusLabels] ?? currentStatus})`
+      );
+    }
+
     const now = Date.now();
     await ctx.db.patch(args.messageId, {
       statusCode: MessageStatus.ACTED,
@@ -455,6 +462,13 @@ export const markAsReported = mutation({
     const currentStatus = message.statusCode ?? MessageStatus.DELIVERED;
     if (currentStatus >= MessageStatus.REPORTED) {
       return { success: true, alreadyReported: true };
+    }
+
+    // AGT-337: Enforce loop order — must be ACTED before REPORTED
+    if (currentStatus < MessageStatus.ACTED) {
+      throw new Error(
+        `Loop order violation: cannot mark as REPORTED before ACTED (current: ${StatusLabels[currentStatus as keyof typeof StatusLabels] ?? currentStatus})`
+      );
     }
 
     const now = Date.now();
@@ -511,3 +525,152 @@ export const markLoopBroken = mutation({
     return { success: true };
   },
 });
+
+// ============================================================
+// AGT-337: LOOP P4 — Enforcement & Compliance
+// ============================================================
+
+/**
+ * Enforce loop order: agents CANNOT skip stages.
+ * Validates that targetStatus is the next sequential stage.
+ * Throws if the transition would skip a stage.
+ */
+export const enforceLoopOrder = mutation({
+  args: {
+    messageId: v.id("agentMessages"),
+    targetStatus: v.number(),
+    agentName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const currentStatus = message.statusCode ?? MessageStatus.PENDING;
+
+    if (currentStatus >= args.targetStatus) {
+      return { valid: true, currentStatus, reason: "Already at or past target" };
+    }
+
+    if (args.targetStatus > currentStatus + 1) {
+      const currentLabel = StatusLabels[currentStatus as keyof typeof StatusLabels] ?? "unknown";
+      const targetLabel = StatusLabels[args.targetStatus as keyof typeof StatusLabels] ?? "unknown";
+      const nextLabel = StatusLabels[(currentStatus + 1) as keyof typeof StatusLabels] ?? "unknown";
+
+      throw new Error(
+        `Loop order violation: cannot skip from "${currentLabel}" to "${targetLabel}". ` +
+        `Next required: "${nextLabel}".`
+      );
+    }
+
+    return { valid: true, currentStatus };
+  },
+});
+
+/**
+ * Escalate a stuck message to a manager.
+ * Creates a loopAlert + sends DM via unifiedMessages.
+ */
+export const escalateToManager = mutation({
+  args: {
+    messageId: v.id("agentMessages"),
+    reason: v.string(),
+    escalateTo: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const now = Date.now();
+    const target = args.escalateTo?.toLowerCase() ?? "max";
+    const agentName = await resolveAgentNameById(ctx.db, message.to);
+
+    await ctx.db.insert("loopAlerts", {
+      messageId: args.messageId,
+      agentName,
+      alertType: "loop_broken",
+      severity: "critical",
+      status: "escalated",
+      escalatedTo: target,
+      createdAt: now,
+    });
+
+    await ctx.db.insert("unifiedMessages", {
+      fromAgent: "system",
+      toAgent: target === "ceo" ? "son" : target,
+      content: `ESCALATION: ${agentName.toUpperCase()} — ${args.reason}. Message: ${args.messageId}`,
+      type: "system",
+      priority: "urgent",
+      read: false,
+      createdAt: now,
+    });
+
+    return { success: true, escalatedTo: target };
+  },
+});
+
+/**
+ * Get loop compliance stats per agent.
+ * Returns: total messages, loops closed, broken, SLA breaches, compliance %.
+ */
+export const getAgentLoopCompliance = query({
+  args: {
+    agentName: v.optional(v.string()),
+    sinceDays: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const since = Date.now() - (args.sinceDays ?? 7) * 24 * 60 * 60 * 1000;
+    const now = Date.now();
+
+    if (args.agentName) {
+      const agentId = await resolveAgentIdByName(ctx.db, args.agentName);
+      const messages = await ctx.db
+        .query("agentMessages")
+        .withIndex("by_to_statusCode", (q) => q.eq("to", agentId))
+        .filter((q) => q.gte(q.field("timestamp"), since))
+        .collect();
+
+      return [buildCompliance(args.agentName, messages, now)];
+    }
+
+    // All agents
+    const allMessages = await ctx.db
+      .query("agentMessages")
+      .withIndex("by_timestamp")
+      .filter((q) => q.gte(q.field("timestamp"), since))
+      .collect();
+
+    const byAgent = new Map<string, typeof allMessages>();
+    for (const msg of allMessages) {
+      const name = await resolveAgentNameById(ctx.db, msg.to);
+      if (!byAgent.has(name)) byAgent.set(name, []);
+      byAgent.get(name)!.push(msg);
+    }
+
+    return Array.from(byAgent.entries()).map(([name, msgs]) =>
+      buildCompliance(name, msgs, now)
+    );
+  },
+});
+
+function buildCompliance(agentName: string, messages: any[], now: number) {
+  const total = messages.length;
+  const closed = messages.filter((m: any) => (m.statusCode ?? 0) >= MessageStatus.REPORTED).length;
+  const broken = messages.filter((m: any) => m.loopBroken).length;
+
+  let slaBreaches = 0;
+  for (const m of messages) {
+    if (m.expectedReplyBy && !m.repliedAt && now > m.expectedReplyBy) slaBreaches++;
+    if (m.expectedActionBy && !m.actedAt && now > m.expectedActionBy) slaBreaches++;
+    if (m.expectedReportBy && !m.reportedAt && now > m.expectedReportBy) slaBreaches++;
+  }
+
+  return {
+    agentName,
+    totalMessages: total,
+    loopsClosed: closed,
+    loopsBroken: broken,
+    slaBreaches,
+    inProgress: total - closed - broken,
+    compliancePercent: total > 0 ? Math.round((closed / total) * 100) : 100,
+  };
+}

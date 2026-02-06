@@ -93,8 +93,8 @@ crons.interval(
   {}
 );
 
-// CORE-209: The Loop — SLA Monitor every 5 minutes
-// Checks for overdue replies (>15min), actions (>2h), reports (>24h)
+// CORE-209 + AGT-337: The Loop — SLA Monitor every 5 minutes
+// Detects AND auto-escalates: reply >15min → DM MAX, action >2h → critical MAX, report >24h → broken + CEO dispatch
 crons.interval(
   "loop-sla-monitor",
   { minutes: 5 },
