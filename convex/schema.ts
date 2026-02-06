@@ -12,6 +12,7 @@ export default defineSchema({
   // Agent management
   agents: defineTable({
     name: v.string(),
+    agentId: v.optional(v.string()), // AGT-332: Stable agent ID (e.g., "agt_max_001")
     role: v.union(
       v.literal("pm"),
       v.literal("backend"),
@@ -57,7 +58,8 @@ export default defineSchema({
     spawnReason: v.optional(v.string()),              // Why agent was spawned
   })
     .index("by_status", ["status"])
-    .index("by_name", ["name"]),
+    .index("by_name", ["name"])
+    .index("by_agentId", ["agentId"]),
 
   // Agent name → Convex/Linear mapping (ADR-001: attribution from caller, not Linear API key)
   agentMappings: defineTable({
