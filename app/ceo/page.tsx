@@ -26,6 +26,9 @@ import { cn } from "@/lib/utils";
 import { LiveFeed } from "@/components/ceo/LiveFeed";
 import { BlockersCard } from "@/components/ceo/BlockersCard";
 import { WinsCard } from "@/components/ceo/WinsCard";
+import { LoopSummaryCard } from "@/components/ceo/LoopSummaryCard";
+import { AccountabilityGrid } from "@/components/ceo/AccountabilityGrid";
+import { UnresolvedAlerts } from "@/components/ceo/UnresolvedAlerts";
 import { useState } from "react";
 
 export default function CEODashboardPage() {
@@ -123,11 +126,20 @@ export default function CEODashboardPage() {
           </div>
         )}
 
+        {/* The Loop — Glanceable loop health */}
+        <LoopSummaryCard />
+
         {/* Blockers - Show first if any (RED) */}
         <BlockersCard />
 
+        {/* Unresolved Loop Alerts — Active SLA breaches */}
+        <UnresolvedAlerts />
+
         {/* Wins - Celebrate (GREEN) */}
         <WinsCard />
+
+        {/* Accountability Grid — Per-agent loop performance */}
+        <AccountabilityGrid />
 
         {/* Live Feed - What's happening */}
         <section>
