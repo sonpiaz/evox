@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://evox-ten.vercel.app">Live Demo</a> · <a href="#architecture">Architecture</a> · <a href="#quick-start">Quick Start</a> · <a href="#roadmap">Roadmap</a>
+  <a href="#architecture">Architecture</a> · <a href="#quick-start">Quick Start</a> · <a href="#roadmap">Roadmap</a>
 </p>
 
 <p align="center">
