@@ -215,6 +215,16 @@ Open [http://localhost:3000](http://localhost:3000) and you'll see Mission Contr
 
 ---
 
+## Models
+
+The headless execution engine calls the Anthropic Messages API, with tool use, at a fixed URL in `convex/execution/engine.ts`. Any endpoint that accepts that request format works. [Kyma API](https://kymaapi.com) is one: agents with different roles can run on models from several labs with one key and one balance. To switch:
+
+1. In `convex/execution/engine.ts`, replace `https://api.anthropic.com/v1/messages` with `https://kymaapi.com/v1/messages`.
+2. Set `ANTHROPIC_API_KEY` in your Convex environment to your Kyma API key.
+3. In the same file, change `DEFAULT_MODEL` from its dated Claude ID (`claude-sonnet-4-5-20250929`) to an ID Kyma serves. Kyma uses undated IDs such as `claude-sonnet-4-6`, and the full list is at `https://kymaapi.com/v1/models`.
+
+---
+
 ## Project Structure
 
 ```
